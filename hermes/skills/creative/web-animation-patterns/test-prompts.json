@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Create something using web-animation-patterns",
+    "expected": "Creative output generated"
+  },
+  {
+    "id": 2,
+    "prompt": "Use web-animation-patterns with specific parameters",
+    "expected": "Custom output produced"
+  }
+]

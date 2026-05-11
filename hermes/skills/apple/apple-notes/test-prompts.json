@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Use apple-notes to perform its core function",
+    "expected": "apple-notes executes successfully"
+  },
+  {
+    "id": 2,
+    "prompt": "Check apple-notes for edge cases",
+    "expected": "Handles errors gracefully"
+  }
+]

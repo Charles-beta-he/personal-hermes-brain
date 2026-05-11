@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Set up and run trl-fine-tuning",
+    "expected": "trl-fine-tuning configured and running"
+  },
+  {
+    "id": 2,
+    "prompt": "Debug trl-fine-tuning configuration issue",
+    "expected": "Issue diagnosed"
+  }
+]

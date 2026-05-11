@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Create something using manim-video",
+    "expected": "Creative output generated"
+  },
+  {
+    "id": 2,
+    "prompt": "Use manim-video with specific parameters",
+    "expected": "Custom output produced"
+  }
+]

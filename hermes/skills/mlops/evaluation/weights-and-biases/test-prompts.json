@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Set up and run weights-and-biases",
+    "expected": "weights-and-biases configured and running"
+  },
+  {
+    "id": 2,
+    "prompt": "Debug weights-and-biases configuration issue",
+    "expected": "Issue diagnosed"
+  }
+]

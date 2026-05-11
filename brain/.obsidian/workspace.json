@@ -1,0 +1,273 @@
+{
+  "main": {
+    "id": "67769a7d7dd4413c",
+    "type": "split",
+    "children": [
+      {
+        "id": "559b7d2d7a2d2316",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "2e9b43a4488823b8",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "06-治理与评审/reviews/00-reviews索引.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "00-reviews索引"
+            }
+          },
+          {
+            "id": "fe0c844fe6d6dc46",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "05-实践与项目/projects/hermes-code-evidence-mcp/00-hermes-code-evidence-mcp索引.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "00-hermes-code-evidence-mcp索引"
+            }
+          },
+          {
+            "id": "5c2e12ab57be0f4a",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "05-实践与项目/实践方案/00-实践方案索引.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "00-实践方案索引"
+            }
+          },
+          {
+            "id": "d8f60e693e02304e",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "05-实践与项目/实践方案/10-可恢复多模型认证系统Playbook.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "10-可恢复多模型认证系统Playbook"
+            }
+          }
+        ],
+        "currentTab": 3
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "d790c34229e97b88",
+    "type": "split",
+    "children": [
+      {
+        "id": "beec3b16fa6bc95b",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "4e68eca9478b5ad7",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "byCreatedTime",
+                "autoReveal": true
+              },
+              "icon": "lucide-folder-closed",
+              "title": "文件列表"
+            }
+          },
+          {
+            "id": "10b7b63ab8740977",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "恢复",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "搜索"
+            }
+          },
+          {
+            "id": "9f947f5cb6cc1b42",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "书签"
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "horizontal",
+    "width": 332.5
+  },
+  "right": {
+    "id": "5130bad354ef9824",
+    "type": "split",
+    "children": [
+      {
+        "id": "7df6f79938d680e2",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "be7c1c45cf05d11a",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "07-仪表盘/待完成任务控制台.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "待完成任务控制台 的反向链接列表"
+            }
+          },
+          {
+            "id": "a4cfe1c25789a934",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "07-仪表盘/待完成任务控制台.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "待完成任务控制台 的出链列表"
+            }
+          },
+          {
+            "id": "6437f1fcf401fb4f",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "标签"
+            }
+          },
+          {
+            "id": "fd7569ba4e52b486",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "添加笔记属性"
+            }
+          },
+          {
+            "id": "1d34e3fdfb2f3d14",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "07-仪表盘/待完成任务控制台.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "待完成任务控制台 的大纲"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:打开快速切换": false,
+      "graph:查看关系图谱": false,
+      "canvas:新建白板": false,
+      "daily-notes:打开/创建今天的日记": false,
+      "templates:插入模板": false,
+      "command-palette:打开命令面板": false,
+      "markdown-importer:打开 Markdown 格式转换器": false,
+      "bases:新建数据库": false
+    }
+  },
+  "active": "d8f60e693e02304e",
+  "lastOpenFiles": [
+    "06-治理与评审/reviews/2026-05-11-personal-hermes-brain-round1-landing.md",
+    "99-hermes-notes/reports/pa-daily-2026-05-11.md",
+    "05-实践与项目/实践方案/00-实践方案索引.md",
+    "05-实践与项目/tasks/2026-05-07-resumable-multimodel-certification-landing-log.md",
+    "05-实践与项目/tasks/00-tasks索引.md",
+    "05-实践与项目/projects/00-projects索引.md",
+    "06-治理与评审/进化日志/2026-05-07-可恢复多模型认证系统长期目标落地.md",
+    "06-治理与评审/进化日志/00-进化日志索引.md",
+    "03-理论与元认知/控制论基础/05-稳态-内稳态与自适应.md",
+    "05-实践与项目/实践方案/10-可恢复多模型认证系统Playbook.md",
+    "07-仪表盘/待完成任务运行态.md",
+    "06-治理与评审/reviews/2026-05-11-hermes-github-personal-assistant-sync-plan.md",
+    "07-仪表盘/待完成任务控制台.md",
+    "05-实践与项目/projects/agent-cognitive-operating-system/Project - Agent Cognitive Operating System.md",
+    "05-实践与项目/projects/hermes-self-improvement/evidence/taskpool-flow/taskpool-flow-audit-2026-05-11.md",
+    "05-实践与项目/projects/hermes-self-improvement/evidence/taskpool-flow",
+    "05-实践与项目/tasks/2026-05-06-multimodel-coverage-minority-opinion-fill-log.md",
+    "01-系统与偏好/system/Obsidian Setup - Hermes Local Brain.md",
+    "06-治理与评审/skills/obsidian-sync-and-brain-routing.md",
+    "06-治理与评审/skills/00-skills索引.md",
+    "08-模板/local-brain-task-note-template.md",
+    "08-模板/task-workflow-contract-template.md",
+    "08-模板/项目工作记忆模板.md",
+    "04-知识原子/atoms/main-hierarchy-migration-as-control-plane.md",
+    "04-知识原子/atoms/agent-cognitive-operating-system.md",
+    "04-知识原子/atoms/系统工程四环Agent映射.md",
+    "03-理论与元认知/系统理论/Nudge-选择架构与激励.md",
+    "05-实践与项目/missions/2026-05-10-mission-local-first-artifacts-kg.evidence.json",
+    "05-实践与项目/missions",
+    "05-实践与项目/projects/uvisa-app-2.0/evidence/taskpool/uvisa-me-id-copy-browser-smoke-2026-05-11.json",
+    "05-实践与项目/projects/uvisa-app-2.0/evidence/taskpool/uvisa-me-id-copy-fix-2026-05-11.json",
+    "05-实践与项目/projects/uvisa-app-2.0/evidence/taskpool",
+    "05-实践与项目/projects/agent-skill-learning/created-task-results-2026-05-10.json",
+    "05-实践与项目/projects/agent-skill-learning/multi-model-state-linked-2026-05-10.json",
+    "05-实践与项目/projects/agent-skill-learning/multi-model-state-2026-05-10.json",
+    "05-实践与项目/projects/agent-skill-learning/skill-learning-candidates-2026-05-10.json",
+    "05-实践与项目/projects/uvisa-app-2.0/evidence/screenshots/uvisa-card-home-restore-original-ui-hardcoded-data-20260510-162453.jpg",
+    "05-实践与项目/projects/uvisa-app-2.0/evidence/screenshots/uvisa-me-id-empty-20260510-160341.jpg",
+    "未命名.canvas"
+  ]
+}

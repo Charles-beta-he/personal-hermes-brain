@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Run semantic-release-monorepo deployment workflow",
+    "expected": "Deployment configured"
+  },
+  {
+    "id": 2,
+    "prompt": "Verify semantic-release-monorepo configuration",
+    "expected": "Config validated"
+  }
+]

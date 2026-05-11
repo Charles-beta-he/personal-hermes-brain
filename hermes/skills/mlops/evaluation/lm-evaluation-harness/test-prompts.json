@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Set up and run lm-evaluation-harness",
+    "expected": "lm-evaluation-harness configured and running"
+  },
+  {
+    "id": 2,
+    "prompt": "Debug lm-evaluation-harness configuration issue",
+    "expected": "Issue diagnosed"
+  }
+]

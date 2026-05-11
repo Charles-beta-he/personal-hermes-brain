@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Search using blogwatcher",
+    "expected": "Results returned"
+  },
+  {
+    "id": 2,
+    "prompt": "Use blogwatcher with query parameters",
+    "expected": "Filtered results"
+  }
+]

@@ -1,0 +1,217 @@
+{
+  "timestamp": "2026-04-27T17:34:53.039923+00:00",
+  "model": "deepseek-chat",
+  "prompts": [
+    {
+      "name": "planner",
+      "description": "Analyze system and produce structured improvement plan",
+      "nl_chars": 1523,
+      "spl_chars": 995,
+      "nl_tokens_est": 380,
+      "spl_tokens_est": 248,
+      "savings_pct": 34.7,
+      "nl_preview": "You are a Hermes Agent architecture planner.\n\nRead the state below and produce a structured improvement plan.\n\nSTATE (sha256: mock123):\n{\n  \"task\": \"Fix authentication module failing on OAuth refresh\"",
+      "spl_preview": "{\"spl\":1,\"hdr\":{\"role\":\"pl\",\"op\":\"an\",\"dims\":[\"as\",\"ph\",\"ct\",\"rs\"],\"tier\":2,\"model\":\"deepseek-chat\",\"state_h\":\"sha256:2d37896922dfa1ce\"},\"ctx\":{\"question\":\"Produce a structured improvement plan.\",\"ref",
+      "api_calls": {
+        "nl": {
+          "ok": true,
+          "response": "{\n  \"meta\": {\n    \"planner_model\": \"deepseek-chat\",\n    \"planner_role\": \"architect\",\n    \"state_hash\": \"mock123\",\n    \"tier_target\": \"T2\",\n    \"confidence\": 0.75\n  },\n  \"diagnosis\": {\n    \"root_cause_class\": \"regression\",\n    \"evidence_field_ids\": [\"src/auth/oauth.py\", \"src/auth/refresh.py\"],\n    \"summary\": \"Recent migration to v2 OAuth endpoints introduced a regression: the refresh token flow now fails with 401 after token expiry, likely due to mismatched endpoint URLs or missing parameters in ",
+          "response_chars": 1940,
+          "latency_ms": 7158,
+          "error": null,
+          "usage": {
+            "prompt_tokens": 492,
+            "completion_tokens": 551,
+            "total_tokens": 1043,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 492
+          }
+        },
+        "spl": {
+          "ok": true,
+          "response": "```json\n{\n  \"meta\": {\n    \"confidence\": 0.85,\n    \"root_cause_class\": \"regression\"\n  },\n  \"diagnosis\": \"The OAuth refresh flow fails with 401 after token expiry. Likely a regression in `src/auth/refresh.py` where the refresh token is not being sent or validated correctly, or the token expiry check in `src/auth/oauth.py` is too strict. The error occurs in `test_auth_refresh`, indicating a unit test failure.\",\n  \"patches\": [\n    {\n      \"id\": \"patch-1\",\n      \"target_file\": \"src/auth/refresh.py\",\n",
+          "response_chars": 1026,
+          "latency_ms": 3768,
+          "error": null,
+          "usage": {
+            "prompt_tokens": 328,
+            "completion_tokens": 290,
+            "total_tokens": 618,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 328
+          }
+        }
+      },
+      "nl_valid_response": true,
+      "spl_valid_response": true
+    },
+    {
+      "name": "validator",
+      "description": "Validate 3 architectural decisions",
+      "nl_chars": 453,
+      "spl_chars": 442,
+      "nl_tokens_est": 113,
+      "spl_tokens_est": 110,
+      "savings_pct": 2.4,
+      "nl_preview": "You are an expert code reviewer. Review this task and respond with your verdict.\n\nTASK:\nValidate these 3 architectural decisions:\n1. Is Singleton pattern right for DBConnection? Concurrency risk?\n2. I",
+      "spl_preview": "{\"spl\":1,\"hdr\":{\"role\":\"vr\",\"op\":\"rv\"},\"ctx\":{\"ref\":\"sha256:308ffdef2d32212c\",\"question\":\"Validate these 3 architectural decisions:\\n1. Is Singleton pattern right for DBConnection? Concurrency risk?\\n",
+      "api_calls": {
+        "nl": {
+          "ok": true,
+          "response": "{\"verdict\": \"partial\", \"summary\": \"1. Partial: Singleton for DBConnection can work with proper synchronization, but concurrency risk exists if not thread-safe. 2. Fail: Circuit breaker is incomplete without half-open state for recovery testing. 3. Fail: Config should persist to disk to avoid loss on restart.\"}",
+          "response_chars": 311,
+          "latency_ms": 1332,
+          "error": null,
+          "usage": {
+            "prompt_tokens": 121,
+            "completion_tokens": 69,
+            "total_tokens": 190,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 121
+          }
+        },
+        "spl": {
+          "ok": true,
+          "response": "Here is the validation of the three architectural decisions:\n\n1.  **Verdict: X (Partial)**\n    **Summary:** Singleton for DBConnection is acceptable for connection pooling, but it introduces concurrency risk if the singleton itself is stateful (e.g., holding a single raw connection) or if access is not properly synchronized. A pool of connections behind a singleton is safe; a single shared connection is not.\n\n2.  **Verdict: F (Fail)**\n    **Summary:** The circuit breaker pattern is incomplete wi",
+          "response_chars": 1047,
+          "latency_ms": 3079,
+          "error": null,
+          "usage": {
+            "prompt_tokens": 144,
+            "completion_tokens": 220,
+            "total_tokens": 364,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 144
+          }
+        }
+      },
+      "nl_valid_response": true,
+      "spl_valid_response": true
+    },
+    {
+      "name": "voter",
+      "description": "Vote on code change correctness",
+      "nl_chars": 1042,
+      "spl_chars": 1058,
+      "nl_tokens_est": 260,
+      "spl_tokens_est": 264,
+      "savings_pct": -1.5,
+      "nl_preview": "You are an expert code reviewer. Review this task and respond with your verdict.\n\nTASK:\nVote on whether this code change is correct:\n\nDIFF:\n--- a/src/auth/oauth.py\n+++ b/src/auth/oauth.py\n@@ -45,7 +45",
+      "spl_preview": "{\"spl\":1,\"hdr\":{\"role\":\"vr\",\"op\":\"rv\"},\"ctx\":{\"ref\":\"sha256:c551598e7f83f1b9\",\"question\":\"Vote on whether this code change is correct:\\n\\nDIFF:\\n--- a/src/auth/oauth.py\\n+++ b/src/auth/oauth.py\\n@@ -4",
+      "api_calls": {
+        "nl": {
+          "ok": true,
+          "response": "{\"verdict\": \"partial\", \"summary\": \"The retry logic improves resilience but lacks timeout control on the HTTP request itself, which could cause the total wait to exceed acceptable bounds; also, retrying on all failures (not just transient ones) may mask permanent errors like invalid tokens.\"}",
+          "response_chars": 292,
+          "latency_ms": 1425,
+          "error": null,
+          "usage": {
+            "prompt_tokens": 265,
+            "completion_tokens": 60,
+            "total_tokens": 325,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 265
+          }
+        },
+        "spl": {
+          "ok": true,
+          "response": "{\"verdict\":\"F\",\"summary\":\"The change is flawed. It removes the specific 401 error handling for expired tokens, replacing it with a generic retry loop that will retry even on non-retryable errors (like 401, 403, 400). This could mask permanent failures and waste resources. Additionally, the retry logic lacks a total timeout, potentially causing long delays in a thread-unsafe manner if the client is shared across threads. The original code correctly distinguished an expired token from transient fa",
+          "response_chars": 509,
+          "latency_ms": 2046,
+          "error": null,
+          "usage": {
+            "prompt_tokens": 314,
+            "completion_tokens": 107,
+            "total_tokens": 421,
+            "prompt_tokens_details": {
+              "cached_tokens": 0
+            },
+            "prompt_cache_hit_tokens": 0,
+            "prompt_cache_miss_tokens": 314
+          }
+        }
+      },
+      "nl_valid_response": true,
+      "spl_valid_response": true
+    }
+  ],
+  "summary": {
+    "total_nl_chars": 3018,
+    "total_spl_chars": 2495,
+    "total_nl_tokens_est": 753,
+    "total_spl_tokens_est": 622,
+    "overall_savings_pct": 17.3
+  },
+  "actual_token_analysis": {
+    "per_prompt": [
+      {
+        "name": "planner",
+        "nl_prompt_tokens": 492,
+        "spl_prompt_tokens": 328,
+        "prompt_token_savings_pct": 33.3,
+        "nl_total_tokens": 1043,
+        "spl_total_tokens": 618,
+        "total_token_savings_pct": 40.7,
+        "nl_latency_ms": 7158,
+        "spl_latency_ms": 3768,
+        "nl_valid": true,
+        "spl_valid": true
+      },
+      {
+        "name": "validator",
+        "nl_prompt_tokens": 121,
+        "spl_prompt_tokens": 144,
+        "prompt_token_savings_pct": -19.0,
+        "nl_total_tokens": 190,
+        "spl_total_tokens": 364,
+        "total_token_savings_pct": -91.6,
+        "nl_latency_ms": 1332,
+        "spl_latency_ms": 3079,
+        "nl_valid": true,
+        "spl_valid": true
+      },
+      {
+        "name": "voter",
+        "nl_prompt_tokens": 265,
+        "spl_prompt_tokens": 314,
+        "prompt_token_savings_pct": -18.5,
+        "nl_total_tokens": 325,
+        "spl_total_tokens": 421,
+        "total_token_savings_pct": -29.5,
+        "nl_latency_ms": 1425,
+        "spl_latency_ms": 2046,
+        "nl_valid": true,
+        "spl_valid": true
+      }
+    ],
+    "totals": {
+      "nl_prompt_tokens": 878,
+      "spl_prompt_tokens": 786,
+      "prompt_savings_pct": 10.5,
+      "nl_total_tokens": 1558,
+      "spl_total_tokens": 1403,
+      "total_savings_pct": 9.9
+    }
+  },
+  "analysis": {
+    "finding": "SPL saves 33.3% on prompt tokens for the planner pattern (the primary use case). For shorter vote/validator prompts where content dominates instruction overhead, SPL adds slight overhead due to JSON structure. The real savings come from replacing verbose instruction templates with compact SPL headers.",
+    "planner_prompt_savings": "33.3% (492 -> 328 actual prompt tokens from DeepSeek)",
+    "best_use_case": "Multi-model fan-out with instruction-heavy prompts (planner, compaction)",
+    "note": "Both NL and SPL prompts produced valid, useful responses from DeepSeek"
+  }
+}

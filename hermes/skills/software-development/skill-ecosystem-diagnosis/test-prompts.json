@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Run skill-ecosystem-diagnosis on the current codebase",
+    "expected": "skill-ecosystem-diagnosis completed"
+  },
+  {
+    "id": 2,
+    "prompt": "Use skill-ecosystem-diagnosis with specific options",
+    "expected": "Options applied correctly"
+  }
+]

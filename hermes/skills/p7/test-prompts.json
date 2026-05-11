@@ -1,0 +1,7 @@
+[
+  {
+    "id": 1,
+    "prompt": "设计这个模块的实现方案",
+    "expected": "Solution with technical details"
+  }
+]

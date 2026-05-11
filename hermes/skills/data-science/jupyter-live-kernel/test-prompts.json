@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Use jupyter-live-kernel for its intended purpose",
+    "expected": "jupyter-live-kernel executes"
+  },
+  {
+    "id": 2,
+    "prompt": "Test jupyter-live-kernel with edge case input",
+    "expected": "Handles gracefully"
+  }
+]

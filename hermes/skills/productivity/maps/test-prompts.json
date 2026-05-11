@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Use maps to create or access content",
+    "expected": "Content accessed"
+  },
+  {
+    "id": 2,
+    "prompt": "Manage maps resources",
+    "expected": "Resources managed"
+  }
+]

@@ -1,0 +1,77 @@
+---
+type: task
+lane: evolution
+layer: L3
+status: pending
+priority: P1
+created: 2026-05-10T18:29:12+08:00
+updated: 2026-05-11T15:01:02+08:00
+expires_at: 2026-06-09T18:29:12+08:00
+project: hermes-skill-learning
+architecture_target: skill-graph
+capability_delta: 评估可组合 skill 编排、brainstorming/TDD 原子能力拆分、与 Hermes 现有 pua/loop/tdd/plan 的互补关系。
+anti_drift_check: 不直接导入外部 skill；先做来源核验、能力矩阵、最小复现实验与冲突/重复检查。
+acceptance_evidence: "截图 OCR: 20多个可组合 Skill 覆盖开发全流程，brainstorming 和 TDD 最好用; linked state: /Users/charles/Documents/brain/05-实践与项目/projects/agent-skill-learning/multi-model-state-linked-2026-05-10.json; multi-model artifact: /Users/charles/.hermes/tick-20260510-102539; truth gate grounded, fanout quorum met, consensus weak/advisory only."
+workflow_contract: ["[08-模板/task-workflow-contract-template]"]
+claimed_by: 
+claim_expires_at: 
+run_id: 
+retry_count: 0
+next_attempt_at: 
+workspace: 
+parallel_boundary: evolution:skill-learning:superpowers
+evidence: []
+concepts: ["skill-learning", "superpowers", "multi-model", "evidence-first"]
+---
+
+# Task - Skill学习路线：Superpowers 可组合开发流程与 TDD/brainstorming 适配评估
+
+## Objective
+
+对截图候选 skill `superpowers` 走 evidence-first 分析学习路线：先核验来源/许可/能力，再评估 Hermes 适配，最后输出 adopt/borrow/reject 决策；本任务不安装、不导入、不宣称已采用。截图说明：20多个可组合 Skill 覆盖开发全流程，brainstorming 和 TDD 最好用。
+
+## Acceptance Criteria
+
+- [ ] 确认来源与许可；完成 Superpowers 能力矩阵；选 2 个 brainstorming/TDD 场景做可复现实验设计；给出 adopt/borrow/reject 决策与证据链接
+
+## Plan / Workpad
+
+- [ ] Reconcile current state before execution.
+- [ ] Execute the smallest verifiable slice.
+- [ ] Record proof and update status.
+
+## Validation
+
+| Command / Check | Status | Evidence |
+|---|---|---|
+| brain_task_orchestrator list | pending | |
+
+## Proof Log
+
+- 2026-05-10T18:29:12+08:00: Task created from local-brain control point.
+
+## Blockers / Confusions
+
+- None.
+
+## Final Handoff
+
+- Status:
+- Evidence:
+- Residual risk:
+
+- 2026-05-11T01:43:59+08:00: Lifecycle transition `pending` -> `claimed` by `agent-team-controller`. Reason: Phase 4 dynamic parallel dispatch
+
+- 2026-05-11T02:12:49+08:00: Lifecycle transition `claimed` -> `pending` by `hermes`. Force: true. Reason: timeout_cleanup
+
+- 2026-05-11T05:05:11+08:00: Lifecycle transition `pending` -> `claimed` by `agent-team-controller`. Reason: Phase 4 dynamic parallel dispatch
+
+- 2026-05-11T06:10:45+08:00: Reconcile action `stale_claim_released` by `hermes-reconcile`. Previous status `claimed`.
+
+- 2026-05-11T06:15:33+08:00: Lifecycle transition `pending` -> `claimed` by `agent-team-controller`. Reason: Phase 4 dynamic parallel dispatch
+
+- 2026-05-11T07:19:15+08:00: Lifecycle transition `claimed` -> `pending` by `hermes`. Force: true. Reason: guardian_stale_claim_cleanup
+
+- 2026-05-11T13:51:01+08:00: Lifecycle transition `pending` -> `claimed` by `agent-team-controller`. Reason: Phase 4 dynamic parallel dispatch
+
+- 2026-05-11T15:01:02+08:00: Lifecycle transition `claimed` -> `pending` by `hermes`. Force: true. Reason: guardian_stale_claim_cleanup

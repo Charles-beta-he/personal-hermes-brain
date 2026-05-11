@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Use himalaya for its intended purpose",
+    "expected": "himalaya executes"
+  },
+  {
+    "id": 2,
+    "prompt": "Test himalaya with edge case input",
+    "expected": "Handles gracefully"
+  }
+]

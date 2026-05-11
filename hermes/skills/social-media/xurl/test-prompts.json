@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Post using xurl",
+    "expected": "Post created"
+  },
+  {
+    "id": 2,
+    "prompt": "Read content via xurl",
+    "expected": "Content displayed"
+  }
+]

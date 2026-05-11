@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Create something using popular-web-designs",
+    "expected": "Creative output generated"
+  },
+  {
+    "id": 2,
+    "prompt": "Use popular-web-designs with specific parameters",
+    "expected": "Custom output produced"
+  }
+]

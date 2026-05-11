@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Create something using songwriting-and-ai-music",
+    "expected": "Creative output generated"
+  },
+  {
+    "id": 2,
+    "prompt": "Use songwriting-and-ai-music with specific parameters",
+    "expected": "Custom output produced"
+  }
+]

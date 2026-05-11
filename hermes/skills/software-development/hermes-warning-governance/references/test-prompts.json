@@ -1,0 +1,10 @@
+[
+  {
+    "prompt": "多模型尝试修复 Hermes 长期 p10-health warning，并把流程固化成 skill",
+    "expected": "Loads hermes-warning-governance plus Hermes/systematic-debugging skills, captures p10-health/usage/self-test/steward baselines, removes only confirmed memory ghosts, avoids deleting user skills, reclassifies noisy raw skill_count only when steward governance exists, verifies Grade A and 47/47, then updates the skill if new pitfalls appear."
+  },
+  {
+    "prompt": "p10-health warning: memory file > 2.2KB and skill count > 80, but system is otherwise Grade A",
+    "expected": "Audits MEMORY.md for stale point-in-time ghosts, keeps durable lessons, treats raw skill count as a capacity signal governed by skill-steward instead of deleting skills, and runs p10-health/usage-score/self-test verification."
+  }
+]

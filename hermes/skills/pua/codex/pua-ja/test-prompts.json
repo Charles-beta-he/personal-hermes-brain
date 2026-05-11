@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Load and use pua-ja",
+    "expected": "Skill loaded successfully"
+  },
+  {
+    "id": 2,
+    "prompt": "Test pua-ja trigger conditions",
+    "expected": "Triggers as expected"
+  }
+]

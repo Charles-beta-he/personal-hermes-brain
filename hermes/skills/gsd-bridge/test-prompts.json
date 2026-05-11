@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Use gsd-bridge for its intended purpose",
+    "expected": "gsd-bridge executes"
+  },
+  {
+    "id": 2,
+    "prompt": "Test gsd-bridge with edge case input",
+    "expected": "Handles gracefully"
+  }
+]

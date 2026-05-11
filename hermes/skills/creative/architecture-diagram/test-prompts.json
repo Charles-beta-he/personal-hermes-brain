@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Create something using architecture-diagram",
+    "expected": "Creative output generated"
+  },
+  {
+    "id": 2,
+    "prompt": "Use architecture-diagram with specific parameters",
+    "expected": "Custom output produced"
+  }
+]

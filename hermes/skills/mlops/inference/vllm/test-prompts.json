@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Set up and run vllm",
+    "expected": "vllm configured and running"
+  },
+  {
+    "id": 2,
+    "prompt": "Debug vllm configuration issue",
+    "expected": "Issue diagnosed"
+  }
+]

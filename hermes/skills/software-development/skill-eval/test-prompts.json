@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Run skill-eval on the current codebase",
+    "expected": "skill-eval completed"
+  },
+  {
+    "id": 2,
+    "prompt": "Use skill-eval with specific options",
+    "expected": "Options applied correctly"
+  }
+]

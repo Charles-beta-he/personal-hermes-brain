@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Use gif-search to process media",
+    "expected": "Media processed"
+  },
+  {
+    "id": 2,
+    "prompt": "Configure gif-search settings",
+    "expected": "Settings applied"
+  }
+]

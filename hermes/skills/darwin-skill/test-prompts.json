@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "优化所有 skills",
+    "expected": "执行完整的 Phase 0-3 评估和优化流程"
+  },
+  {
+    "id": 2,
+    "prompt": "评估 bayesian-agent 这个 skill 的质量",
+    "expected": "按 8 维度 rubric 评分并输出评分卡"
+  }
+]

@@ -1,0 +1,7 @@
+[
+  {
+    "id": 1,
+    "prompt": "按 TDD 流程实现这个函数",
+    "expected": "Red-green-refactor cycle"
+  }
+]

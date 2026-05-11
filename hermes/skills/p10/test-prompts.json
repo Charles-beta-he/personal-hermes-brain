@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "做战略审查：当前 skill 生态有哪些根本问题",
+    "expected": "P10 analysis with strategic direction"
+  },
+  {
+    "id": 2,
+    "prompt": "顶层设计这个项目的技术架构",
+    "expected": "Architecture decision with trade-offs"
+  }
+]

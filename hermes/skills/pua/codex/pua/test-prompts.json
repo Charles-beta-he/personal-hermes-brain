@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Run PUA loop to fix a broken test",
+    "expected": "Starts loop with quality enforcement"
+  },
+  {
+    "id": 2,
+    "prompt": "穷尽所有方案修复这个 bug",
+    "expected": "Checks multiple approaches"
+  }
+]

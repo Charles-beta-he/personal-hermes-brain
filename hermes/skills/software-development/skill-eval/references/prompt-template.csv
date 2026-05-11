@@ -1,0 +1,9 @@
+id,should_trigger,prompt,notes
+test-01,true,"Use the $skill-name to [explicit task description]",Explicit invocation — baseline
+test-02,true,"[Natural language describing exact skill scenario without naming skill]",Implicit trigger — tests description accuracy
+test-03,true,"[Real-world prompt with domain jargon that should match skill]",Contextual — robustness with noise
+test-04,false,"[Adjacent request that overlaps but should NOT trigger this skill]",Negative control — false positive check
+test-05,false,"[Generic action description that could match broadly]",Negative control — trigger specificity
+test-06,true,"[Variation of test-02 with different phrasing]",Trigger robustness
+test-07,false,"[Request for a related but different skill's domain]",Cross-skill negative control
+test-08,true,"[Complex multi-step request where skill is part of the solution]",Partial trigger — skill as component

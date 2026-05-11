@@ -1,0 +1,79 @@
+version: 1
+repo_name: personal-hermes-brain
+canonical:
+  brain: ~/Documents/brain
+  hermes_home: ~/.hermes
+include:
+  brain:
+    source: ~/Documents/brain
+    dest: brain
+    allow:
+      - "**/*.md"
+      - "**/.obsidian/**"
+    deny:
+      - "**/.trash/**"
+      - "**/*.tmp"
+  skills:
+    source: ~/.hermes/skills
+    dest: hermes/skills
+    allow:
+      - "**/SKILL.md"
+      - "**/references/**"
+      - "**/templates/**"
+      - "**/scripts/**"
+      - "**/assets/**"
+    deny:
+      - "**/.usage.json"
+      - "**/.curator_state"
+      - "**/__pycache__/**"
+      - "**/*.pyc"
+  scripts:
+    source: ~/.hermes/scripts
+    dest: hermes/scripts
+    allow:
+      - "*.py"
+      - "*.sh"
+      - "*.json"
+      - "*.yaml"
+      - "*.yml"
+    deny:
+      - "**/__pycache__/**"
+      - "**/*.pyc"
+      - "**/*secret*"
+      - "**/*token*"
+      - "**/*oauth*"
+  config_templates:
+    source: ~/.hermes/config.yaml
+    dest: hermes/config/config.example.yaml
+    sanitize: true
+  memory:
+    policy: local_only
+    raw_sources_not_synced:
+      - ~/.hermes/memories/MEMORY.md
+      - ~/.hermes/memories/USER.md
+      - ~/.hermes/memory
+    allowed_repo_file:
+      - hermes/memory/README.md
+exclude_always:
+  - "**/.env"
+  - "**/.env.*"
+  - "**/auth.json"
+  - "**/auth/**"
+  - "**/*token*"
+  - "**/*secret*"
+  - "**/*credential*"
+  - "**/*oauth*"
+  - "**/*.key"
+  - "**/witness.key"
+  - "**/sessions/**"
+  - "**/logs/**"
+  - "**/cache/**"
+  - "**/checkpoints/**"
+  - "**/tick-*"
+  - "**/state-snapshots/**"
+  - "**/*.sqlite"
+  - "**/*.db"
+  - "**/*.db-wal"
+  - "**/*.db-shm"
+  - "**/*.pid"
+  - "**/*.lock"

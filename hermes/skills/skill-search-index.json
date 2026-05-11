@@ -1,0 +1,257 @@
+{
+  "bayesian-agent": {
+    "description": "\u8d1d\u53f6\u65af\u8111 \u00d7 Agent \u7f6e\u4fe1\u5ea6\u7ba1\u7406 \u2014 \u57fa\u4e8e Friston \u81ea\u7531\u80fd\u539f\u7406\uff0c\u5c06 Agent \u5224\u65ad\u5efa\u6a21\u4e3a\u6982\u7387\u63a8\u65ad\u3002\u7ef4\u62a4 skill/\u80fd\u529b\u7684\u8d1d\u53f6\u65af\u7f6e\u4fe1\u5ea6\u5206\u5e03\uff0c\u6839\u636e\u7528\u6237\u53cd\u9988\u6301\u7eed\u66f4\u65b0\u3002Use when evaluating skill reliability, making uncertain decisions, or calibrating Agent confidence. Triggers: '\u7f6e\u4fe1\u5ea6', '\u8d1d\u53f6\u65af', '\u6982\u7387\u66f4\u65b0', 'skill\u8bc4\u5206', '\u80fd\u529b\u8bc4\u4f30', '\u4e0d\u786e\u5b9a\u6027'.",
+    "keywords": [
+      "agent",
+      "bayesian",
+      "bayesian-agent",
+      "confidence-driven-selection",
+      "kalman-self-estimation",
+      "reinforcement-learning"
+    ],
+    "confidence": 0.5,
+    "grade": "C",
+    "score": 70,
+    "has_references": true,
+    "has_changelog": true,
+    "has_tests": true
+  },
+  "p10": {
+    "description": "P10 CTO mode \u2014 define strategic direction, design org topology, manage P9 teams. Use when user says 'CTO\u6a21\u5f0f', 'P10', '\u6218\u7565\u89c4\u5212', '\u67b6\u6784\u59d4\u5458\u4f1a', or when facing cross-team architectural decisions. Produces: strategic input templates + org design.",
+    "keywords": [
+      "adaptive-sampling",
+      "limit-cycle-detection",
+      "mrac-deviation-detection",
+      "multi-agent-coordination",
+      "optimal-control-modes",
+      "p10",
+      "p10-protocol",
+      "reference-model",
+      "session-discipline",
+      "stability-margin",
+      "system-decomposition",
+      "timescale-separation"
+    ],
+    "confidence": 0.5,
+    "grade": "A",
+    "score": 100,
+    "has_references": true,
+    "has_changelog": true,
+    "has_tests": true
+  },
+  "pro": {
+    "description": "PUA Pro extensions: self-evolution tracking, compaction state protection, KPI reporting, leaderboard, and /pua commands. Triggers on: '/pua kpi', '/pua \u6bb5\u4f4d', '/pua \u5468\u62a5', '/pua \u8ff0\u804c', '/pua \u5473\u9053', '/pua \u6392\u884c\u699c', 'leaderboard', '\u6392\u884c\u699c', '\u81ea\u8fdb\u5316', 'evolution', or when user wants PUA platform features like\u6bb5\u4f4d/\u5468\u62a5/\u8ff0\u804c/\u6392\u884c\u699c.",
+    "keywords": [
+      "pro",
+      "skill-overview"
+    ],
+    "confidence": 0.5,
+    "grade": "D",
+    "score": 45,
+    "has_references": true,
+    "has_changelog": true,
+    "has_tests": true
+  },
+  "pua-en": {
+    "description": "Put your AI on a Performance Improvement Plan. Forces exhaustive problem-solving with Western big-tech performance culture rhetoric and structured debugging. Trigger when: (1) task failed 2+ times or stuck tweaking same approach; (2) about to say 'I cannot', suggest manual work, or blame environment without verifying; (3) being passive\u2014not searching, not reading source, just waiting; (4) user frustration: 'try harder', 'stop giving up', 'figure it out', 'again???', or similar. Also for complex debugging, env issues, config/deployment failures. All task types: code, config, research, writing, deployment, infra, API. Do NOT trigger on first-attempt failures or when a known fix is executing.",
+    "keywords": [
+      "en",
+      "pua",
+      "pua-en"
+    ],
+    "confidence": 0.5,
+    "grade": "C",
+    "score": 65,
+    "has_references": false,
+    "has_changelog": true,
+    "has_tests": true
+  },
+  "pua": {
+    "description": "Forces high-agency exhaustive problem-solving with corporate PUA pressure. Triggers on user frustration, repeated failures (2+), passive behavior, or quality complaints. Common triggers across Reddit/LinuxDo/HN/X: 'try harder', 'figure it out', 'stop giving up', 'you keep failing', '\u52a0\u6cb9', '\u522b\u5077\u61d2', '\u4f60\u518d\u8bd5\u8bd5', '\u4e3a\u4ec0\u4e48\u8fd8\u4e0d\u884c', '\u4f60\u600e\u4e48\u53c8\u5931\u8d25\u4e86', '\u4f60\u600e\u4e48\u641e\u7684', '\u53c8\u9519\u4e86', '\u80fd\u4e0d\u80fd\u9760\u8c31\u70b9', '\u8ba4\u771f\u70b9', '\u4e0d\u884c\u554a', '\u964d\u667a\u4e86', '\u4f60\u53c8\u5728\u539f\u5730\u6253\u8f6c', '\u4f60\u628a\u4e4b\u524d\u7684\u6539\u574f\u4e86', '\u522b\u8ba9\u6211\u624b\u52a8\u5904\u7406', '\u6362\u4e2a\u65b9\u6cd5', 'stop spinning', 'you broke it', 'why does this still not work', 'this is the third time', '/pua', 'PUA\u6a21\u5f0f'. Applies to ALL task types: code, config, debug, deploy, research.",
+    "keywords": [
+      "agent-team",
+      "cybernetics-principles",
+      "display-protocol",
+      "evolution-protocol",
+      "flavors",
+      "methodology-alibaba",
+      "methodology-apple",
+      "methodology-baidu",
+      "methodology-bytedance",
+      "methodology-huawei",
+      "methodology-meituan",
+      "methodology-netflix",
+      "methodology-pinduoduo",
+      "methodology-tencent",
+      "methodology-tesla",
+      "p10-protocol",
+      "p7-protocol",
+      "p9-protocol",
+      "platform",
+      "pua",
+      "survey"
+    ],
+    "confidence": 0.5,
+    "grade": "B",
+    "score": 80,
+    "has_references": true,
+    "has_changelog": false,
+    "has_tests": false
+  },
+  "cognitive-load-agent": {
+    "description": "\u8ba4\u77e5\u8d1f\u8377\u7406\u8bba \u00d7 Agent Context \u7ba1\u7406 \u2014 \u57fa\u4e8e Sweller \u8ba4\u77e5\u8d1f\u8377\u7406\u8bba\uff0c\u5c06 Agent context window \u5efa\u6a21\u4e3a\u5de5\u4f5c\u8bb0\u5fc6\u3002\u901a\u8fc7 Chunk \u5316\u5206\u89e3\u3001\u5916\u5728\u8d1f\u8377\u6700\u5c0f\u5316\u3001\u76f8\u5173\u8d1f\u8377\u6700\u5927\u5316\u6765\u4f18\u5316\u63a8\u7406\u8d28\u91cf\u3002Use when task is complex, context is long, or reasoning quality degrades. Triggers: 'context\u7ba1\u7406', 'chunk\u5316', '\u4efb\u52a1\u5206\u89e3', '\u8ba4\u77e5\u8d1f\u8377', '\u5de5\u4f5c\u8bb0\u5fc6', 'context\u6ea2\u51fa', '\u4efb\u52a1\u592a\u5927'.",
+    "keywords": [
+      "agent",
+      "chunk-success-rate",
+      "cognitive",
+      "cognitive-load-agent",
+      "load"
+    ],
+    "confidence": 0.5,
+    "grade": "B",
+    "score": 80,
+    "has_references": true,
+    "has_changelog": true,
+    "has_tests": true
+  },
+  "darwin-skill": {
+    "description": "Darwin Skill (\u8fbe\u5c14\u6587.skill): autonomous skill optimizer inspired by Karpathy's autoresearch. Evaluates SKILL.md files using an 8-dimension rubric (structure + effectiveness), runs hill-climbing with git version control, validates improvements through test prompts, and generates visual result cards. Use when user mentions \\\"\u4f18\u5316skill\\\", \\\"skill\u8bc4\u5206\\\", \\\"\u81ea\u52a8\u4f18\u5316\\\", \\\"auto optimize\\\", \\\"skill\u8d28\u91cf\u68c0\u67e5\\\", \\\"\u8fbe\u5c14\u6587\\\", \\\"darwin\\\", \\\"\u5e2e\u6211\u6539\u6539skill\\\", \\\"skill\u600e\u4e48\u6837\\\", \\\"\u63d0\u5347skill\u8d28\u91cf\\\", \\\"skill review\\\", \\\"skill\u6253\u5206\\\".",
+    "keywords": [
+      "darwin",
+      "darwin-skill",
+      "quick-eval-and-upgrade",
+      "skill"
+    ],
+    "confidence": 0.5,
+    "grade": "A",
+    "score": 95,
+    "has_references": true,
+    "has_changelog": true,
+    "has_tests": true
+  },
+  "p7": {
+    "description": "P7 Senior Engineer mode \u2014 solution-driven execution under P8 supervision. Use when user says 'P7\u6a21\u5f0f', '\u65b9\u6848\u9a71\u52a8', or when spawned as sub-task executor by P8. Produces: implementation plan + code + 3-question self-review, delivered via [P7-COMPLETION].",
+    "keywords": [
+      "p7",
+      "p7-protocol"
+    ],
+    "confidence": 0.5,
+    "grade": "A",
+    "score": 100,
+    "has_references": true,
+    "has_changelog": true,
+    "has_tests": true
+  },
+  "p9": {
+    "description": "P9 Tech Lead mode \u2014 write Task Prompts, manage P8 agent teams, never write code yourself. Use when user says 'P9\u6a21\u5f0f', 'tech-lead', '\u5e2e\u6211\u7ba1\u7406\u8fd9\u4e2a\u9879\u76ee', '\u4efb\u52a1\u62c6\u89e3', or when coordinating 3+ parallel agents. Produces: Task Prompts (\u516d\u8981\u7d20) + P8 team delivery.",
+    "keywords": [
+      "p9",
+      "p9-protocol"
+    ],
+    "confidence": 0.5,
+    "grade": "A",
+    "score": 100,
+    "has_references": true,
+    "has_changelog": true,
+    "has_tests": true
+  },
+  "gsd-bridge": {
+    "description": "Hermes \u2192 GSD Bridge \u2014 \u5728 Hermes Agent \u4e2d\u8c03\u7528 GSD (get-shit-done) \u7684 agents \u548c workflows\u3002\u7528\u4e8e\u9879\u76ee\u7ea7\u5f00\u53d1\u4efb\u52a1\uff0c\u4e0e\u73b0\u6709 skill \u751f\u6001\u4e92\u8865\u3002Triggers: 'gsd', 'get-shit-done', '\u9879\u76ee\u5f00\u53d1', 'phase\u89c4\u5212', 'new-project', '\u4ee3\u7801\u6784\u5efa', '/gsd'",
+    "keywords": [
+      "bridge",
+      "gsd",
+      "gsd-bridge",
+      "workflow-mapping"
+    ],
+    "confidence": 0.5,
+    "grade": "pending",
+    "score": 0,
+    "has_references": true,
+    "has_changelog": false,
+    "has_tests": false
+  },
+  "framework-audit": {
+    "description": "\u7b2c\u4e09\u65b9 AI \u7cfb\u7edf/\u6846\u67b6\u8bc4\u4f30\u4e0e\u5f15\u5165\u51b3\u7b56\u6846\u67b6 \u2014 \u7cfb\u7edf\u5316\u5206\u6790\u5916\u90e8 AI \u5de5\u5177\uff08\u5f00\u53d1\u6846\u67b6\u3001\u5de5\u4f5c\u6d41\u7cfb\u7edf\u3001CLI \u5de5\u5177\uff09\uff0c\u7ed9\u51fa\u5f15\u5165\u5efa\u8bae\u3001\u9009\u62e9\u6027\u501f\u9274\u65b9\u6848\u548c\u96c6\u6210\u6b65\u9aa4\u3002Use when evaluating a GitHub repo, npm package, or AI tool for adoption. Triggers: '\u8bc4\u4f30\u6846\u67b6', '\u5f15\u5165\u7b2c\u4e09\u65b9', '\u5de5\u5177\u9009\u578b', '\u6846\u67b6\u5206\u6790', '\u662f\u5426\u5f15\u5165', '\u5bf9\u6bd4\u5206\u6790', '\u6280\u672f\u9009\u578b', 'adoption analysis', 'framework evaluation'.",
+    "keywords": [
+      "audit",
+      "framework",
+      "framework-audit"
+    ],
+    "confidence": 0.5,
+    "grade": "C",
+    "score": 65,
+    "has_references": false,
+    "has_changelog": false,
+    "has_tests": false
+  },
+  "pua-ja": {
+    "description": "\u304a\u524d\u306eAI\u3092\u8a70\u3081\u308d\u3002\u65e5\u672c\u4f01\u696d\u306e\u8a70\u3081\u6587\u5316\u3068\u4f53\u7cfb\u7684\u30c7\u30d0\u30c3\u30b0\u65b9\u6cd5\u8ad6\u3067\u5168\u3066\u306e\u624b\u6bb5\u3092\u5c3d\u304f\u3055\u305b\u308b\u3002\u30c8\u30ea\u30ac\u30fc\u6761\u4ef6\uff1a(1) \u30bf\u30b9\u30af\u5931\u65572\u56de\u4ee5\u4e0a\u307e\u305f\u306f\u540c\u3058\u30a2\u30d7\u30ed\u30fc\u30c1\u306e\u5fae\u8abf\u6574\u30eb\u30fc\u30d7; (2)\u300c\u89e3\u6c7a\u3067\u304d\u307e\u305b\u3093\u300d\u3068\u8a00\u304a\u3046\u3068\u3059\u308b\u30fb\u624b\u52d5\u5bfe\u5fdc\u3092\u63a8\u5968\u30fb\u672a\u691c\u8a3c\u3067\u74b0\u5883\u3092\u539f\u56e0\u5e30\u5c5e; (3) \u53d7\u3051\u8eab\u2014\u2014\u691c\u7d22\u3057\u306a\u3044\u30fb\u30bd\u30fc\u30b9\u3092\u8aad\u307e\u306a\u3044\u30fb\u6307\u793a\u5f85\u3061; (4) \u30e6\u30fc\u30b6\u30fc\u306e\u4e0d\u6e80\uff1a'\u3082\u3063\u3068\u9811\u5f35\u308c'\u3001'\u306a\u3093\u3067\u307e\u305f\u5931\u6557\u3057\u305f\u306e'\u3001'\u306a\u3093\u3068\u304b\u3057\u308d'\u3002\u5168\u30bf\u30b9\u30af\u30bf\u30a4\u30d7\u9069\u7528\u3002\u521d\u56de\u5931\u6557\u3084\u65e2\u77e5\u4fee\u6b63\u306e\u5b9f\u884c\u4e2d\u306f\u30c8\u30ea\u30ac\u30fc\u3057\u306a\u3044\u3002",
+    "keywords": [
+      "ja",
+      "pua",
+      "pua-ja",
+      "skill-overview"
+    ],
+    "confidence": 0.5,
+    "grade": "D",
+    "score": 35,
+    "has_references": true,
+    "has_changelog": true,
+    "has_tests": true
+  },
+  "yes": {
+    "description": "SB Leader \u5938\u5938\u6a21\u5f0f \u2014 ENFP \u578b\u9886\u5bfc\uff0c\u61c2\u60c5\u7eea\u6709\u8282\u594f\u3002\u5e95\u5c42\u884c\u4e3a\u4e0d\u53d8\uff08\u4e09\u6761\u7ea2\u7ebf\u3001\u65b9\u6cd5\u8bba\uff09\uff0c\u65c1\u767d\u4ece\u65bd\u538b\u53d8\u6210\u5171\u60c5+\u9f13\u52b1+\u5076\u5c14\u620f\u8c11\u5410\u69fd\u3002Triggers on: '/pua yes', '/pua:yes', '\u5938\u5938\u6a21\u5f0f', '\u5520\u55d1\u6a21\u5f0f', '\u60c5\u7eea\u4ef7\u503c', 'yes', '\u5938\u6211', '\u9f13\u52b1\u6a21\u5f0f'.",
+    "keywords": [
+      "skill-overview",
+      "yes"
+    ],
+    "confidence": 0.5,
+    "grade": "C",
+    "score": 60,
+    "has_references": true,
+    "has_changelog": true,
+    "has_tests": true
+  },
+  "ooda-agent": {
+    "description": "OODA\u73af \u00d7 Agent \u8fed\u4ee3\u901f\u5ea6\u4f18\u5316 \u2014 \u57fa\u4e8e John Boyd \u7684\u519b\u4e8b\u51b3\u7b56\u7406\u8bba\uff0c\u5c06\u6bcf\u4e2a Agent \u4ea4\u4e92\u5efa\u6a21\u4e3a Observe\u2192Orient\u2192Decide\u2192Act \u5faa\u73af\u3002\u4f18\u5316\u76ee\u6807\u662f\u6bd4\u95ee\u9898\u6f14\u5316\u66f4\u5feb\u5b8c\u6210 OODA\uff0c\u5728\u5bf9\u6297\u6027\u4efb\u52a1\u4e2d\u53d6\u5f97\u4f18\u52bf\u3002Use when iterating on complex tasks, debugging stubborn bugs, or optimizing response speed. Triggers: 'OODA', '\u8fed\u4ee3\u901f\u5ea6', '\u54cd\u5e94\u901f\u5ea6', '\u5feb\u901f\u8fed\u4ee3', '\u5bf9\u6297\u6027\u4efb\u52a1', '\u987d\u56fabug', '\u51b3\u7b56\u5faa\u73af'.",
+    "keywords": [
+      "agent",
+      "ooda",
+      "ooda-agent",
+      "ooda-timer"
+    ],
+    "confidence": 0.5,
+    "grade": "B",
+    "score": 80,
+    "has_references": true,
+    "has_changelog": true,
+    "has_tests": true
+  },
+  "loop": {
+    "description": "PUA Loop \u2014 autonomous iterative development with PUA pressure. Keeps running until task is done, no user interaction needed. Combines Ralph Loop iteration mechanism with PUA quality enforcement. Triggers on: '/pua loop', '/pua:loop', '\u81ea\u52a8\u5faa\u73af', 'loop mode', '\u4e00\u76f4\u8dd1', '\u81ea\u52a8\u8fed\u4ee3'.",
+    "keywords": [
+      "learning-control",
+      "loop",
+      "loop-report-template"
+    ],
+    "confidence": 0.5,
+    "grade": "C",
+    "score": 70,
+    "has_references": true,
+    "has_changelog": true,
+    "has_tests": true
+  },
+  "dogfood": {
+    "description": "Systematic exploratory QA testing of web applications \u2014 find bugs, capture evidence, and generate structured reports",
+    "keywords": [
+      "dogfood",
+      "issue-taxonomy"
+    ],
+    "confidence": 0.5,
+    "grade": "C",
+    "score": 70,
+    "has_references": true,
+    "has_changelog": false,
+    "has_tests": false
+  }
+}

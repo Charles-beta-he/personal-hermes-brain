@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Set up and run unsloth",
+    "expected": "unsloth configured and running"
+  },
+  {
+    "id": 2,
+    "prompt": "Debug unsloth configuration issue",
+    "expected": "Issue diagnosed"
+  }
+]

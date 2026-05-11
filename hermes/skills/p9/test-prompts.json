@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "将这个需求拆成可执行的 Task Prompt",
+    "expected": "Breaks down into actionable tasks"
+  },
+  {
+    "id": 2,
+    "prompt": "写一个 agent 能直接执行的步骤清单",
+    "expected": "Step-by-step instructions"
+  }
+]

@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Create something using creative-ideation",
+    "expected": "Creative output generated"
+  },
+  {
+    "id": 2,
+    "prompt": "Use creative-ideation with specific parameters",
+    "expected": "Custom output produced"
+  }
+]

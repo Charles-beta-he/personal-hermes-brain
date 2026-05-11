@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Run post-deploy-verification on the current codebase",
+    "expected": "post-deploy-verification completed"
+  },
+  {
+    "id": 2,
+    "prompt": "Use post-deploy-verification with specific options",
+    "expected": "Options applied correctly"
+  }
+]

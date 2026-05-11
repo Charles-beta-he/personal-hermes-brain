@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Use ocr-and-documents to create or access content",
+    "expected": "Content accessed"
+  },
+  {
+    "id": 2,
+    "prompt": "Manage ocr-and-documents resources",
+    "expected": "Resources managed"
+  }
+]

@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Run requesting-code-review on the current codebase",
+    "expected": "requesting-code-review completed"
+  },
+  {
+    "id": 2,
+    "prompt": "Use requesting-code-review with specific options",
+    "expected": "Options applied correctly"
+  }
+]

@@ -1,0 +1,95 @@
+timestamp	commit	skill	old_score	new_score	status	dimension	note	eval_mode
+2026-04-23T22:04:14.643661	baseline	bayesian-agent	0	84	B	all	缺 test-prompts.json 和 CHANGELOG；输入输出格式可更严格	base_eval
+2026-04-23T22:04:14.643670	baseline	cognitive-load-agent	0	88	B	all	缺 CHANGELOG 和 test-prompts.json；chunk 化成功率指标可量化	base_eval
+2026-04-23T22:04:14.643673	baseline	ooda-agent	0	90	A	all	输入格式可更严格；可补充实测计时数据	base_eval
+2026-04-23T22:08:23.496369	optimize	bayesian-agent	84	89	B+	all	已补充 test-prompts/CHANGELOG/IO规范。+5分。	regression
+2026-04-23T22:08:23.496382	optimize	cognitive-load-agent	88	91	A-	all	已补充 test-prompts/CHANGELOG/IO规范/量化指标。+3分。	regression
+2026-04-23T22:09:57.566808	optimize	ooda-agent	90	93	A	all	已补充 test-prompts/CHANGELOG/IO规范。+3分。	regression
+2026-04-23T22:17:22.236391	self-improve	darwin-skill	86	88	keep	doc+io+maint	新增生态审计章节和集成清单	dry_run
+2026-04-23T22:33:49.640365	baseline	p10	0	51	D	all	quick_struct_eval	dry_run
+2026-04-23T22:33:49.640376	baseline	p9	0	46	D	all	quick_struct_eval	dry_run
+2026-04-23T22:33:49.640377	baseline	p7	0	46	D	all	quick_struct_eval	dry_run
+2026-04-23T22:33:49.640378	baseline	loop	0	85	A	all	quick_struct_eval	dry_run
+2026-04-23T22:33:49.640379	baseline	pro	0	83	B	all	quick_struct_eval	dry_run
+2026-04-23T22:33:49.640380	baseline	pua	0	82	B	all	quick_struct_eval	dry_run
+2026-04-23T22:34:50.097823	optimize	p10	51	51	D	all	add_changelog_and_testprompts	dry_run
+2026-04-23T22:34:50.098014	optimize	p9	46	46	D	all	add_changelog_and_testprompts	dry_run
+2026-04-23T22:34:50.098184	optimize	p7	46	46	D	all	add_changelog_and_testprompts	dry_run
+2026-04-23T22:53:54.199676	rewrite-v1.1	p10	51	100	accepted	IO+constraints+checkpoints+examples	rewrite
+2026-04-23T22:53:54.199676	rewrite-v1.1	p9	46	100	accepted	IO+constraints+checkpoints+examples	rewrite
+2026-04-23T22:53:54.199676	rewrite-v1.1	p7	46	100	accepted	IO+constraints+checkpoints+examples	rewrite
+2026-04-23T22:55:36.886311	quarterly-audit	apple	None	0	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	autonomous-ai-agents	None	0	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	bayesian-agent	89	70	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	cognitive-load-agent	91	80	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	creative	None	0	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	darwin-skill	None	95	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	data-science	None	0	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	devops	None	0	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	diagramming	None	0	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	dogfood	None	70	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	domain	None	0	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	email	None	0	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	feeds	None	0	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	framework-audit	None	65	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	gaming	None	0	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	gifs	None	0	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	github	None	0	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	inference-sh	None	0	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	leisure	None	0	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	loop	None	70	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	mcp	None	0	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	media	None	0	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	mlops	None	0	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	note-taking	None	0	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	ooda-agent	93	80	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	p10	46	100	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	p7	46	100	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	p9	46	100	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	post-deploy-verification	None	0	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	pro	None	45	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	productivity	None	0	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	pua	None	80	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	pua-en	None	55	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	pua-ja	None	35	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	red-teaming	None	0	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	research	None	0	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	smart-home	None	0	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	social-media	None	0	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	software-development	None	0	accepted	quarterly-review	auto
+2026-04-23T22:55:36.886311	quarterly-audit	yes	None	40	accepted	quarterly-review	auto
+2026-04-24T11:15:52.993972	batch-upgrade	pua-en	55	65	accepted	add-standard-components	auto
+2026-04-24T11:17:11.484006	batch-upgrade-v2	yes	40	60	accepted	add-overview-doc	auto
+2026-04-24T11:28:24.007123	rewrite-v1.1	software-development	0	60	accepted	add-SKILL.md	rewrite
+2026-04-24T11:29:51.551388	batch-create	apple	0	70	accepted	create-SKILL-md	auto
+2026-04-24T11:29:51.551388	batch-create	research	0	70	accepted	create-SKILL-md	auto
+2026-04-24T11:29:51.551388	batch-create	gaming	0	70	accepted	create-SKILL-md	auto
+2026-04-24T11:29:51.551388	batch-create	social-media	0	70	accepted	create-SKILL-md	auto
+2026-04-24T11:29:51.551388	batch-create	devops	0	70	accepted	create-SKILL-md	auto
+2026-04-24T11:29:51.551388	batch-create	leisure	0	70	accepted	create-SKILL-md	auto
+2026-04-24T11:29:51.551388	batch-create	data-science	0	70	accepted	create-SKILL-md	auto
+2026-04-24T11:29:51.551388	batch-create	mlops	0	70	accepted	create-SKILL-md	auto
+2026-04-24T11:29:51.551388	batch-create	inference-sh	0	70	accepted	create-SKILL-md	auto
+2026-04-24T11:29:51.551388	batch-create	mcp	0	70	accepted	create-SKILL-md	auto
+2026-04-24T11:29:51.551388	batch-create	gifs	0	70	accepted	create-SKILL-md	auto
+2026-04-24T11:29:51.551388	batch-create	feeds	0	70	accepted	create-SKILL-md	auto
+2026-04-24T11:29:51.551388	batch-create	diagramming	0	70	accepted	create-SKILL-md	auto
+2026-04-24T11:29:51.551388	batch-create	github	0	70	accepted	create-SKILL-md	auto
+2026-04-24T11:29:51.551388	batch-create	note-taking	0	70	accepted	create-SKILL-md	auto
+2026-04-24T11:30:26.183209	batch-create	red-teaming	0	75	accepted	create-SKILL-md	auto
+2026-04-24T11:30:26.183209	batch-create	creative	0	75	accepted	create-SKILL-md	auto
+2026-04-24T11:30:26.183209	batch-create	domain	0	75	accepted	create-SKILL-md	auto
+2026-04-24T11:30:26.183209	batch-create	email	0	75	accepted	create-SKILL-md	auto
+2026-04-24T11:30:26.183209	batch-create	smart-home	0	75	accepted	create-SKILL-md	auto
+2026-04-24T11:30:26.183209	batch-create	autonomous-ai-agents	0	75	accepted	create-SKILL-md	auto
+2026-04-24T11:30:26.183209	batch-create	productivity	0	75	accepted	create-SKILL-md	auto
+2026-04-24T11:30:26.183209	batch-create	media	0	75	accepted	create-SKILL-md	auto
+2026-04-24T11:30:26.183209	batch-create	post-deploy-verification	0	75	accepted	create-SKILL-md	auto
+2026-04-24T11:32:35.012870	assessment	pro	45	45	deferred	needs-rewrite	manual
+2026-04-24T11:32:35.012870	assessment	pua-ja	35	35	deferred	needs-rewrite	manual
+2026-04-24T12:22:48.576698	auto-audit	pua-ja	35	80	accepted	added Input section,added Output section,added Constraints section,added Checkpoints section	auto
+2026-04-24T12:45:10.526802	auto-audit	pro	45	80	accepted	added Input section,added Output section,added Constraints section,added Checkpoints section	auto
+2026-04-28T02:00:57.234956	auto-audit	inference-sh	60	90	accepted		auto
+2026-04-30T02:00:59.621153	auto-audit	mcp	60	90	accepted		auto
+2026-04-30T02:04:38.688395	auto-audit	gifs	60	100	accepted		auto
+2026-05-01T12:47:02.864969	auto-audit	feeds	60	100	accepted		auto

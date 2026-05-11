@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Search using arxiv",
+    "expected": "Results returned"
+  },
+  {
+    "id": 2,
+    "prompt": "Use arxiv with query parameters",
+    "expected": "Filtered results"
+  }
+]

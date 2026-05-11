@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Set up and run outlines",
+    "expected": "outlines configured and running"
+  },
+  {
+    "id": 2,
+    "prompt": "Debug outlines configuration issue",
+    "expected": "Issue diagnosed"
+  }
+]

@@ -1,0 +1,7 @@
+[
+  {
+    "id": 1,
+    "prompt": "审计这个页面的 UI 质量",
+    "expected": "A-through-F grading report"
+  }
+]

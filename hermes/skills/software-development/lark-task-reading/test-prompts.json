@@ -1,0 +1,14 @@
+[
+  {
+    "prompt": "给 arc-dispatch 增加 Lark Task Center 读取，只处理 UVISA-2.0新版开发任务，dry-run 不写回 Lark",
+    "expected": "加载 lark-task-reading；使用 lark_task_reader.prioritize_tasks；保留 prefer/only/off；payload 写入 lark_task_scope_match；运行 dry-run、unittest、compileall"
+  },
+  {
+    "prompt": "融合 github-dispatch 的评论截图读取能力到 Lark 任务采集流程",
+    "expected": "提取 comment text、doc/wiki links、image/file placeholders、comment_image_keys；限制 max_docs/max_chars；单任务 enrichment 失败不阻塞 collector"
+  },
+  {
+    "prompt": "Lark 任务可能属于前端或后端，帮我设计路由策略并 loop 验证",
+    "expected": "后端关键词先于前端；明确 direct route vs staged route；保留 project_profile/file_tree 证据；跑相关项目测试和 skill graph strict check；只提交 scoped skill/code 文件"
+  }
+]

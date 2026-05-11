@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Use github-auth on the current repo",
+    "expected": "GitHub operation completed"
+  },
+  {
+    "id": 2,
+    "prompt": "Perform github-auth with error handling",
+    "expected": "Errors handled gracefully"
+  }
+]

@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Delegate a task to opencode",
+    "expected": "Task delegated and result returned"
+  },
+  {
+    "id": 2,
+    "prompt": "Use opencode to implement a feature",
+    "expected": "Implementation completed"
+  }
+]

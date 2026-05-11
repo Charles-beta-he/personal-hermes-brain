@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Delegate a task to claude-code",
+    "expected": "Task delegated and result returned"
+  },
+  {
+    "id": 2,
+    "prompt": "Use claude-code to implement a feature",
+    "expected": "Implementation completed"
+  }
+]

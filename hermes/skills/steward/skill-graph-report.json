@@ -1,0 +1,320 @@
+{
+  "metric": "Skill Graphs 2.0 \u62d3\u6251\u5ba1\u8ba1",
+  "value": "edges=93, depth_max=4, cycles=0, tiers={'atom': 148, 'compound': 15, 'molecule': 33}",
+  "status": "OK",
+  "max_depth_allowed": 4,
+  "edge_count": 93,
+  "tier_counts": {
+    "atom": 148,
+    "compound": 15,
+    "molecule": 33
+  },
+  "explicit_tier_count": 1,
+  "cycle_count": 0,
+  "cycles": [],
+  "excessive_depth": [],
+  "typed_violations": [],
+  "missing_dependencies": [
+    {
+      "skill": "feeds",
+      "dependency": "cronjob"
+    },
+    {
+      "skill": "creative/comfyui",
+      "dependency": "image_gen"
+    },
+    {
+      "skill": "creative/touchdesigner-mcp",
+      "dependency": "ascii-video"
+    },
+    {
+      "skill": "creative/touchdesigner-mcp",
+      "dependency": "hermes-video"
+    },
+    {
+      "skill": "creative/p5js",
+      "dependency": "ascii-video"
+    },
+    {
+      "skill": "creative/architecture-diagram",
+      "dependency": "concept-diagrams"
+    },
+    {
+      "skill": "software-development/private-fork-evolution-governance",
+      "dependency": "save-workflow-as-skill"
+    },
+    {
+      "skill": "software-development/multi-agent-code-review",
+      "dependency": "delegate_task"
+    },
+    {
+      "skill": "software-development/hermes-warning-governance",
+      "dependency": "save-workflow-as-skill"
+    },
+    {
+      "skill": "research/research-paper-writing",
+      "dependency": "ml-paper-writing"
+    },
+    {
+      "skill": "apple/macos-computer-use",
+      "dependency": "browser"
+    }
+  ],
+  "ambiguous_dependencies": [],
+  "migration_suggestions": [
+    {
+      "skill": "apple",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "research",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "idea-refine",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "gaming",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "social-media",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "devops",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "bayesian-agent",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "leisure",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "p10",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "incremental-implementation",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "pro",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "yuanbao",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "data-science",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "api-and-interface-design",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "software-development",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "mlops",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "cognitive-load-agent",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "inference-sh",
+      "suggested_tier": "molecule",
+      "reason": "deps=2, depth=1"
+    },
+    {
+      "skill": "mcp",
+      "suggested_tier": "molecule",
+      "reason": "deps=2, depth=1"
+    },
+    {
+      "skill": "darwin-skill",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "gifs",
+      "suggested_tier": "molecule",
+      "reason": "deps=2, depth=1"
+    },
+    {
+      "skill": "feeds",
+      "suggested_tier": "molecule",
+      "reason": "deps=2, depth=1"
+    },
+    {
+      "skill": "p7",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "p9",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "diagramming",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "github",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "note-taking",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "gsd-bridge",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "red-teaming",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "framework-audit",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "deprecation-and-migration",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "chinese-platforms",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "codebase-intelligence",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "creative",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "taste-skill",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "code-simplification",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "yes",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "source-driven-development",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "domain",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "ooda-agent",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "p10-architecture-self-check",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "email",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "loop",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "smart-home",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "autonomous-ai-agents",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "dogfood",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "productivity",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "media",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "documentation-and-adrs",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    },
+    {
+      "skill": "media/youtube-content",
+      "suggested_tier": "atom",
+      "reason": "deps=0, depth=0"
+    }
+  ],
+  "details": [
+    "\u663e\u5f0f tier: 1/196\uff1b\u672a\u58f0\u660e\u6309 deps/depth \u63a8\u65ad\u5e76\u7ed9\u51fa\u8fc1\u79fb\u5efa\u8bae",
+    "fail-closed gate: cycles=0, excessive_depth=0, typed_violations=0"
+  ]
+}

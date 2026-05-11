@@ -1,0 +1,38 @@
+# Secrets
+.env
+.env.*
+**/.env
+**/.env.*
+**/auth.json
+**/auth/**
+**/*token*
+**/*secret*
+**/*credential*
+**/*oauth*
+**/*.key
+**/witness.key
+
+# Hermes runtime / derived state
+**/sessions/**
+**/logs/**
+**/cache/**
+**/audio_cache/**
+**/image_cache/**
+**/checkpoints/**
+**/tick-*/**
+**/state-snapshots/**
+**/rate_limits/**
+**/sandboxes/**
+**/tmp/**
+**/*.sqlite
+**/*.db
+**/*.db-wal
+**/*.db-shm
+**/*.pid
+**/*.lock
+
+# Python/runtime noise
+**/__pycache__/**
+**/*.pyc
+.pytest_cache/
+.DS_Store
