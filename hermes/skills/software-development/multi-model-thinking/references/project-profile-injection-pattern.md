@@ -153,7 +153,7 @@ Trigger backend inspection when the task touches auth, OTP, PIN/payment password
 
 ## Injection Point
 
-In `delegate_to_worker()`, load profile and append to worker context:
+In any worker launch path, load the project profile and append it to worker context BEFORE the worker can start. This applies to normal dispatch, claim/handoff, autorun handoff, and parallel handoff paths.
 
 ```python
 profile = load_project_profile(task.get('project', ''))
@@ -174,11 +174,36 @@ Forbidden: {chr(10).join('- ' + f for f in profile.get('forbidden', []))}
 
 `~/.hermes/project-profiles/{project}.json`
 
-Fallback: `~/.hermes/project-profiles/hermes.json` (default)
+Fallback: `~/.hermes/project-profiles/hermes.json` (default). The fallback is still a real required profile: if both project-specific profile and fallback are missing or invalid, dispatch must fail closed.
+
+## Local Brain Taskpool Implementation Pattern
+
+For `~/.hermes/scripts/brain_task_orchestrator.py`, implement profile injection as a deterministic gate, not just prompt decoration:
+
+1. Add `PROJECT_PROFILES_DIR = $HERMES_PROJECT_PROFILES_DIR || $HERMES_HOME/project-profiles`.
+2. Resolve candidates in order: safe exact project filename, slugified project filename, then `hermes.json` fallback.
+3. `load_project_profile(project)` returns structured status: `project`, `fallback`, `missing`, or `invalid`, plus path/error/candidates.
+4. Add row fields: `project_profile_status`, `project_profile_missing`, `project_profile_path`, `project_profile_error`.
+5. Gate `Task.is_dispatchable()` and claim-bound lifecycle transitions (`claimed`, `running`, `review`, `done`) with `project_profile_failures()`.
+6. Include profile context in every worker-start artifact: `dispatch_prompt_for_row`, `render_autorun_handoff`, and `render_parallel_handoff`.
+7. Include missing/invalid profile in `selfcheck`/boundary invalid lists so the pool becomes visibly unhealthy rather than silently dispatching under-scoped workers.
+8. Add TDD fixtures with temporary `$HERMES_HOME/project-profiles/hermes.json`; verify fallback injection, project-specific override, and full-missing fail-closed claim behavior.
+
+Verification bundle for this pattern:
+
+```bash
+python3 ~/.hermes/scripts/test_brain_task_orchestrator.py
+python3 -m py_compile ~/.hermes/scripts/brain_task_orchestrator.py ~/.hermes/scripts/test_brain_task_orchestrator.py
+python3 ~/.hermes/scripts/brain_task_orchestrator.py selfcheck --json
+python3 ~/.hermes/scripts/brain_task_orchestrator.py dispatch-dry-run --json  # execution_prompt contains PROJECT PROFILE
+~/.hermes/scripts/p10-health.sh
+```
+
+If `brain_task_orchestrator.py list --json` is not parseable due legacy task-note control characters or unescaped text, import the module and call `sorted_tasks()`/`dispatchable_tasks()` directly for diagnostic scanning rather than weakening production gates.
 
 ## Multi-Model Verification After Completion (4 Models)
 
-After worker outputs, verify with all 4 models (3/4 must pass):
+After worker outputs, verify with all 4 authenticated models. For this user's certification workflows, 4/4 authenticated agreement is required for certification; 2/4 or 3/4 is advisory only unless the active task explicitly relaxes the gate.
 
 ```python
 def verify_with_models(task_title, worker_output, profile):

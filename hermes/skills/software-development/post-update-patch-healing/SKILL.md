@@ -393,6 +393,17 @@ def register(ctx):
 
 When upgrading with local vendor patches, follow this exact sequence. Skipping steps causes conflicts that are harder to resolve than the upgrade itself.
 
+### Fast recovery from failed `自更新` attempts
+
+If an automatic self-update attempt returns only `hermes update` timeout plus `post-update-check.py` exit `126`, do not stop there:
+
+- Treat the update timeout as inconclusive. Inspect the repo and update process state, then verify whether the pull/install actually finished.
+- Exit `126` from `~/.hermes/scripts/post-update-check.py` means the script was found but not executable. Rerun as `python3 ~/.hermes/scripts/post-update-check.py` or fix permissions with `chmod +x ~/.hermes/scripts/post-update-check.py`, then rerun dry-run and `--fix` if needed.
+- After any checker fix, run the normal verification: `git diff --check`, checker dry-run, relevant `py_compile`/pytest, `hermes --version`, and `hermes doctor`.
+- Final report should distinguish command timeout, permission issue, actual patch status, and verification status.
+
+
+
 ### Phase 0: Pre-Upgrade Analysis (before touching anything)
 
 Use this both for deciding whether an update is worth doing and for preparing the actual update.

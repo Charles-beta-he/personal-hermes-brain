@@ -2,7 +2,7 @@
 
 Sanitized private backup/export for Charles' Hermes personal brain.
 
-Generated: 2026-05-12T05:03:08Z
+Generated: 2026-05-12T07:14:29Z
 
 This repo intentionally contains portable knowledge and deterministic source artifacts only.
 It does not contain raw Hermes memory, auth files, OAuth tokens, logs, caches, sessions,

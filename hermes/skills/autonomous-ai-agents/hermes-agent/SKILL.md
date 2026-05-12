@@ -240,6 +240,16 @@ hermes claw migrate         Migrate from OpenClaw
 hermes uninstall            Uninstall Hermes
 ```
 
+### Self-update operator flow
+
+When the user says `自更新`, `/update`, or asks to update Hermes itself, treat it as an operational update, not an explanation request:
+
+1. Run `hermes update` with a long timeout/background strategy. Updates can legitimately exceed a short terminal timeout during `git pull`/`pip install`; if the command times out, inspect the Hermes repo state before claiming failure.
+2. Run the post-update checker after the update. If `~/.hermes/scripts/post-update-check.py` exits `126`, it is usually not executable; run it as `python3 ~/.hermes/scripts/post-update-check.py` or `chmod +x` then rerun. Use `--fix` when the checker reports known repairable issues.
+3. Verify update state with `cd ~/.hermes/hermes-agent && git rev-list --left-right --count HEAD...origin/main`, `hermes --version`, and `hermes doctor` or the local verify script when available.
+4. If the user has private Hermes patches, follow `post-update-patch-healing` before/after `hermes update`; do not assume upstream preserved local vendor edits.
+5. Report concise status: updated/current, checker result, verification result, and whether anything remains manual. Do not stop after a timeout without follow-up evidence.
+
 ---
 
 ## Slash Commands (In-Session)
@@ -390,6 +400,16 @@ Interpretation:
 - If the project-local file is byte-identical to the Hermes runtime copy, report that relationship explicitly.
 - Do not delete Hermes-related artifacts until project references, Hermes runtime references, and git tracked/untracked status have all been checked.
 - One-off patch scripts that modify vendor files should be migrated to an update-safe checker/plugin pattern; see `post-update-patch-healing`.
+
+### Local taskpool project-profile governance
+
+When working on Hermes local-brain/taskpool automation that dispatches Markdown tasks from the brain vault, remember that project profiles are a hard gate, not a hint:
+
+- `~/.hermes/scripts/brain_task_orchestrator.py` resolves task `project` frontmatter to `~/.hermes/project-profiles/<project>.json`, then slug fallback, then `hermes.json`.
+- Missing profile is **fail-closed**: the task becomes non-dispatchable and `claim` fails with `project_profile_missing`.
+- Worker dispatch injects project-profile context (tech stack, conventions, acceptance, forbidden rules) into the spawned agent prompt, so mismatched project IDs silently weaken execution quality even when dispatch still works.
+- When renaming a canonical project key (for example consolidating `foo-work` into `foo`), migrate task frontmatter and tests first, but keep a deprecated alias profile temporarily with the same constraints plus explicit alias metadata. Remove the alias only after searches/tests show no remaining references.
+- If two profiles describe the same project at different strictness levels, prefer one canonical profile and make any alias byte-equivalent in constraints except alias metadata. This prevents work tasks from inheriting weaker rules than the main project profile.
 
 ### Config Sections
 

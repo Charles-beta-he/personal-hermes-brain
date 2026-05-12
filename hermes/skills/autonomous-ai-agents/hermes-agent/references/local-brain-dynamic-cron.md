@@ -48,6 +48,8 @@ A dynamic taskpool runner should contain:
 
 - `--summary`, `--autorun-step`, and `--no-state` when calling the dispatch tick.
 - A deterministic `signature(summary)` and `changed` gate.
+- Full `stdout`/`stderr` retained for internal JSON parsing; only log/report fields may be truncated to `stdout_tail` / `stderr_tail`. Never parse a tail slice.
+- Explicit fail-closed parse handling: non-empty successful stdout that cannot be parsed is `*_parse_failed` / exit non-zero, not `no_intervention_needed` or null summary fields.
 - `start_new_session=True`, `os.killpg`, and a structured `subprocess_timeout` record.
 - A short timeout for probing the multi-model worker starter (for example 60s), not for running the full discussion.
 
@@ -66,6 +68,49 @@ For recurring script-summary jobs that fail only because a model/provider pin is
 - Prefer converting the job to no-agent deterministic reporting when the script output is already machine-readable.
 - Otherwise repin via Hermes' provider registry/model picker rather than hardcoding a guessed provider/model.
 - Do not conflate provider pin failures with local-brain taskpool corruption.
+
+## No-agent wrapper convention for recurring audits
+
+When a cron job is mostly `run deterministic script → summarize JSON`, reduce blast radius by adding a no-space wrapper script under `~/.hermes/scripts/` and switching the job to `no_agent: true`:
+
+```python
+#!/usr/bin/env python3
+import json, subprocess, sys
+from datetime import datetime, timezone
+from pathlib import Path
+
+SCRIPT = Path.home() / ".hermes" / "scripts" / "target-script.py"
+p = subprocess.run([sys.executable, str(SCRIPT)], text=True, capture_output=True, timeout=300)
+print(json.dumps({
+    "schema": "target_noagent_wrapper_v1",
+    "ts": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+    "status": "OK" if p.returncode == 0 else "ERROR",
+    "returncode": p.returncode,
+    "stdout_tail": (p.stdout or "")[-3000:],
+    "stderr_tail": (p.stderr or "")[-1000:],
+}, ensure_ascii=False, indent=2))
+sys.exit(0 if p.returncode == 0 else 2)
+```
+
+Use this for nightly audits such as autonomous evolution or skill-steward graph checks when the LLM adds little value and has been causing timeout/provider-pinning failures. Keep the wrapper deterministic and auditable; do not let it create cron jobs recursively.
+
+## Safe backup after cron hardening
+
+If the task includes syncing the user's personal Hermes assistant, never commit live `~/.hermes` after cron/script edits. Export through the sanitized personal-brain backup path, then validate and push only that repo:
+
+```bash
+python3 ~/.hermes/scripts/brainctl.py --json sync
+python3 ~/.hermes/scripts/brainctl.py --json reindex
+python3 ~/.hermes/scripts/personal_hermes_brain_export.py --json
+cd ~/personal-hermes-brain
+bash bootstrap/validate_safe_tree.sh
+bash bootstrap/verify.sh
+git diff --check
+git add -A && git commit -m "sync: <summary>"
+HERMES_ALLOW_PUSH=1 git push -u origin HEAD:main
+```
+
+The export allowlist must include any new deterministic cron wrapper scripts that should survive machine restore. Raw memory, auth, `.env`, sessions, logs, state DBs, checkpoints, and tick artifacts remain excluded.
 
 ## Verification
 

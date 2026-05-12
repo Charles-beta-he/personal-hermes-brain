@@ -36,9 +36,57 @@ def utc() -> str:
 def run(cmd: list[str], timeout: int = 90, env: dict[str, str] | None = None) -> dict[str, Any]:
     try:
         p = subprocess.run(cmd, text=True, capture_output=True, timeout=timeout, env=env)
-        return {"cmd": cmd, "returncode": p.returncode, "stdout": (p.stdout or "")[-8000:], "stderr": (p.stderr or "")[-4000:]}
+        return with_output_tails({"cmd": cmd, "returncode": p.returncode, "stdout": p.stdout or "", "stderr": p.stderr or ""})
     except subprocess.TimeoutExpired as exc:
-        return {"cmd": cmd, "returncode": "timeout", "reason": "subprocess_timeout", "stdout": (exc.stdout or "")[-4000:] if isinstance(exc.stdout, str) else "", "stderr": (exc.stderr or "")[-4000:] if isinstance(exc.stderr, str) else ""}
+        return with_output_tails({"cmd": cmd, "returncode": "timeout", "reason": "subprocess_timeout", "stdout": (exc.stdout or "") if isinstance(exc.stdout, str) else "", "stderr": (exc.stderr or "") if isinstance(exc.stderr, str) else ""})
+
+
+def with_output_tails(result: dict[str, Any], stdout_limit: int = 8000, stderr_limit: int = 4000) -> dict[str, Any]:
+    stdout = result.get("stdout") or ""
+    stderr = result.get("stderr") or ""
+    result["stdout_tail"] = stdout[-stdout_limit:]
+    result["stderr_tail"] = stderr[-stderr_limit:]
+    result["stdout_bytes"] = len(stdout.encode("utf-8", errors="replace"))
+    result["stderr_bytes"] = len(stderr.encode("utf-8", errors="replace"))
+    return result
+
+
+def compact_result(result: dict[str, Any]) -> dict[str, Any]:
+    compact = dict(result)
+    compact["stdout"] = compact.get("stdout_tail", (compact.get("stdout") or "")[-8000:])
+    compact["stderr"] = compact.get("stderr_tail", (compact.get("stderr") or "")[-4000:])
+    return compact
+
+
+def summarize_parallel_step(payload: dict[str, Any]) -> dict[str, Any]:
+    results = payload.get("results") if isinstance(payload.get("results"), list) else []
+    return {
+        "status": payload.get("status"),
+        "tasks_processed": payload.get("tasks_processed"),
+        "tasks_passed": payload.get("tasks_passed"),
+        "tasks_failed": payload.get("tasks_failed"),
+        "tasks_errors": payload.get("tasks_errors"),
+        "task_ids": [r.get("task_id") for r in results[:5] if isinstance(r, dict)],
+        "gate_statuses": [(r.get("gate") or {}).get("status") for r in results[:5] if isinstance(r, dict)],
+        "decisions": [(r.get("gate") or {}).get("decision") for r in results[:5] if isinstance(r, dict)],
+        "convergence": payload.get("convergence") if isinstance(payload.get("convergence"), dict) else {},
+    }
+
+
+def summarize_worker_result(result: dict[str, Any]) -> dict[str, Any]:
+    payload = parse_json(result.get("stdout", ""))
+    if not payload:
+        return {
+            "status": "PARSE_FAILED" if result.get("returncode") == 0 and result.get("stdout") else "NO_STDOUT",
+            "returncode": result.get("returncode"),
+            "stdout_bytes": result.get("stdout_bytes"),
+            "stderr_bytes": result.get("stderr_bytes"),
+        }
+    summary = summarize_parallel_step(payload)
+    summary["returncode"] = result.get("returncode")
+    summary["stdout_bytes"] = result.get("stdout_bytes")
+    summary["stderr_bytes"] = result.get("stderr_bytes")
+    return summary
 
 
 def alive(pid: int) -> bool:
@@ -106,7 +154,7 @@ def worker(max_workers: int) -> int:
     env = os.environ.copy(); env["HERMES_LOCAL_BRAIN_AUTORUN_MULTIMODEL"] = "1"
     cmd = [sys.executable, str(ORCH), "multimodel-intervention-parallel-step", "--max-workers", str(max_workers), "--json"]
     result = run(cmd, timeout=int(os.environ.get("HERMES_MULTIMODEL_WORKER_TIMEOUT", "7200")), env=env)
-    event["finished_at"] = utc(); event["result"] = result
+    event["finished_at"] = utc(); event["worker_summary"] = summarize_worker_result(result); event["result"] = compact_result(result)
     append(event)
     print(json.dumps(event, ensure_ascii=False, indent=2))
     try: PID.unlink()
@@ -135,8 +183,14 @@ def main() -> int:
     env = os.environ.copy(); env["HERMES_LOCAL_BRAIN_AUTORUN_MULTIMODEL"] = "1"
     dry_cmd = [sys.executable, str(ORCH), "multimodel-intervention-dry-run", "--max-tasks", "6", "--json"]
     dry_res = run(dry_cmd, timeout=90, env=env)
-    event["dry_run"] = {"returncode": dry_res.get("returncode"), "stderr": dry_res.get("stderr", "")[-1000:]}
+    event["dry_run"] = {"returncode": dry_res.get("returncode"), "stdout_bytes": dry_res.get("stdout_bytes"), "stderr": dry_res.get("stderr_tail", "")[-1000:]}
     dry = parse_json(dry_res.get("stdout", "")) if dry_res.get("returncode") == 0 else {}
+    if dry_res.get("returncode") == 0 and dry_res.get("stdout") and not dry:
+        event.update({"status": "ERROR", "action": "dry_run_parse_failed", "intervention_required": True, "selected_task_id": "", "queued_count": -1})
+        append(event)
+        if args.json:
+            print(json.dumps(event, ensure_ascii=False, indent=2))
+        return 2
     event["intervention_required"] = bool(dry.get("intervention_required"))
     event["selected_task_id"] = dry.get("selected_task_id", "")
     event["queued_count"] = int(dry.get("queued_count") or 0)

@@ -5,9 +5,9 @@ layer: L3
 status: pending
 priority: P0
 created: 2026-05-12T01:43:02+08:00
-updated: 2026-05-12T10:27:30+08:00
+updated: 2026-05-12T14:20:12+08:00
 expires_at: 2026-05-26T01:43:02+08:00
-project: uvisa-app-2.0-work
+project: uvisa-app-2.0
 workflow_contract: "work/product delivery: live Lark reopened task; evidence-first; classify FE/BE/contract before execution; real API/end-to-end proof required; no mock-only closeout; no deleting routes/buttons/fields; frontend build plus backend JDK21 tests/package when backend touched; Railway/package monitor; scoped local commit; no push unless required by UVISA Lark loop"
 required_authority: autonomous-execution
 max_authority: yolo-execution
@@ -115,3 +115,7 @@ certified_requires_ratification_artifact: true
 - 2026-05-12T09:26:36+08:00: Lifecycle transition `pending` -> `claimed` by `agent-team-controller`. Reason: Phase 4 dynamic parallel dispatch
 
 - 2026-05-12T10:27:30+08:00: Lifecycle transition `claimed` -> `pending` by `hermes`. Force: true. Reason: guardian_stale_claim_cleanup
+
+- 2026-05-12T13:14:29+08:00: Lifecycle transition `pending` -> `claimed` by `hermes`.
+
+- 2026-05-12T14:20:12+08:00: Lifecycle transition `claimed` -> `pending` by `hermes`. Force: true. Reason: guardian_stale_claim_cleanup

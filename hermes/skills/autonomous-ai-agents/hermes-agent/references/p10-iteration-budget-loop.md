@@ -8,11 +8,15 @@ Treat the warning as a control-system saturation signal, not as a reason to blin
 
 ## Evidence-backed implementation pattern
 
-1. Diagnose effective caps and recent hits:
+1. Diagnose effective caps, recent hits, and session-level self-correction signals:
 
 ```bash
 python3 ~/.hermes/scripts/iteration_budget_doctor.py --json
+python3 ~/.hermes/scripts/post-session-autopsy.py --recent 1 --write
 ```
+
+The post-session autopsy must classify tool-call/iteration cap messages such as "maximum number of tool-calling iterations allowed" as `iteration_budget_saturation` / `control_system_saturation`, not as generic tool failure. User corrections like "揪出来的问题" or "自我修正是否触发" should also be captured as correction signals so the double-loop learning path has an auditable trigger.
+
 
 Expected responsibilities:
 - report `agent.max_turns`, `delegation.max_iterations`, compression config, and whether `HERMES_MAX_ITERATIONS` is present;

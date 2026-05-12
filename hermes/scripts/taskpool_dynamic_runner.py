@@ -47,8 +47,26 @@ def run(cmd: list[str], timeout: int = 240, env: dict[str, str] | None = None) -
             except Exception:
                 pass
             out, err = proc.communicate()
-        return {"cmd": cmd, "returncode": "timeout", "reason": "subprocess_timeout", "stdout": (out or "")[-4000:], "stderr": (err or "")[-4000:]}
-    return {"cmd": cmd, "returncode": proc.returncode, "stdout": (out or "")[-4000:], "stderr": (err or "")[-4000:]}
+        return with_output_tails({"cmd": cmd, "returncode": "timeout", "reason": "subprocess_timeout", "stdout": out or "", "stderr": err or ""})
+    return with_output_tails({"cmd": cmd, "returncode": proc.returncode, "stdout": out or "", "stderr": err or ""})
+
+
+def with_output_tails(result: dict[str, Any], stdout_limit: int = 4000, stderr_limit: int = 4000) -> dict[str, Any]:
+    """Keep full output for internal parsing while exposing bounded tails for logs."""
+    stdout = result.get("stdout") or ""
+    stderr = result.get("stderr") or ""
+    result["stdout_tail"] = stdout[-stdout_limit:]
+    result["stderr_tail"] = stderr[-stderr_limit:]
+    result["stdout_bytes"] = len(stdout.encode("utf-8", errors="replace"))
+    result["stderr_bytes"] = len(stderr.encode("utf-8", errors="replace"))
+    return result
+
+
+def compact_result(result: dict[str, Any]) -> dict[str, Any]:
+    compact = dict(result)
+    compact["stdout"] = compact.get("stdout_tail", (compact.get("stdout") or "")[-4000:])
+    compact["stderr"] = compact.get("stderr_tail", (compact.get("stderr") or "")[-4000:])
+    return compact
 
 
 def load_state() -> dict[str, Any]:
@@ -122,8 +140,15 @@ def main() -> int:
         env.setdefault("HERMES_LOCAL_BRAIN_AUTORUN", "1")
         event: dict[str, Any] = {"schema": "taskpool_dynamic_runner_v1", "ts": utc()}
         tick = run([sys.executable, str(TICK), "--summary", "--autorun-step", "--no-state"], timeout=int(os.environ.get("HERMES_TASKPOOL_DYNAMIC_TIMEOUT", "240")), env=env)
-        event["tick"] = tick
+        event["tick"] = compact_result(tick)
         summary = parse_json_tail(tick.get("stdout", ""))
+        if tick.get("returncode") in (0, "0") and tick.get("stdout") and not summary:
+            event.update({"status": "ERROR", "action": "summary_parse_failed", "parse_error": "tick_stdout_not_json"})
+            prev_state = load_state()
+            save_state({"updated_at": event["ts"], "signature": prev_state.get("signature", ""), "last_mm_probe_epoch": prev_state.get("last_mm_probe_epoch", 0), "last_summary": {}})
+            append(event)
+            print(json.dumps(event, ensure_ascii=False, indent=2, sort_keys=True))
+            return 2
         event["summary"] = {k: summary.get(k) for k in ["status", "next_task_id", "dispatchable", "error_count", "reconcile_action_count", "ingested_count"]}
         event["autorun"] = summary.get("autorun", {}) if isinstance(summary.get("autorun"), dict) else {}
         sig = signature(summary)
@@ -135,8 +160,9 @@ def main() -> int:
         # Start/advance multimodel worker opportunistically, but never block this tick.
         mm = summary.get("multimodel_intervention") if isinstance(summary.get("multimodel_intervention"), dict) else {}
         if mm.get("intervention_required") and (changed or time.time() - float(prev.get("last_mm_probe_epoch") or 0) > 1800):
-            event["multimodel_dynamic"] = run([sys.executable, str(MM_DYNAMIC), "--json"], timeout=60, env=env)
-            should_print = True if event["multimodel_dynamic"].get("stdout") else should_print
+            mm_dynamic = run([sys.executable, str(MM_DYNAMIC), "--json"], timeout=60, env=env)
+            event["multimodel_dynamic"] = compact_result(mm_dynamic)
+            should_print = True if mm_dynamic.get("stdout") else should_print
             prev["last_mm_probe_epoch"] = time.time()
         state = {"updated_at": event["ts"], "signature": sig, "last_mm_probe_epoch": prev.get("last_mm_probe_epoch", 0), "last_summary": event["summary"]}
         save_state(state); append(event)
