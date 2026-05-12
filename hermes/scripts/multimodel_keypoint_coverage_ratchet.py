@@ -80,6 +80,9 @@ RATCHET_RULES = [
     "taskpool_dry_run_keeps_T3_quorum4_discussion_for_pua_loop_when_checked",
     "autorun_multimodel_step_is_double_gated_by_cli_flag_and_env",
     "autorun_long_running_timeout_is_structured_not_traceback",
+    "dynamic_runner_is_no_agent_event_gated_and_short_running",
+    "multimodel_dynamic_worker_is_detached_locked_and_cooldown_gated",
+    "personal_brain_cloud_sync_requires_safe_tree_validation_before_push",
 ]
 
 TABLE_RE = re.compile(r"^\|\s*(\d+)\s*\|\s*(.*?)\s*\|\s*(.*?)\s*\|\s*$")
@@ -228,6 +231,41 @@ def check_taskpool(data: dict[str, Any]) -> dict[str, Any]:
     return {"status": "PASS" if all(c["ok"] for c in checks) else "FAIL", "checks": checks, "selected_task_id": data.get("selected_task_id"), "queued_count": data.get("queued_count"), "convergence": conv}
 
 
+def check_dynamic_source_contracts() -> dict[str, Any]:
+    """Static checks for dynamic/no_agent timeout remediation scripts."""
+    specs = {
+        "taskpool_dynamic_runner": HERMES_HOME / "scripts" / "taskpool_dynamic_runner.py",
+        "multimodel_dynamic_step": HERMES_HOME / "scripts" / "multimodel_intervention_dynamic_step.py",
+        "brain_cloud_sync_guard": HERMES_HOME / "scripts" / "brain_cloud_sync_guard.py",
+    }
+    texts: dict[str, str] = {}
+    checks: list[dict[str, Any]] = []
+    for name, path in specs.items():
+        exists = path.exists()
+        checks.append({"name": f"file:{name}", "ok": exists, "path": str(path)})
+        texts[name] = read(path) if exists else ""
+    taskpool = texts.get("taskpool_dynamic_runner", "")
+    checks.extend([
+        {"name": "dynamic_runner:uses_summary_autorun_step", "ok": "--summary" in taskpool and "--autorun-step" in taskpool and "--no-state" in taskpool},
+        {"name": "dynamic_runner:event_signature_gated", "ok": "signature(summary" in taskpool and "changed" in taskpool and "should_print" in taskpool},
+        {"name": "dynamic_runner:multimodel_probe_nonblocking", "ok": "multimodel_intervention_dynamic_step.py" in taskpool and "timeout=60" in taskpool},
+        {"name": "dynamic_runner:process_group_timeout", "ok": "start_new_session=True" in taskpool and "os.killpg" in taskpool and "subprocess_timeout" in taskpool},
+    ])
+    mm = texts.get("multimodel_dynamic_step", "")
+    checks.extend([
+        {"name": "multimodel_dynamic:detached_worker", "ok": "subprocess.Popen" in mm and "start_new_session=True" in mm and "--worker" in mm},
+        {"name": "multimodel_dynamic:pid_lock", "ok": "worker_already_running" in mm and "worker.pid" in mm and "alive(pid)" in mm},
+        {"name": "multimodel_dynamic:cooldown_signature", "ok": "cooldown_seconds" in mm and "signature(dry)" in mm and "suppressed_no_change_cooldown" in mm},
+        {"name": "multimodel_dynamic:preserves_quorum_command_path", "ok": "multimodel-intervention-parallel-step" in mm and "HERMES_LOCAL_BRAIN_AUTORUN_MULTIMODEL" in mm},
+    ])
+    cloud = texts.get("brain_cloud_sync_guard", "")
+    checks.extend([
+        {"name": "cloud_sync:validates_before_push", "ok": "bootstrap/validate_safe_tree.sh" in cloud and "bootstrap/verify.sh" in cloud and "git" in cloud, "value": "validate+verify before push"},
+        {"name": "cloud_sync:push_guard_env", "ok": "HERMES_ALLOW_PUSH" in cloud and "personal_hermes_brain_export.py" in cloud},
+    ])
+    return {"status": "PASS" if all(c.get("ok") for c in checks) else "FAIL", "checks": checks}
+
+
 def evaluate(vault: Path = VAULT, taskpool_json: dict[str, Any] | None = None, skip_taskpool: bool = False) -> dict[str, Any]:
     review = vault / "06-治理与评审" / "reviews" / "2026-05-06-multimodel-thinking-keypoint-coverage-review.md"
     route_matrix = vault / "05-实践与项目" / "实践方案" / "07-关键点多模型介入路由矩阵.md"
@@ -276,6 +314,9 @@ def evaluate(vault: Path = VAULT, taskpool_json: dict[str, Any] | None = None, s
     checks.append({"name": "file:brain_task_dispatch_tick", "ok": tick_exists, "path": str(tick_path)})
     tick = check_dispatch_tick_source(read(tick_path) if tick_exists else "")
     checks.extend(tick["checks"])
+
+    dynamic_contracts = check_dynamic_source_contracts()
+    checks.extend(dynamic_contracts["checks"])
 
     passed = [c for c in checks if c.get("ok")]
     failed = [c for c in checks if not c.get("ok")]

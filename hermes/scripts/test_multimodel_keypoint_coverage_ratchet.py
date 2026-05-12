@@ -182,6 +182,32 @@ if os.environ.get("HERMES_LOCAL_BRAIN_AUTORUN_MULTIMODEL") == "1":
     assert "autorun:long_running_timeout_is_structured" in names, names
 
 
+def test_dynamic_source_contracts_are_enforced():
+    module = load_module()
+    result = module.check_dynamic_source_contracts()
+    assert result["status"] == "PASS", result
+    names = {c["name"] for c in result["checks"]}
+    assert "dynamic_runner:event_signature_gated" in names
+    assert "multimodel_dynamic:detached_worker" in names
+    assert "cloud_sync:validates_before_push" in names
+
+
+def test_dynamic_source_contracts_fail_closed_for_missing_files():
+    module = load_module()
+    original_home = module.HERMES_HOME
+    with tempfile.TemporaryDirectory() as td:
+        module.HERMES_HOME = Path(td)
+        try:
+            result = module.check_dynamic_source_contracts()
+        finally:
+            module.HERMES_HOME = original_home
+    assert result["status"] == "FAIL", result
+    failed = {c["name"] for c in result["checks"] if not c["ok"]}
+    assert "file:taskpool_dynamic_runner" in failed
+    assert "file:multimodel_dynamic_step" in failed
+    assert "file:brain_cloud_sync_guard" in failed
+
+
 def test_cli_writes_json_and_markdown_report():
     with tempfile.TemporaryDirectory() as td:
         root = Path(td)

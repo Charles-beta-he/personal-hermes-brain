@@ -31,10 +31,19 @@ hermes cron list
 2. Canonical taskpool counts by status/lane/priority.
 3. Current `review` / `running` / `blocked` / `retry` / `expired` tasks.
 4. `next` dispatchable task and whether it requires multi-model gates.
-5. Guardian result: stale claims, stuck envelopes, `V`, grade, bottleneck.
-6. Envelope result: status counts, timeouts, `human_escape_triggered`, and concrete failed envelope IDs/titles/errors when escape is true.
-7. Cron jobs relevant to taskpool: auto-completer, occasional report, guardian, pipeline tick, agent-team controller, envelope executor.
-8. Actionable blockers in priority order.
+5. Project-profile readiness when the question is about execution/validation readiness, not just lifecycle status.
+6. Guardian result: stale claims, stuck envelopes, `V`, grade, bottleneck.
+7. Envelope result: status counts, timeouts, `human_escape_triggered`, and concrete failed envelope IDs/titles/errors when escape is true.
+8. Cron jobs relevant to taskpool: auto-completer, occasional report, guardian, pipeline tick, agent-team controller, envelope executor.
+9. Actionable blockers in priority order.
+
+## Project profile resolution boundary
+
+Local-brain task notes normally store a routing key, not a full project profile snapshot. `brain_task_orchestrator.py add` writes fields such as `project`, `workspace`, `parallel_boundary`, `lane`, and acceptance/proof metadata into Markdown frontmatter. Plain status checks (`list`, `next`, `proof-check`, `selfcheck`) should read lifecycle/proof state from the Markdown taskpool and do not need to query project profiles.
+
+When the user asks whether a task can proceed, how it will be executed, or whether validation is project-correct, check project-profile resolution separately. `agent_team_controller.py` loads `~/.hermes/project-profiles/{project}.json` at execution/verification time via `load_project_profile(project)` and injects the resulting `PROJECT PROFILE` into worker and reviewer prompts. Report whether profile resolution is exact, missing, or default-fallback.
+
+Treat fallback-to-default profiles as a risk boundary: for `lane=work` or product/Lark tasks, a missing project profile should be reported as `project_profile_missing`/`default_profile_fallback`, not silently accepted as correct project context. For Hermes/local-brain self-evolution tasks, default Hermes profile fallback may be acceptable if stated.
 
 ## Human escape interpretation
 

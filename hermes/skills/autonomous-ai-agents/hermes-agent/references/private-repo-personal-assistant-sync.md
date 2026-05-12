@@ -85,6 +85,22 @@ Recommended guarded cadence after explicit authorization:
 - Push the sanitized backup repo on a regular cadence (for example daily or after verified evolution batches), provided `validate_safe_tree.sh` and `verify.sh` pass.
 - Do not connect the live `~/.hermes` repo directly to a remote until `.env`, `auth.json`, raw memory, sessions, state DBs, tick outputs, caches, screenshots, checkpoints, and logs are excluded by construction and by validation.
 
+## Export automation pattern
+
+For a recurring private backup, create a sanitized export script rather than pointing Git at live `~/.hermes`.
+
+Recommended script behavior:
+
+1. Clean/rebuild a dedicated repo/worktree while preserving `.git`.
+2. Copy only allowlisted text artifacts from the brain vault, skills, and selected deterministic scripts.
+3. Deny by path, suffix, and secret-like content; skip rather than redact questionable source files.
+4. Write repo policy files (`README.md`, `SECURITY.md`, `CONFLICT_POLICY.md`, `manifest.yaml`) and bootstrap scripts (`validate_safe_tree.sh`, `verify.sh`, `install_push_guard.sh`).
+5. Install a pre-push hook that requires both safe-tree validation and `HERMES_ALLOW_PUSH=1`.
+6. Run `brainctl sync`/`reindex`, export, validate, verify, commit, then push only after the guard passes.
+7. In no-change cases, keep cron output silent; on changes/errors, emit compact JSON and append JSONL logs.
+
+This preserves the user's ongoing backup cadence without turning private GitHub into a raw secret/memory store.
+
 ## Verification loop
 
 Before declaring complete, run:

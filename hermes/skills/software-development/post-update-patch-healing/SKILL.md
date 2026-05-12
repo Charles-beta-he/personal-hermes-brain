@@ -340,6 +340,10 @@ For "NO" auto-fix: checker detects the OLD state (bare `await server.session.xxx
     content = '\n'.join(new_lines)
     ```
 
+14. **Codex timeout hardening must cover both main and auxiliary paths**: If Codex/OAuth transport starts timing out, do not only increase a global timeout. Add provider/model-scoped circuit breaking, split HTTP timeouts, and close/evict poisoned cached clients on every timeout branch. The auxiliary foreground-deadline branch is easy to miss because it can set `timed_out=True` without raising the same exception path as API timeouts. See `references/codex-transport-hardening.md`.
+
+15. **Certification manifest beats discussion optimism**: In multi-model verification after a self-update, a `discussion_result.json` approval is not sufficient if the manifest reports planner/fanout mismatch, parser failure, or `can_claim_complete_certification=false`. Report it as deterministic gates passing plus degraded/advisory model review; do not claim 4/4 certification.
+
 ## Plugin Example: Skill Usage Tracker
 
 ```yaml
@@ -373,6 +377,7 @@ def register(ctx):
 | Step ordering in `_copy_reasoning_content_for_api` | `run_agent.py` | **UPSTREAM SUPERSEDED** — upstream refactored reasoning handling with cross-provider leak blocking (ee1a07f9), our old patch no longer needed | `# 2. DeepSeek / Kimi thinking mode` before `needs_empty_reasoning` |
 | MemoryManager provider registration rollback | `agent/memory_manager.py` | **ACTIVE + CHECKER-COVERED** | `self._providers.append(provider)` followed by bare `for schema in provider.get_tool_schemas()` without try/except rollback |
 | MCP RPC timeout guard (all operations) | `tools/mcp_tool.py` | **ACTIVE + FULLY INTEGRATED** | `_mcp_rpc_call(server, coro, timeout)` helper present — centralizes `server._rpc_lock` + timeout across all 5 MCP operations (call_tool, list/read resources, list/get prompts). Commit f0e69bd5d (2026-05-12). Post-update-check now detects OLD state and reports NEEDS_FIX. Re-apply via `~/.hermes/scripts/apply-mcp-timeout-patch.py` (line-by-line processing, not regex). 199 tests pass. |
+| Codex transport hardening | `agent/codex_circuit_breaker.py`, `agent/auxiliary_client.py`, `run_agent.py`, `hermes_cli/timeouts.py` | **ACTIVE — SHOULD BE CHECKER-COVERED** | File-backed provider/model-scoped circuit breaker, split Codex HTTP timeouts (`connect=30/read=600/write=60/pool=60`), and cached-client close/evict on all timeout paths. Reapply via dedicated script/patch under `~/.hermes/scripts/` and integrate into `post-update-check.py`. See `references/codex-transport-hardening.md`. |
 | Context compressor anti-ghost rules | `agent/context_compressor.py` | **ACTIVE + CHECKER-COVERED** | Compaction prompt without `CRITICAL — ANTI-GHOST RULES` (stale counters, "This session..." carry-forward) |
 | Prompt builder ghost prevention | `agent/prompt_builder.py` | **ACTIVE + CHECKER-COVERED** | MEMORY_GUIDANCE without "Will this fact still be true in 10 sessions?" guard |
 
