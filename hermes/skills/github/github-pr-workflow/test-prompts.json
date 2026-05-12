@@ -1,0 +1,7 @@
+[
+  {
+    "id": 1,
+    "prompt": "创建 PR 并提交审查",
+    "expected": "Branch-commit-PR workflow"
+  }
+]

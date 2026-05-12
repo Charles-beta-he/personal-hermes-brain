@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Set up and run segment-anything",
+    "expected": "segment-anything configured and running"
+  },
+  {
+    "id": 2,
+    "prompt": "Debug segment-anything configuration issue",
+    "expected": "Issue diagnosed"
+  }
+]

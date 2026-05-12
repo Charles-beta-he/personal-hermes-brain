@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "/pua loop \"fix the failing CI build\"",
+    "expected": "Enters auto-iteration mode"
+  },
+  {
+    "id": 2,
+    "prompt": "一直跑直到所有测试通过",
+    "expected": "Iterates until done"
+  }
+]

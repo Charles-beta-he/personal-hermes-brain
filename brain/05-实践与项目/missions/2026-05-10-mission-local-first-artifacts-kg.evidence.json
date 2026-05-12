@@ -1,0 +1,29 @@
+{
+  "mission_note": "/Users/charles/Documents/brain/05-实践与项目/missions/2026-05-10-mission-local-first-artifacts-kg.md",
+  "mission_note_hash": "8d1eb97b194e9af8e62d5689f777351ab9c11c1c7d1fc9ea0adc83bb5d26334a",
+  "created_at": "2026-05-11T20:31:30+08:00",
+  "evidence": [
+    {
+      "id": "ev-001",
+      "path": "/Users/charles/Documents/brain/08-模板/mission-artifact-template.md",
+      "sha256": "ee06f55c60019e030b825793c7430c06abbb236cab5c5fe850a4a3acfcfbb83b",
+      "type": "markdown",
+      "created_at": "2026-05-11T20:31:30+08:00"
+    },
+    {
+      "id": "ev-002",
+      "path": "/Users/charles/.hermes/scripts/evidence_manifest.py",
+      "sha256": "2495b09c37a6332e2ecbd9199b1982931c1bc7ae1e617bb3a699978437238eff",
+      "type": "script",
+      "created_at": "2026-05-11T20:31:30+08:00"
+    },
+    {
+      "id": "ev-003",
+      "path": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-10-mission方法论p1local-first-mission-artifacts-与知识图谱沉淀.md",
+      "sha256": "2799a675dc1346971ab747befebe848bdf69d5715eb4559a2e4dde8c2834eed5",
+      "type": "markdown",
+      "created_at": "2026-05-11T20:31:30+08:00"
+    }
+  ],
+  "updated_at": "2026-05-11T20:31:30+08:00"
+}

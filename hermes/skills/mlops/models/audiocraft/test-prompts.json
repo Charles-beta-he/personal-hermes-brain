@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Set up and run audiocraft",
+    "expected": "audiocraft configured and running"
+  },
+  {
+    "id": 2,
+    "prompt": "Debug audiocraft configuration issue",
+    "expected": "Issue diagnosed"
+  }
+]

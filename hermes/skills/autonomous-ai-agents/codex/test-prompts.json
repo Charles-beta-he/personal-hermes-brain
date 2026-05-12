@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Delegate a task to codex",
+    "expected": "Task delegated and result returned"
+  },
+  {
+    "id": 2,
+    "prompt": "Use codex to implement a feature",
+    "expected": "Implementation completed"
+  }
+]

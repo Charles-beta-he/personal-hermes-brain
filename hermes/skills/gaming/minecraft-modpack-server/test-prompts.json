@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Use minecraft-modpack-server for its intended purpose",
+    "expected": "minecraft-modpack-server executes"
+  },
+  {
+    "id": 2,
+    "prompt": "Test minecraft-modpack-server with edge case input",
+    "expected": "Handles gracefully"
+  }
+]

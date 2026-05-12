@@ -1,0 +1,16 @@
+{
+  "test_cases": [
+    {
+      "input": "检查 https://example.com/feed.xml 是否是有效 RSS/Atom/JSON feed",
+      "expected_behavior": "Fetch with bounded timeout, report final URL/status/content type, parse format, item count, newest timestamp, and classify health as ok/degraded/invalid_feed/unreachable/needs_auth."
+    },
+    {
+      "input": "帮我从 https://example.com/blog 发现可订阅 feed，并监控新文章",
+      "expected_behavior": "Discover alternate feed links and common feed paths, validate candidates, choose canonical feed URL, and if scheduling is requested use a script-first bounded cron monitor."
+    },
+    {
+      "input": "这个 RSS 每次都重复提醒旧文章，帮我诊断",
+      "expected_behavior": "Inspect dedupe keys and state, compare GUID/URL/title+published/content hash, identify unstable IDs or missing state persistence, and recommend a stable dedupe strategy."
+    }
+  ]
+}

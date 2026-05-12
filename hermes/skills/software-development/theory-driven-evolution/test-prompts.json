@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Run theory-driven-evolution on the current codebase",
+    "expected": "theory-driven-evolution completed"
+  },
+  {
+    "id": 2,
+    "prompt": "Use theory-driven-evolution with specific options",
+    "expected": "Options applied correctly"
+  }
+]

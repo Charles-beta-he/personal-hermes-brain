@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Use youtube-content to process media",
+    "expected": "Media processed"
+  },
+  {
+    "id": 2,
+    "prompt": "Configure youtube-content settings",
+    "expected": "Settings applied"
+  }
+]

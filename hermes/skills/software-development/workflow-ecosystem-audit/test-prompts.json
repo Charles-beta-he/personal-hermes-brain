@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Run workflow-ecosystem-audit on the current codebase",
+    "expected": "workflow-ecosystem-audit completed"
+  },
+  {
+    "id": 2,
+    "prompt": "Use workflow-ecosystem-audit with specific options",
+    "expected": "Options applied correctly"
+  }
+]

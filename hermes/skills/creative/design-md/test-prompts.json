@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Create something using design-md",
+    "expected": "Creative output generated"
+  },
+  {
+    "id": 2,
+    "prompt": "Use design-md with specific parameters",
+    "expected": "Custom output produced"
+  }
+]

@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Set up and run grpo-rl-training",
+    "expected": "grpo-rl-training configured and running"
+  },
+  {
+    "id": 2,
+    "prompt": "Debug grpo-rl-training configuration issue",
+    "expected": "Issue diagnosed"
+  }
+]

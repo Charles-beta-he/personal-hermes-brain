@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Run hermes-workflow-orchestrator on the current codebase",
+    "expected": "hermes-workflow-orchestrator completed"
+  },
+  {
+    "id": 2,
+    "prompt": "Use hermes-workflow-orchestrator with specific options",
+    "expected": "Options applied correctly"
+  }
+]

@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Use openhue for its intended purpose",
+    "expected": "openhue executes"
+  },
+  {
+    "id": 2,
+    "prompt": "Test openhue with edge case input",
+    "expected": "Handles gracefully"
+  }
+]

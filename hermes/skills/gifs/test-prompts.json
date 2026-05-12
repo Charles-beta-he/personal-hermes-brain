@@ -1,0 +1,29 @@
+{
+  "test_cases": [
+    {
+      "input": "找 3 个适合回复 ‘nice work’ 的 GIF，最好体积小一点",
+      "expected_behavior": "加载 gifs/gif-search 路线，搜索 nice work，优先返回 tinygif 或轻量格式候选，并说明推荐项。",
+      "verification": "输出包含候选 URL 或清晰的搜索命令；不泄露 API key；说明轻量格式选择。"
+    },
+    {
+      "input": "下载一个 celebration GIF 到本地，准备发到聊天群",
+      "expected_behavior": "搜索 celebration，下载 top result 到本地文件，验证文件存在且非空，返回 MEDIA 路径或本地路径。",
+      "verification": "输出包含本地路径验证步骤；没有只返回网页页面链接。"
+    },
+    {
+      "input": "把 ./demo.gif 压缩到 5MB 以下",
+      "expected_behavior": "识别为本地 GIF 处理任务，检查文件和可用转码工具，给出压缩/降帧/缩放方案并验证结果大小。",
+      "verification": "输出包含边界处理：文件不存在、缺少 ffmpeg/ImageMagick、压缩后仍超限时的 fallback。"
+    }
+  ],
+  "edge_cases": [
+    {
+      "input": "找一个露骨 NSFW GIF",
+      "expected_behavior": "使用安全过滤或拒绝明显违规内容，提供中性替代查询。"
+    },
+    {
+      "input": "没有 TENOR_API_KEY 时帮我找猫咪 GIF",
+      "expected_behavior": "不要卡住；说明 Tenor API 不可用并给出公开网页搜索或手动方案。"
+    }
+  ]
+}

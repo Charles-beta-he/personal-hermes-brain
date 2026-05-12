@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Post using xitter",
+    "expected": "Post created"
+  },
+  {
+    "id": 2,
+    "prompt": "Read content via xitter",
+    "expected": "Content displayed"
+  }
+]

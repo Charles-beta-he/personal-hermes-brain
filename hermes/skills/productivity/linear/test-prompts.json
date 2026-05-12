@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Use linear to create or access content",
+    "expected": "Content accessed"
+  },
+  {
+    "id": 2,
+    "prompt": "Manage linear resources",
+    "expected": "Resources managed"
+  }
+]

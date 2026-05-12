@@ -1,0 +1,7 @@
+[
+  {
+    "id": 1,
+    "prompt": "制定这个功能的实施计划",
+    "expected": "Multi-step plan with verification"
+  }
+]

@@ -1,0 +1,615 @@
+{
+  "meta": {
+    "version": "1.0",
+    "updated": "2026-04-23",
+    "note": "Beta(2,2) = \u65e0\u5148\u9a8c\u504f\u7f6e\uff0c\u6240\u6709 skill \u521d\u59cb\u7f6e\u4fe1\u5ea6\u5747\u4e3a 50%"
+  },
+  "skills": {
+    "apple": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 75,
+      "darwin_grade": "B",
+      "last_audit": "2026-04-24T13:01:35.324297"
+    },
+    "research": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 75,
+      "darwin_grade": "B",
+      "last_audit": "2026-04-24T13:01:35.324368"
+    },
+    "gaming": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 75,
+      "darwin_grade": "B",
+      "last_audit": "2026-04-24T13:01:35.324441"
+    },
+    "social-media": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 75,
+      "darwin_grade": "B",
+      "last_audit": "2026-04-24T13:01:35.324513"
+    },
+    "devops": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 75,
+      "darwin_grade": "B",
+      "last_audit": "2026-04-24T13:01:35.324585"
+    },
+    "bayesian-agent": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 70,
+      "darwin_grade": "C",
+      "last_audit": "2026-04-24T13:01:35.323979"
+    },
+    "leisure": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 75,
+      "darwin_grade": "B",
+      "last_audit": "2026-04-24T13:01:35.324656"
+    },
+    "p10": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 90,
+      "darwin_grade": "S",
+      "needs_rewrite": true,
+      "last_audit": "2026-04-24T13:05:31.106676"
+    },
+    "pro": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 80,
+      "darwin_grade": "B",
+      "last_audit": "2026-04-24T12:54:51.705184",
+      "note": "needs_rewrite: SKILL.md\u7ed3\u6784\u4e0d\u5b8c\u6574\uff0c\u9700\u6dfb\u52a0IO/\u7ea6\u675f/\u68c0\u67e5\u70b9/\u793a\u4f8b"
+    },
+    "pua-en": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 80,
+      "darwin_grade": "B",
+      "last_audit": "2026-04-24T12:57:58.510901"
+    },
+    "data-science": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 75,
+      "darwin_grade": "B",
+      "last_audit": "2026-04-24T13:01:35.324739"
+    },
+    "software-development": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 77,
+      "darwin_grade": "B",
+      "last_audit": "2026-04-24T13:05:31.107702"
+    },
+    "pua": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 80,
+      "darwin_grade": "B",
+      "last_audit": "2026-04-24T12:54:51.705187"
+    },
+    "mlops": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 75,
+      "darwin_grade": "B",
+      "last_audit": "2026-04-24T13:01:35.324905"
+    },
+    "cognitive-load-agent": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 80,
+      "darwin_grade": "B",
+      "last_audit": "2026-04-24T12:54:51.705188"
+    },
+    "inference-sh": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 90,
+      "darwin_grade": "A",
+      "last_audit": "2026-04-28T02:00:57.234251"
+    },
+    "mcp": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 90,
+      "darwin_grade": "A",
+      "last_audit": "2026-04-30T02:00:59.620491"
+    },
+    "darwin-skill": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 95,
+      "darwin_grade": "S",
+      "last_audit": "2026-04-24T13:05:31.106666"
+    },
+    "gifs": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 100,
+      "darwin_grade": "A",
+      "last_audit": "2026-04-30T02:04:38.688059"
+    },
+    "feeds": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 100,
+      "darwin_grade": "A",
+      "last_audit": "2026-05-01T12:47:02.864397"
+    },
+    "p7": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 85,
+      "darwin_grade": "A",
+      "needs_rewrite": true,
+      "last_audit": "2026-04-24T13:05:31.107345"
+    },
+    "p9": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 90,
+      "darwin_grade": "S",
+      "needs_rewrite": true,
+      "last_audit": "2026-04-24T13:05:31.107043"
+    },
+    "diagramming": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 60,
+      "darwin_grade": "C",
+      "last_audit": "2026-04-24T12:57:58.512318"
+    },
+    "github": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 60,
+      "darwin_grade": "C",
+      "last_audit": "2026-04-24T12:57:58.512431"
+    },
+    "note-taking": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 60,
+      "darwin_grade": "C",
+      "last_audit": "2026-04-24T12:57:58.512544"
+    },
+    "red-teaming": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 75,
+      "darwin_grade": "B",
+      "last_audit": "2026-04-24T11:30:26.183209"
+    },
+    "pua-ja": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 80,
+      "darwin_grade": "B",
+      "last_audit": "2026-04-24T12:54:51.705192",
+      "note": "needs_rewrite: SKILL.md\u7ed3\u6784\u4e0d\u5b8c\u6574\uff0c\u9700\u6dfb\u52a0IO/\u7ea6\u675f/\u68c0\u67e5\u70b9/\u793a\u4f8b"
+    },
+    "creative": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 75,
+      "darwin_grade": "B",
+      "last_audit": "2026-04-24T11:30:26.183209"
+    },
+    "yes": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 65,
+      "darwin_grade": "C",
+      "last_audit": "2026-04-24T13:01:35.324216"
+    },
+    "domain": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 75,
+      "darwin_grade": "B",
+      "last_audit": "2026-04-24T11:30:26.183209"
+    },
+    "ooda-agent": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 80,
+      "darwin_grade": "B",
+      "last_audit": "2026-04-24T12:54:51.705193"
+    },
+    "email": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 75,
+      "darwin_grade": "B",
+      "last_audit": "2026-04-24T11:30:26.183209"
+    },
+    "loop": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 70,
+      "darwin_grade": "C",
+      "last_audit": "2026-04-24T13:01:35.324101"
+    },
+    "smart-home": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 75,
+      "darwin_grade": "B",
+      "last_audit": "2026-04-24T11:30:26.183209"
+    },
+    "autonomous-ai-agents": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 75,
+      "darwin_grade": "B",
+      "last_audit": "2026-04-24T11:30:26.183209"
+    },
+    "dogfood": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 75,
+      "darwin_grade": "B",
+      "last_audit": "2026-04-24T12:57:58.513500"
+    },
+    "productivity": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 75,
+      "darwin_grade": "B",
+      "last_audit": "2026-04-24T11:30:26.183209"
+    },
+    "media": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 75,
+      "darwin_grade": "B",
+      "last_audit": "2026-04-24T11:30:26.183209"
+    },
+    "post-deploy-verification": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 75,
+      "darwin_grade": "B",
+      "last_audit": "2026-04-24T11:30:26.183209"
+    },
+    "framework-audit": {
+      "alpha": 2,
+      "beta": 2,
+      "mean": 0.5,
+      "credible_interval_95": [
+        0.09,
+        0.91
+      ],
+      "grade": "B",
+      "last_updated": "2026-04-23",
+      "observations": 0,
+      "darwin_score": 75,
+      "darwin_grade": "B",
+      "last_audit": "2026-04-24T12:57:58.513832"
+    }
+  },
+  "session_history": []
+}

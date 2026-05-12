@@ -1,0 +1,27 @@
+[
+  {
+    "id": 1,
+    "prompt": "分析当前任务的 OODA 耗时瓶颈",
+    "expected": "输出 Observe/Orient/Decide/Act 各阶段耗时占比，识别瓶颈阶段，给出优化建议"
+  },
+  {
+    "id": 2,
+    "prompt": "这个 bug 修了三轮还没好，启用对抗性 OODA",
+    "expected": "触发破坏性 OODA：改变观测维度/定向框架/引入外部变量/加速执行，输出新策略"
+  },
+  {
+    "id": 3,
+    "prompt": "记录本轮迭代的 OODA 计时",
+    "expected": "输出 JSON 格式计时数据：observe_ms, orient_ms, decide_ms, act_ms, total_ms, bottleneck"
+  },
+  {
+    "id": 4,
+    "prompt": "Orient 阶段耗时太长了，怎么加速",
+    "expected": "输出诊断模板、模式匹配建议、假设排序策略、快速排除方案"
+  },
+  {
+    "id": 5,
+    "prompt": "评估当前迭代速度是否达标",
+    "expected": "对比当前总耗时与目标（简单<2min/常规<5min/复杂<10min/顽固<15min），输出是否达标"
+  }
+]

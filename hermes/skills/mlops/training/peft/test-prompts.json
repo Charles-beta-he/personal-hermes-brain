@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Set up and run peft",
+    "expected": "peft configured and running"
+  },
+  {
+    "id": 2,
+    "prompt": "Debug peft configuration issue",
+    "expected": "Issue diagnosed"
+  }
+]

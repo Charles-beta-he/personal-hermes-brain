@@ -1,0 +1,10 @@
+{
+  "source": "/Users/charles/Library/Containers/com.larksuite.macos.lark/Data/Library/Application Support/LarkInternational/sdk_storage/f860a8b25f5ba958f164d39bf7fed0f5/resources/images/img_v3_0211i_af3618be-ec53-4bd0-8a3a-cafc5b50f7hu.jpg",
+  "copied_to": "/Users/charles/Documents/brain/05-实践与项目/projects/uvisa-app-2.0/evidence/screenshots/uvisa-card-home-restore-original-ui-hardcoded-data-20260510-162453.jpg",
+  "sha256": "584f0dabbef2f7aa0cefda0ce0a4a1b19e0b059877dff6f11602311a3d1d0b45",
+  "bytes": 145107,
+  "captured_from": "LarkInternational local sdk_storage image path supplied by user",
+  "user_instruction": "uvisa-app-2.0 项目：这个页面因为测试想前置测试页面；恢复至原有 UI 样式，暂时使用硬编码假数据。",
+  "observed_page": "U-VISA tab/card home page showing no-card / pending activation test/empty state",
+  "observed_issue": "Default U-VISA page appears replaced by test-forwarded empty/no-card state; needs original UI restored with temporary hardcoded fake data."
+}

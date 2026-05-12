@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Use imessage to perform its core function",
+    "expected": "imessage executes successfully"
+  },
+  {
+    "id": 2,
+    "prompt": "Check imessage for edge cases",
+    "expected": "Handles errors gracefully"
+  }
+]

@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Use apple-reminders to perform its core function",
+    "expected": "apple-reminders executes successfully"
+  },
+  {
+    "id": 2,
+    "prompt": "Check apple-reminders for edge cases",
+    "expected": "Handles errors gracefully"
+  }
+]

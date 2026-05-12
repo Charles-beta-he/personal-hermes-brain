@@ -1,0 +1,186 @@
+{
+  "schema": "multi_model_state_v1",
+  "created_at": "2026-05-11T16:16:59.029888+00:00",
+  "question": "Evaluate rowboatlabs/rowboat for Hermes-native taskpool/orchestration improvements; decide adoption/reject/spike recommendations from claim-linked evidence only.",
+  "context": {
+    "repo": "https://github.com/rowboatlabs/rowboat",
+    "commit": "a9b4e0601806b36466a4f3932816f4f788962e38",
+    "task_id": "2026-05-10-多模型分析-rowboatlabs-rowboat-并完善-hermes-自身",
+    "evidence_pack": "/Users/charles/Documents/brain/05-实践与项目/projects/hermes-self-improvement/evidence/rowboat-review-20260512/rowboat-evidence-pack.json",
+    "scope": "advisory evidence pack; no code import; T3 required before closeout"
+  },
+  "constraints": [
+    "Evidence-first; model agreement is not evidence; cite evidence ids and sources.",
+    "Do not recommend wholesale runtime import; only Hermes-native bounded slices unless evidence proves otherwise.",
+    "Final closeout requires canonical Claude+GPT+DeepSeek+MiMo ratification; this state preparation alone is not certification."
+  ],
+  "acceptance_criteria": [
+    "Classify each recommendation as adopt/reject/spike with evidence ids and residual risks.",
+    "Identify any missing evidence requests before implementation.",
+    "Do not certify if severity>=3 risks remain unsupported or unresolved."
+  ],
+  "non_goals": [],
+  "risk_level": "medium",
+  "budget": {},
+  "claims": [
+    {
+      "id": "C-001",
+      "text": "Rowboat positions itself as a local-first AI coworker that stores long-lived working memory as Obsidian-compatible Markdown notes on the user's machine.",
+      "severity": 3
+    },
+    {
+      "id": "C-002",
+      "text": "Rowboat's Electron app exposes typed agent definitions with built-in, MCP, and agent-as-tool attachments, plus scheduled agent entries for cron/window/once runs.",
+      "severity": 3
+    },
+    {
+      "id": "C-003",
+      "text": "Rowboat's run runtime has a run log/lock/abort flow, emits permission and ask-human events, supports agent subflows, and limits each LLM step to one step before processing tool calls.",
+      "severity": 3
+    },
+    {
+      "id": "C-004",
+      "text": "Rowboat Live Notes implement a concrete note-agent pattern: one objective in frontmatter, backend-only writes for live metadata, 15s timed scheduler, 5min backoff, per-note concurrency guard, event queue, FIFO event processing, and two-pass event routing.",
+      "severity": 3
+    },
+    {
+      "id": "C-005",
+      "text": "Rowboat includes local tool surfaces and external integrations that are useful references but are not safe to wholesale import into Hermes without sandbox/permission/proof review: shell command execution, MCP clients, Composio/API-key integrations, and OAuth/service integrations.",
+      "severity": 3
+    }
+  ],
+  "evidence": [
+    {
+      "id": "E-README-LOCAL",
+      "supports": [
+        "C-001"
+      ],
+      "source": "README.md:28-33,84-91,102-110,146-150",
+      "quote": "Open-source AI coworker... local-first... maintains an Obsidian-compatible vault of plain Markdown notes... everything lives on your machine as plain Markdown."
+    },
+    {
+      "id": "E-AGENT-SCHEMA",
+      "supports": [
+        "C-002"
+      ],
+      "source": "apps/x/packages/shared/src/agent.ts:3-35",
+      "quote": "ToolAttachment is a discriminated union of builtin, mcp, and agent; Agent has name/provider/model/description/instructions/tools."
+    },
+    {
+      "id": "E-SCHEDULE-SCHEMA",
+      "supports": [
+        "C-002"
+      ],
+      "source": "apps/x/packages/shared/src/agent-schedule.ts:3-44",
+      "quote": "CronSchedule, WindowSchedule, OnceSchedule, AgentScheduleEntry, AgentScheduleConfig."
+    },
+    {
+      "id": "E-RUNTIME-LOCK",
+      "supports": [
+        "C-003"
+      ],
+      "source": "apps/x/packages/core/src/agents/runtime.ts:143-227; apps/x/packages/core/src/runs/runs.ts:16-44,92-107",
+      "quote": "AgentRuntime.trigger locks a run, creates abort signal, appends/broadcasts events, cleans abort registry and releases lock; runs.ts creates runs/messages and stop() aborts."
+    },
+    {
+      "id": "E-RUNTIME-PERMISSION",
+      "supports": [
+        "C-003"
+      ],
+      "source": "apps/x/packages/core/src/agents/runtime.ts:938-1053,1219-1265; apps/x/packages/core/src/runs/runs.ts:47-78",
+      "quote": "ask-human calls wait; blocked executeCommand emits tool-permission-request; agent tools spawn subflows; permission responses resume runtime and optional always approval persists command names."
+    },
+    {
+      "id": "E-RUNTIME-STEP",
+      "supports": [
+        "C-003"
+      ],
+      "source": "apps/x/packages/core/src/agents/runtime.ts:1280-1297",
+      "quote": "streamText(... stopWhen: stepCountIs(1), abortSignal: signal)."
+    },
+    {
+      "id": "E-LIVE-DOC",
+      "supports": [
+        "C-004"
+      ],
+      "source": "apps/x/LIVE_NOTE.md:1-5,46-64,87-101,105-126,131-198,217-220",
+      "quote": "One live: frontmatter block with objective/triggers/runtime fields; renderer never writes live key; scheduler/event processor/runLiveNoteAgent; per-note serialization."
+    },
+    {
+      "id": "E-LIVE-SCHEDULER",
+      "supports": [
+        "C-004"
+      ],
+      "source": "apps/x/packages/core/src/knowledge/live-note/scheduler.ts:8-96",
+      "quote": "POLL_INTERVAL_MS=15_000; scans knowledge markdown; skips inactive; checks dueTimedTrigger and backoffRemainingMs; fires runLiveNoteAgent asynchronously."
+    },
+    {
+      "id": "E-LIVE-RUNNER",
+      "supports": [
+        "C-004"
+      ],
+      "source": "apps/x/packages/core/src/knowledge/live-note/runner.ts:103-235",
+      "quote": "runningLiveNotes Set concurrency guard; lastAttemptAt/lastRunId before execution; lastRunAt only on success; failure records lastRunError; cleanup in finally."
+    },
+    {
+      "id": "E-LIVE-EVENTS",
+      "supports": [
+        "C-004"
+      ],
+      "source": "apps/x/packages/core/src/knowledge/live-note/events.ts:13-35,87-157,160-204",
+      "quote": "events/pending and done JSON dirs; monotonic ID filenames; malformed events moved to done with error; filenames sorted; candidates processed sequentially and enriched."
+    },
+    {
+      "id": "E-LIVE-ROUTING",
+      "supports": [
+        "C-004"
+      ],
+      "source": "apps/x/packages/core/src/knowledge/live-note/routing.ts:18-33,64-111",
+      "quote": "Routing classifier is liberal and prefers false positives; targetFilePath short-circuits; batches of 20 generate Pass1OutputSchema filePaths."
+    },
+    {
+      "id": "E-README-TOOLS",
+      "supports": [
+        "C-005"
+      ],
+      "source": "README.md:63-75,139-144",
+      "quote": "Optional Deepgram/ElevenLabs/Exa/Composio API keys; MCP external tools; examples include search, databases, CRMs, support tools, automations."
+    },
+    {
+      "id": "E-COMMAND-EXECUTOR",
+      "supports": [
+        "C-005"
+      ],
+      "source": "apps/x/packages/core/src/application/lib/command-executor.ts:47-63,77-107,139-170",
+      "quote": "isBlocked uses allowlist/session allowed commands; executeCommand runs arbitrary shell through exec; abortable execution uses spawn shell with process group."
+    },
+    {
+      "id": "E-MCP",
+      "supports": [
+        "C-005"
+      ],
+      "source": "apps/x/packages/core/src/mcp/mcp.ts:22-77,120-138",
+      "quote": "MCP config supports stdio command/args/env and remote URL transports; executeTool calls client.callTool."
+    },
+    {
+      "id": "E-LICENSE",
+      "supports": [
+        "C-005"
+      ],
+      "source": "LICENSE:1-5; apps/x/apps/main/package.json:8; apps/cli/package.json:21",
+      "quote": "Apache License 2.0; main and CLI package metadata license Apache-2.0."
+    }
+  ],
+  "implementation_target": {
+    "files": [
+      "/Users/charles/Documents/brain/05-实践与项目/projects/hermes-self-improvement/evidence/rowboat-review-20260512/rowboat-evidence-pack.json",
+      "/Users/charles/Documents/brain/05-实践与项目/projects/hermes-self-improvement/evidence/rowboat-review-20260512/rowboat-advisory-report.md"
+    ],
+    "verify_commands": [
+      "python3 -m json.tool rowboat-evidence-pack.json"
+    ],
+    "forbidden_changes": []
+  },
+  "is_candidate_solution": false,
+  "state_owner": "main_orchestrator"
+}

@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Run color-contrast-checker on the current codebase",
+    "expected": "color-contrast-checker completed"
+  },
+  {
+    "id": 2,
+    "prompt": "Use color-contrast-checker with specific options",
+    "expected": "Options applied correctly"
+  }
+]

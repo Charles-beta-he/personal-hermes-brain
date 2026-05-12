@@ -1,0 +1,5 @@
+# autonomous-ai-agents Changelog
+
+## v1.0.0
+
+- Initial skill setup

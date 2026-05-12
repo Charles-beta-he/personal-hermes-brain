@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Set up and run pytorch-fsdp",
+    "expected": "pytorch-fsdp configured and running"
+  },
+  {
+    "id": 2,
+    "prompt": "Debug pytorch-fsdp configuration issue",
+    "expected": "Issue diagnosed"
+  }
+]

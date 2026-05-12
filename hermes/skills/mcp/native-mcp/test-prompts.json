@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Use native-mcp for its intended purpose",
+    "expected": "native-mcp executes"
+  },
+  {
+    "id": 2,
+    "prompt": "Test native-mcp with edge case input",
+    "expected": "Handles gracefully"
+  }
+]

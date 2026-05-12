@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "installed": {
+    "taste-skill": {
+      "source": "clawhub",
+      "identifier": "taste-skill",
+      "trust_level": "community",
+      "scan_verdict": "dangerous",
+      "content_hash": "sha256:690355f96c364c4e",
+      "install_path": "taste-skill",
+      "files": [
+        "references/commands.md",
+        "references/onboarding.md",
+        "references/skill-guide.md",
+        "SKILL.md",
+        "templates/post.md",
+        "templates/publish-from-link.md",
+        "_meta.json"
+      ],
+      "metadata": {},
+      "installed_at": "2026-04-26T07:47:59.139689+00:00",
+      "updated_at": "2026-04-26T07:47:59.139692+00:00"
+    }
+  }
+}

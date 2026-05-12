@@ -1,0 +1,45 @@
+{
+  "task_id": "2026-05-10-修复-uvisa-app-20-我的-个人信息卡片-id-为空但复制按钮仍显示的问题",
+  "status": "ready_for_review",
+  "repo": "/Users/charles/Desktop/folder/work/uvisa-app-2.0",
+  "verified_at": "2026-05-11T19:49:34+08:00",
+  "implementation_claims": [
+    "MeScreen trims the canonical user.uid and renders the copy button only when the value is non-empty.",
+    "Empty uid renders a non-clickable `ID: —` state instead of a copy action.",
+    "auth.store normalizes backend /api/me `uvisaUid` into the canonical frontend `uid` field without inventing an ID when backend identity fields are empty.",
+    "User type records `uvisaUid` as the backend rollout alias."
+  ],
+  "verification": [
+    {
+      "cmd": "npm test -- --run src/stores/__tests__/auth.store.test.ts src/screens/me/__tests__/MeScreen.user-id.test.tsx",
+      "exit": 0,
+      "result": "2 files / 32 tests passed at 2026-05-11T19:48 CST"
+    },
+    {
+      "cmd": "npx eslint src/screens/me/MeScreen.tsx src/stores/auth.store.ts src/types/index.ts src/screens/me/__tests__/MeScreen.user-id.test.tsx src/stores/__tests__/auth.store.test.ts",
+      "exit": 0,
+      "result": "passed at 2026-05-11T19:48 CST"
+    },
+    {
+      "cmd": "npm run build",
+      "exit": 0,
+      "result": "tsc -b && vite build passed at 2026-05-11T19:49 CST; Vite chunk-size warning only"
+    },
+    {
+      "cmd": "node /tmp/uvisa-me-id-smoke-20260511.mjs",
+      "exit": 0,
+      "result": "browser smoke PASS: 375/390 non-empty UID visible/copyable; 375 empty UID no copy action; no overflow; no console messages",
+      "artifact": "/Users/charles/Documents/brain/05-实践与项目/projects/uvisa-app-2.0/evidence/taskpool/uvisa-me-id-copy-browser-smoke-2026-05-11.json"
+    },
+    {
+      "cmd": "git diff --check -- src/screens/me/MeScreen.tsx src/screens/me/__tests__/MeScreen.user-id.test.tsx src/stores/auth.store.ts src/stores/__tests__/auth.store.test.ts src/types/index.ts && git diff --cached --check -- <same scoped files>",
+      "exit": 0,
+      "result": "passed"
+    }
+  ],
+  "docs_updated": [
+    "docs/UI_TEST_CASES.md execution ledger row `2026-05-11 19:49 | Taskpool：我的/个人信息卡片 ID 为空但复制按钮仍显示`"
+  ],
+  "scope_note": "Current repo also contains unrelated dirty trusted-device/security files outside this task; this bounded verification did not stage or commit repo files.",
+  "residual_risk": "Real Railway logged-in smoke was not re-run in this slice; local deterministic UI/build/browser checks prove the Me profile UID display/copy behavior against seeded auth state."
+}

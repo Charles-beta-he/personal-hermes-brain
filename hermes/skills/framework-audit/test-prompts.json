@@ -1,0 +1,4 @@
+[
+  {"id": 1, "prompt": "Evaluate a new AI framework for introduction to the stack", "expected": "Systematic evaluation with recommendation"},
+  {"id": 2, "prompt": "Compare two AI agents platforms using the audit framework", "expected": "Structured comparison report"}
+]

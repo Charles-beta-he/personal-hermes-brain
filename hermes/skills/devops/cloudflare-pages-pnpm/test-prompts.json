@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Run cloudflare-pages-pnpm deployment workflow",
+    "expected": "Deployment configured"
+  },
+  {
+    "id": 2,
+    "prompt": "Verify cloudflare-pages-pnpm configuration",
+    "expected": "Config validated"
+  }
+]

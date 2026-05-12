@@ -1,0 +1,4 @@
+[
+    {"prompt": "检查 vendor 补丁是否被 update 覆盖", "expected": "运行 post-update-check.py，确认所有补丁仍在"},
+    {"prompt": "补丁被 hermes update 冲掉了", "expected": "运行 post-update-check.py --fix，自动重打所有 patch"}
+]

@@ -1,0 +1,58 @@
+{
+  "schema": "agent_cos_ratification_issue_ledger_v1",
+  "created_at": "2026-05-07T00:54:32+08:00",
+  "issues": [
+    {
+      "id": "I-006",
+      "severity": 5,
+      "issue": "Deterministic completion was previously at risk of being framed as final certification.",
+      "resolution": "Dashboard/selfcheck now split matrix_status, deterministic_gate_status, ratification_status, final_integration_status; ratification_gate.py controls certification transition.",
+      "status": "resolved",
+      "evidence_ids": [
+        "E-001",
+        "E-003",
+        "E-005",
+        "E-006"
+      ]
+    },
+    {
+      "id": "I-007",
+      "severity": 5,
+      "issue": "Ratification evidence binding gap can make models see unsupported high severity claims.",
+      "resolution": "Ratification state now carries top-level claims and evidence where every severity>=3 claim has explicit supports evidence IDs.",
+      "status": "resolved",
+      "evidence_ids": [
+        "E-001",
+        "E-002",
+        "E-003",
+        "E-004",
+        "E-005"
+      ]
+    },
+    {
+      "id": "I-008",
+      "severity": 4,
+      "issue": "Default gate could accidentally read unrelated tick discussion_result.json.",
+      "resolution": "ratification_gate.py now filters latest discussion artifacts to Agent-COS-scoped content and otherwise fails closed.",
+      "status": "resolved",
+      "evidence_ids": [
+        "E-003",
+        "E-005",
+        "E-006"
+      ]
+    },
+    {
+      "id": "I-009",
+      "severity": 4,
+      "issue": "Previous online discussion runs timed out or SIGTERMed without certification artifact.",
+      "resolution": "Current status remains LOCAL_COMPLETE_UNRATIFIED; timeout/no-artifact is an explicit not-certified state, not a success. Follow-up T1 run with gpt-5.5, MiMo, and DeepSeek produced certified discussion_result with no remaining risks; T3 degraded outcome remains a provider-availability caveat, not an Agent COS content gap.",
+      "status": "resolved",
+      "evidence_ids": [
+        "E-005"
+      ]
+    }
+  ],
+  "open_severity_ge3_count": 0,
+  "certification_artifact": "/Users/charles/Documents/brain/05-实践与项目/projects/agent-cognitive-operating-system/ratification-discussion-result-2026-05-07.json",
+  "updated_at": "2026-05-07T01:05:41+08:00"
+}

@@ -1,0 +1,97 @@
+{
+  "source": "live_lark_task_reader",
+  "scope": "UVISA-2.0新版开发",
+  "live_count": 37,
+  "reopened_count": 8,
+  "tasklist_name_verified": true,
+  "reopened_tasks": [
+    {
+      "guid": "82f47f18-7e4f-4aea-b7cf-689df27820ca",
+      "suite_entity_num": "t103278",
+      "title": "用户端-底部导航栏我的-点击收款人管理-新增收款人，选择电子钱包，收款账号输入不符合规则的内容（输入空格、特殊符号、表情包）是也能保存成功，没有进行格式校验",
+      "old_completion_note": "✅ 已完成 | 电子钱包收款人格式校验 | NAME_RE + SAFE_ACCOUNT_RE + EMAIL_RE 白名单验证",
+      "lark_url": "https://applink.larksuite.com/client/todo/detail?guid=82f47f18-7e4f-4aea-b7cf-689df27820ca&suite_entity_num=t103278",
+      "requires_backend_contract": true,
+      "requires_real_api_e2e": true,
+      "security_or_money_gate": true,
+      "reason": "validation must be FE+BE; previous completion was frontend-style validation only risk"
+    },
+    {
+      "guid": "ce96f98c-814e-4ba8-9d4b-1d91b5dd6d0f",
+      "suite_entity_num": "t103270",
+      "title": "用户端-底部导航栏第一个资产菜单内，点击转入，选择境内转账，输入金额，点击下一步，该页面显示的收款信息中的提示语中的银行名称需跟随用户绑定的银行信息展示，以及下一步的转入进度的页面中的提示语中的银行信息以及页面上显示的银行信息也需要跟随用户绑定的银行信息展示。这里需要接入真实数据接口",
+      "old_completion_note": "✅ 已完成 | feat(topup): CNY bank name follows bound bank via {{bankName}} template (f41917d) | 545 tests PASS",
+      "lark_url": "https://applink.larksuite.com/client/todo/detail?guid=ce96f98c-814e-4ba8-9d4b-1d91b5dd6d0f&suite_entity_num=t103270",
+      "requires_backend_contract": true,
+      "requires_real_api_e2e": true,
+      "security_or_money_gate": true,
+      "reason": "explicit true interface/bound bank source-of-truth"
+    },
+    {
+      "guid": "0cd14898-094d-44c7-a123-c98100400bcd",
+      "suite_entity_num": "t103250",
+      "title": "用户端-更新后点击登陆页面底部的“联系平台客服”，跳转到客服页面后，会显示一遍之前的信息后自动刷新到新的信息，需要查一下是缓存问题还是其他什么问题，需解决",
+      "old_completion_note": "✅ 已完成 | fix(cs): clear stale CS cache on refresh (01a5bac) | 545 tests PASS | 浏览器QA: 客服页面加载新鲜数据无闪烁",
+      "lark_url": "https://applink.larksuite.com/client/todo/detail?guid=0cd14898-094d-44c7-a123-c98100400bcd&suite_entity_num=t103250",
+      "requires_backend_contract": false,
+      "requires_real_api_e2e": true,
+      "security_or_money_gate": false,
+      "reason": "real CS API/session freshness smoke required"
+    },
+    {
+      "guid": "c1bb88b4-9119-4a97-b4c4-269a353e087e",
+      "suite_entity_num": "t103249",
+      "title": "用户端-更新后的缓存处理问题，不能让用户强制更新",
+      "old_completion_note": "✅ 已完成 | fix(auth): mount UpdateBanner for SW auto-reload (01a5bac) | 浏览器QA: 远端登录页显示邮箱登录",
+      "lark_url": "https://applink.larksuite.com/client/todo/detail?guid=c1bb88b4-9119-4a97-b4c4-269a353e087e&suite_entity_num=t103249",
+      "requires_backend_contract": false,
+      "requires_real_api_e2e": true,
+      "security_or_money_gate": true,
+      "reason": "remote app/SW update behavior required"
+    },
+    {
+      "guid": "b9d0fcf8-e3f8-427d-b584-1f53c136f6ba",
+      "suite_entity_num": "t103245",
+      "title": "用户端-底部导航栏第一个资产菜单内，下拉到底部的最近交易板块，点击“查看全部”，跳转到的页面未按照原型设计和排版布局，正确的应显示的是全部交易记录列表，右上角应有筛选分类的按钮，点击后弹出显示不同交易类型可供选择和筛选的弹窗，点击弹窗对应按钮跳转到对应的信息位置。底部导航栏第四个“我的”内，“交易记录”点击进入后和前面所描述的应该保持同一个页面，并且展示的交易记录是所有交易的记录包含U卡内的交易记录",
+      "old_completion_note": "✅ 已完成 | 交易记录列表 | /tx统一页面 + 筛选sheet | TxListScreen.test.tsx PASS",
+      "lark_url": "https://applink.larksuite.com/client/todo/detail?guid=b9d0fcf8-e3f8-427d-b584-1f53c136f6ba&suite_entity_num=t103245",
+      "requires_backend_contract": true,
+      "requires_real_api_e2e": true,
+      "security_or_money_gate": true,
+      "reason": "transaction aggregation across asset/card/wealth must hit real backend contract"
+    },
+    {
+      "guid": "57da3f4f-3db8-4062-8ca1-14ff49a9a675",
+      "suite_entity_num": "t103235",
+      "title": "用户端-底部导航栏第一个资产页面内，总资产展示的金额，以及点击法币钱包列表，点击加密钱包列表后显示的对应钱包账户的余额，全部都需要做适配处理，金额过大超过当前显示的最大边距后应自动缩小金额字体到适配程度",
+      "old_completion_note": "✅ 已完成 | 金额字体适配 | tier-based font sizing | HomeScreen.amount-fit.test.tsx 3 tests PASS",
+      "lark_url": "https://applink.larksuite.com/client/todo/detail?guid=57da3f4f-3db8-4062-8ca1-14ff49a9a675&suite_entity_num=t103235",
+      "requires_backend_contract": false,
+      "requires_real_api_e2e": true,
+      "security_or_money_gate": true,
+      "reason": "real large balance/amount API payload smoke required, though core is FE typography"
+    },
+    {
+      "guid": "ed1cb905-7f25-4b44-b5a4-b1f342d81650",
+      "suite_entity_num": "t103228",
+      "title": "用户端-未做单点登陆-同账户不同设备登陆未顶掉帐号",
+      "old_completion_note": "✅ 已完成 | feat(sso): Redis active-session SSO | BE cd3915c + FE 02783c5 | 545 tests PASS | 新登录自动踢旧session",
+      "lark_url": "https://applink.larksuite.com/client/todo/detail?guid=ed1cb905-7f25-4b44-b5a4-b1f342d81650&suite_entity_num=t103228",
+      "requires_backend_contract": true,
+      "requires_real_api_e2e": true,
+      "security_or_money_gate": true,
+      "reason": "backend session invalidation + real multi-login proof required"
+    },
+    {
+      "guid": "6906ef6e-1e37-4217-84de-efdbd663d6da",
+      "suite_entity_num": "t103223",
+      "title": "用户端-顶部标题栏-右上角消息通知中心列表交易类型未区分，入金消息和出金消息也属于交易类型下",
+      "old_completion_note": "✅ 已完成 | feat(notification): add subType mapping | BE d87f877 + FE b71c217 | 5 targeted + 531 full PASS",
+      "lark_url": "https://applink.larksuite.com/client/todo/detail?guid=6906ef6e-1e37-4217-84de-efdbd663d6da&suite_entity_num=t103223",
+      "requires_backend_contract": true,
+      "requires_real_api_e2e": true,
+      "security_or_money_gate": true,
+      "reason": "notification type/time semantics are backend business event source-of-truth"
+    }
+  ]
+}

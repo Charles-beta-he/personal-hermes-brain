@@ -1,0 +1,44 @@
+{
+  "status": "PASS",
+  "base": "http://127.0.0.1:58680",
+  "results": [
+    {
+      "scenario": "non_empty_uid_copyable",
+      "width": 375,
+      "url": "http://127.0.0.1:58680/me",
+      "textVisible": true,
+      "box": {
+        "x": 106,
+        "y": 108,
+        "width": 112.9375,
+        "height": 20
+      },
+      "docWidth": 375,
+      "overflow": false
+    },
+    {
+      "scenario": "non_empty_uid_copyable",
+      "width": 390,
+      "url": "http://127.0.0.1:58680/me",
+      "textVisible": true,
+      "box": {
+        "x": 106,
+        "y": 108,
+        "width": 112.9375,
+        "height": 20
+      },
+      "docWidth": 390,
+      "overflow": false
+    },
+    {
+      "scenario": "empty_uid_no_copy_action",
+      "width": 375,
+      "url": "http://127.0.0.1:58680/me",
+      "emptyStateVisible": true,
+      "copyButtonCount": 0,
+      "docWidth": 375,
+      "overflow": false
+    }
+  ],
+  "consoleMessages": []
+}

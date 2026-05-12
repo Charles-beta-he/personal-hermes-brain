@@ -1,0 +1,129 @@
+{
+  "schema": "multi_model_state_v1",
+  "created_at": "2026-05-10T10:12:17.841902+00:00",
+  "question": "基于截图中的 10 个外部/候选 skills，制定 evidence-first 分析学习路线，并决定如何拆成本地大脑任务池。每个 skill 必须作为单独任务；输出要保守区分截图证据、可执行学习动作、验收标准、优先级与风险。",
+  "context": {
+    "source": {
+      "type": "screenshot",
+      "path": "/Users/charles/.hermes/images/clip_20260510_170708_1.png",
+      "captured_at": "2026-05-10",
+      "ocr_verified_by": "vision_analyze"
+    },
+    "candidates": [
+      {
+        "order": 1,
+        "name": "Superpowers",
+        "screenshot_description": "20多个可组合 Skill 覆盖开发全流程，brainstorming 和 TDD 最好用"
+      },
+      {
+        "order": 2,
+        "name": "Planning with Files",
+        "screenshot_description": "把规划写进文件，上下文压缩了也不丢状态"
+      },
+      {
+        "order": 3,
+        "name": "UI UX Pro Max",
+        "screenshot_description": "67种风格 +161套配色，告别 AI 审美"
+      },
+      {
+        "order": 4,
+        "name": "Code Review",
+        "screenshot_description": "多 Agent 并行审查，置信度过滤减少假阳性"
+      },
+      {
+        "order": 5,
+        "name": "Code Simplifier",
+        "screenshot_description": "写完再看一遍，重复逻辑合并成通用函数"
+      },
+      {
+        "order": 6,
+        "name": "Webapp Testing",
+        "screenshot_description": "Playwright 自动化，写脚本跑测试截屏一条龙"
+      },
+      {
+        "order": 7,
+        "name": "Ralph Loop",
+        "screenshot_description": "Claude 想提前收工? Hook 拦截塞回去直到做完"
+      },
+      {
+        "order": 8,
+        "name": "MCP Builder",
+        "screenshot_description": "四阶段引导，从零写 MCP Server 不再踩坑"
+      },
+      {
+        "order": 9,
+        "name": "PPTX",
+        "screenshot_description": "直接生成 pptx 文件，解决从零开始太痛苦的问题"
+      },
+      {
+        "order": 10,
+        "name": "Skill Creator",
+        "screenshot_description": "官方元技能，带 eval 测试框架，不够就自己造"
+      }
+    ]
+  },
+  "constraints": [
+    "不要安装、导入或修改外部 skill；只建立学习/评估/适配任务。",
+    "每个截图条目必须独立成任务，避免一个总任务吞掉具体学习路线。",
+    "输出优先级、学习动作、验收标准、风险/反证检查，并适配 Hermes/本地大脑任务池。"
+  ],
+  "acceptance_criteria": [
+    "生成 10 个任务级建议，每个候选 skill 一个。",
+    "保守区分 screenshot OCR 事实、模型建议、未验证外部能力。",
+    "任务可直接通过 brain_task_orchestrator.py add 落地，并能被 dashboard/search/selfcheck 验证。"
+  ],
+  "non_goals": [],
+  "risk_level": "medium",
+  "budget": {},
+  "claims": [
+    {
+      "id": "C-001",
+      "text": "截图中共有 10 个候选 skill 条目。",
+      "severity": 3
+    },
+    {
+      "id": "C-002",
+      "text": "每个候选 skill 应作为独立本地大脑任务创建，而不是合并成一个总任务。",
+      "severity": 3
+    },
+    {
+      "id": "C-003",
+      "text": "当前只应创建分析学习/评估/适配任务，不应直接宣称已安装或已采用这些外部 skill。",
+      "severity": 3
+    }
+  ],
+  "evidence": [
+    {
+      "items": [
+        {
+          "id": "E-001",
+          "kind": "screenshot_ocr",
+          "source": "/Users/charles/.hermes/images/clip_20260510_170708_1.png",
+          "supports": [
+            "C-001",
+            "C-002",
+            "C-003"
+          ],
+          "summary": "vision_analyze OCR confirmed ten ordered entries: Superpowers, Planning with Files, UI UX Pro Max, Code Review, Code Simplifier, Webapp Testing, Ralph Loop, MCP Builder, PPTX, Skill Creator. User explicitly requested multi-model thinking and adding each skill as a separate task to the task pool."
+        },
+        {
+          "id": "E-002",
+          "kind": "local_brain_contract",
+          "source": "obsidian skill reference local-brain-task-orchestration.md",
+          "supports": [
+            "C-002",
+            "C-003"
+          ],
+          "summary": "Local-brain task pool requires Markdown task notes via brain_task_orchestrator.py add, dashboard regeneration, sync, reindex, search verification, and selfcheck. For external framework/skill audits, use conservative advisory language unless certified."
+        }
+      ]
+    }
+  ],
+  "implementation_target": {
+    "files": [],
+    "verify_commands": [],
+    "forbidden_changes": []
+  },
+  "is_candidate_solution": false,
+  "state_owner": "main_orchestrator"
+}

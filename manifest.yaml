@@ -1,0 +1,9 @@
+schema: personal_hermes_brain_manifest_v1
+generated_at: 2026-05-12T04:37:33Z
+source_brain: /Users/charles/Documents/brain
+policy:
+  raw_memory: excluded
+  auth: excluded
+  runtime_state: excluded
+  validation: bootstrap/validate_safe_tree.sh
+remote: https://github.com/Charles-beta-he/personal-hermes-brain

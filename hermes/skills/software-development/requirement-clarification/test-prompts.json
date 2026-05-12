@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Run requirement-clarification on the current codebase",
+    "expected": "requirement-clarification completed"
+  },
+  {
+    "id": 2,
+    "prompt": "Use requirement-clarification with specific options",
+    "expected": "Options applied correctly"
+  }
+]

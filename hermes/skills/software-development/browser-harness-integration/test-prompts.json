@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Run browser-harness-integration on the current codebase",
+    "expected": "browser-harness-integration completed"
+  },
+  {
+    "id": 2,
+    "prompt": "Use browser-harness-integration with specific options",
+    "expected": "Options applied correctly"
+  }
+]

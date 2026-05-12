@@ -1,0 +1,680 @@
+{
+  "status": "certified",
+  "models_consulted": [
+    "gpt-5.5",
+    "mimo-v2.5-pro",
+    "deepseek-v4-pro"
+  ],
+  "rounds_used": 1,
+  "agreement_matrix": {
+    "framing": 0.95,
+    "approach": 0.95,
+    "implementation_order": 0.95
+  },
+  "final_design": {
+    "meta": {
+      "planner_model": "ensemble:3",
+      "planner_role": "merged",
+      "state_hash": "5afce127466fe8d87b679b821c7d715034e95aa2843c8680a6ee96fd8b74454c",
+      "tier_target": "T1",
+      "confidence": 0.6943,
+      "source_plans": 3
+    },
+    "diagnosis": {
+      "root_cause_class": "no_action",
+      "summary": "Merged from 3 planners, consensus score=0.694"
+    },
+    "patches": [
+      {
+        "id": "P-001",
+        "target_file": "/Users/charles/Documents/brain/07-仪表盘/Agent认知操作系统互补矩阵.md",
+        "op": "noop",
+        "rationale": "No severity>=3 gap found. Matrix is complete (24 unique paired A+ rows), deterministic gates pass, all claims evidence-grounded. Cosmetic wording changes are excluded by constraints. Ratification is a lifecycle event, not a landing defect.",
+        "risk": "low",
+        "blast_radius": "single_tier",
+        "depends_on": []
+      }
+    ],
+    "merge_info": {
+      "strategy": "intersection_first",
+      "planners": 3,
+      "quorum": 2,
+      "unanimous_count": 0,
+      "majority_count": 1,
+      "minority_count": 1,
+      "arbitration_needed": true,
+      "minority_patches": [
+        "noop-agent-cos-ratification-self-check"
+      ],
+      "consensus_score": 0.6943,
+      "consensus_verdict": "weak_consensus",
+      "max_blast_radius": "single_tier"
+    },
+    "verification": {
+      "expected_metric_delta": {
+        "main_pass_rate": 0.01
+      },
+      "guard_metrics": [
+        "main_pass_rate"
+      ],
+      "tier_eval_plan": "T0_T1"
+    },
+    "rollback_signal": {
+      "auto_rollback_if": "main_pass_rate < pre - 0.05",
+      "kill_switch_inc": false
+    },
+    "quota_snapshot": {
+      "openai-codex::gpt-5.5": {
+        "model": "gpt-5.5",
+        "provider": "openai-codex",
+        "status": "unobservable",
+        "observability": "unobservable",
+        "quota_type": "subscription_cap",
+        "remaining_tokens": null,
+        "remaining_requests": null,
+        "remaining_usd": null,
+        "reset_at": null,
+        "source": "response_headers",
+        "confidence": 0.2,
+        "stale_after_seconds": 300,
+        "last_updated": "2026-05-06T17:01:21.128081Z",
+        "usage": {}
+      },
+      "xiaomi::mimo-v2.5-pro": {
+        "model": "mimo-v2.5-pro",
+        "provider": "xiaomi",
+        "status": "unknown",
+        "observability": "unknown",
+        "quota_type": "unknown",
+        "remaining_tokens": null,
+        "remaining_requests": null,
+        "remaining_usd": null,
+        "reset_at": null,
+        "source": "response_headers",
+        "confidence": 0.1,
+        "stale_after_seconds": 300,
+        "last_updated": "2026-05-06T17:00:57.538289Z",
+        "usage": {}
+      },
+      "deepseek::deepseek-v4-pro": {
+        "model": "deepseek-v4-pro",
+        "provider": "deepseek",
+        "status": "unknown",
+        "observability": "unknown",
+        "quota_type": "unknown",
+        "remaining_tokens": null,
+        "remaining_requests": null,
+        "remaining_usd": null,
+        "reset_at": null,
+        "source": "response_headers",
+        "confidence": 0.1,
+        "stale_after_seconds": 300,
+        "last_updated": "2026-05-06T16:59:49.767112Z",
+        "usage": {}
+      }
+    },
+    "quota_confidence": {
+      "schema_version": 1,
+      "exact_count": 0,
+      "estimated_count": 0,
+      "unknown_count": 2,
+      "unobservable_count": 1,
+      "exhausted_count": 0,
+      "has_low_confidence_quota": true,
+      "low_confidence_models": [
+        "deepseek-v4-pro",
+        "gpt-5.5",
+        "mimo-v2.5-pro"
+      ]
+    },
+    "skipped_due_to_quota": [],
+    "fanout_certification": {
+      "schema_version": 1,
+      "status": "fanout_quorum_met",
+      "certified": true,
+      "multi_model_certified": true,
+      "certification_scope": "multi_model",
+      "below_min_quorum": false,
+      "success_count": 3,
+      "fail_count": 0,
+      "planner_count": 3,
+      "min_quorum": 2,
+      "reason": "planner fan-out met min_quorum: 3/2"
+    },
+    "evidence_bundle": {
+      "schema_version": 1,
+      "created_at": "2026-05-06T17:01:32.545322+00:00",
+      "claims": [
+        {
+          "id": "C-001",
+          "text": "Agent COS local matrix is complete: 24 unique paired A+ rows, missing_pairs=0, below_a_plus=0.",
+          "severity": 5
+        },
+        {
+          "id": "C-002",
+          "text": "Local deterministic gates pass: required files exist, required domains/rubric are present, local brain audit has no broken wikilinks or secret hits.",
+          "severity": 5
+        },
+        {
+          "id": "C-003",
+          "text": "Ratification is a first-class lifecycle gate; deterministic PASS is evidence only and cannot by itself upgrade final status to certified.",
+          "severity": 5
+        },
+        {
+          "id": "C-004",
+          "text": "Current Agent COS final integration status is LOCAL_COMPLETE_UNRATIFIED until a scoped Agent-COS discussion_result.json passes ratification_gate.py.",
+          "severity": 5
+        },
+        {
+          "id": "C-005",
+          "text": "The ratification gate fails closed when no scoped Agent-COS discussion artifact exists and avoids using unrelated tick discussion artifacts.",
+          "severity": 4
+        }
+      ],
+      "evidence": [
+        {
+          "id": "E-001",
+          "type": "command",
+          "source_command": "python3 /Users/charles/.hermes/scripts/agent_cos_selfcheck.py --json",
+          "exit_code": 0,
+          "summary": "{\n  \"status\": \"PASS\",\n  \"vault\": \"/Users/charles/Documents/brain\",\n  \"required_files\": 6,\n  \"missing_files\": [],\n  \"contract_present\": true,\n  \"contract\": {\n    \"cos_status\": \"A_PLUS_COMPLETE\",\n    \"matrix_status\": \"A_PLUS_MATRIX_COMPLETE\",\n    \"deterministic_gate_status\": \"PASS\",\n    \"ratification_status\": \"NOT_CERTIFIED_NO_ARTIFACT\",\n    \"final_integration_status\": \"LOCAL_COMPLETE_UNRATIFIED\",\n    \"required_pairings_count\": 24,\n    \"missing_pairs\": 0,\n    \"below_a_plus\": 0,\n    \"required_domains\": [\n      \"control theory\",\n      \"systems theory\",\n      \"cognitive science\",\n      \"metacognition\",\n      \"evolution\",\n      \"epistemology\",\n      \"economics\",\n      \"organization\",\n      \"computer science\",\n      \"information theory\",\n      \"reliability\",\n      \"governance\"\n    ],\n    \"a_plus_rubric_gates\": [\n      \"R1\",\n      \"R2\",\n      \"R3\",\n      \"R4\",\n      \"R5\",\n      \"R6\",\n      \"R7\"\n    ]\n  },\n  \"matrix_status\": \"A_PLUS_MATRIX_COMPLETE\",\n  \"legacy_cos_status\": \"A_PLUS_COMPLETE\",\n  \"deterministic_gate_status\": \"PASS\",\n  \"ratification_status\": \"NOT_CERTIFIED_NO_ARTIFACT\",\n  \"final_integration_status\": \"LOCAL_COMPLETE_UNRATIFIED\",\n  \"pair_rows_count\": 24,\n  \"unique_pair_rows_count\": 24,\n  \"duplicate_pair_ids\": [],\n  \"required_pairings_count\": 24,\n  \"missing_pairs\": 0,\n  \"below_a_plus\": 0,\n  \"unpaired_rows_count\": 0,\n  \"missing_domains\": [],\n  \"missing_rubric\": [],\n  \"forbidden_current_status_hits\": [],\n  \"required_domains_ok\": true,\n  \"a_plus_rubric_ok\": true,\n  \"ratification_note\": \"deterministic selfcheck is evidence only; ratification_gate.py controls certification transition\"\n}",
+          "supports": [
+            "C-001",
+            "C-002",
+            "C-004"
+          ],
+          "contradicts": []
+        },
+        {
+          "id": "E-002",
+          "type": "command",
+          "source_command": "python3 /Users/charles/.hermes/scripts/local_brain_exhaustive_audit.py",
+          "exit_code": 0,
+          "summary": "{\n  \"vault\": \"/Users/charles/Documents/brain\",\n  \"visible_dirs_scanned\": 39,\n  \"markdown_files_scanned\": 239,\n  \"empty_dirs\": [],\n  \"top_level_no_index\": [],\n  \"parent_no_direct_md_top\": [],\n  \"broken_wikilinks_count\": 0,\n  \"broken_wikilinks_samples\": [],\n  \"secret_pattern_hits\": 0,\n  \"secret_pattern_hit_samples\": [],\n  \"wikilinks_seen\": 478,\n  \"stop_gate_pass\": true\n}",
+          "supports": [
+            "C-002"
+          ],
+          "contradicts": []
+        },
+        {
+          "id": "E-003",
+          "type": "command",
+          "source_command": "python3 /Users/charles/.hermes/scripts/test_agent_cos_ratification.py",
+          "exit_code": 0,
+          "summary": "test_ratification_gate_fails_without_discussion_artifact (__main__.TestAgentCosRatification) ... ok\ntest_ratification_gate_passes_certified_discussion_with_no_open_severity3 (__main__.TestAgentCosRatification) ... ok\ntest_selfcheck_splits_matrix_completion_from_ratification_status (__main__.TestAgentCosRatification) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.007s\n\nOK",
+          "supports": [
+            "C-003",
+            "C-005"
+          ],
+          "contradicts": []
+        },
+        {
+          "id": "E-004",
+          "type": "command",
+          "source_command": "python3 -m py_compile /Users/charles/.hermes/scripts/agent_cos_selfcheck.py /Users/charles/.hermes/scripts/ratification_gate.py /Users/charles/.hermes/scripts/test_agent_cos_ratification.py",
+          "exit_code": 0,
+          "summary": "py_compile passed with no output",
+          "supports": [
+            "C-003",
+            "C-005"
+          ],
+          "contradicts": []
+        },
+        {
+          "id": "E-005",
+          "type": "command",
+          "source_command": "python3 /Users/charles/.hermes/scripts/ratification_gate.py --json",
+          "exit_code": 2,
+          "summary": "{\n  \"status\": \"FAIL\",\n  \"vault\": \"/Users/charles/Documents/brain\",\n  \"discussion_result_path\": \"\",\n  \"deterministic_gate_status\": \"PASS\",\n  \"matrix_status\": \"A_PLUS_MATRIX_COMPLETE\",\n  \"ratification_status\": \"NOT_CERTIFIED_NO_ARTIFACT\",\n  \"final_integration_status\": \"LOCAL_COMPLETE_UNRATIFIED\",\n  \"blocking_reasons\": [\n    \"discussion_result_missing\"\n  ],\n  \"deterministic_selfcheck\": {\n    \"status\": \"PASS\",\n    \"vault\": \"/Users/charles/Documents/brain\",\n    \"required_files\": 6,\n    \"missing_files\": [],\n    \"contract_present\": true,\n    \"contract\": {\n      \"cos_status\": \"A_PLUS_COMPLETE\",\n      \"matrix_status\": \"A_PLUS_MATRIX_COMPLETE\",\n      \"deterministic_gate_status\": \"PASS\",\n      \"ratification_status\": \"NOT_CERTIFIED_NO_ARTIFACT\",\n      \"final_integration_status\": \"LOCAL_COMPLETE_UNRATIFIED\",\n      \"required_pairings_count\": 24,\n      \"missing_pairs\": 0,\n      \"below_a_plus\": 0,\n      \"required_domains\": [\n        \"control theory\",\n        \"systems theory\",\n        \"cognitive science\",\n        \"metacognition\",\n        \"evolution\",\n        \"epistemology\",\n        \"economics\",\n        \"organization\",\n        \"computer science\",\n        \"information theory\",\n        \"reliability\",\n        \"governance\"\n      ],\n      \"a_plus_rubric_gates\": [\n        \"R1\",\n        \"R2\",\n        \"R3\",\n        \"R4\",\n        \"R5\",\n        \"R6\",\n        \"R7\"\n      ]\n    },\n    \"matrix_status\": \"A_PLUS_MATRIX_COMPLETE\",\n    \"legacy_cos_status\": \"A_PLUS_COMPLETE\",\n    \"deterministic_gate_status\": \"PASS\",\n    \"ratification_status\": \"NOT_CERTIFIED_NO_ARTIFACT\",\n    \"final_integration_status\": \"LOCAL_COMPLETE_UNRATIFIED\",\n    \"pair_rows_count\": 24,\n    \"unique_pair_rows_count\": 24,\n    \"duplicate_pair_ids\": [],\n    \"required_pairings_count\": 24,\n    \"missing_pairs\": 0,\n    \"below_a_plus\": 0,\n    \"unpaired_rows_count\": 0,\n    \"missing_domains\": [],\n    \"missing_rubric\": [],\n    \"forbidden_current_status_hits\": [],\n    \"required_domains_ok\": true,\n    \"a_plus_rubric_ok\": true,\n    \"ratification_note\": \"deterministic selfcheck is evidence only; ratification_gate.py controls certification transition\"\n  }\n}",
+          "supports": [],
+          "contradicts": [],
+          "validity": "command_failed"
+        },
+        {
+          "id": "E-006",
+          "type": "file",
+          "path": "/Users/charles/.hermes/scripts/ratification_gate.py",
+          "summary": "Scoped Agent-COS discussion artifact discovery; discussion_result missing -> NOT_CERTIFIED_NO_ARTIFACT; certified transition requires agreement/votes/truth/issue ledger gates.",
+          "supports": [
+            "C-003",
+            "C-005"
+          ],
+          "contradicts": []
+        }
+      ],
+      "grounding": {
+        "C-001": {
+          "claim_id": "C-001",
+          "claim_text": "Agent COS local matrix is complete: 24 unique paired A+ rows, missing_pairs=0, below_a_plus=0.",
+          "severity": 5,
+          "truth_status": "verified_by_evidence",
+          "supporting_evidence_ids": [
+            "E-001"
+          ],
+          "contradicting_evidence_ids": [],
+          "candidate_evidence_ids": []
+        },
+        "C-002": {
+          "claim_id": "C-002",
+          "claim_text": "Local deterministic gates pass: required files exist, required domains/rubric are present, local brain audit has no broken wikilinks or secret hits.",
+          "severity": 5,
+          "truth_status": "verified_by_evidence",
+          "supporting_evidence_ids": [
+            "E-001",
+            "E-002"
+          ],
+          "contradicting_evidence_ids": [],
+          "candidate_evidence_ids": []
+        },
+        "C-003": {
+          "claim_id": "C-003",
+          "claim_text": "Ratification is a first-class lifecycle gate; deterministic PASS is evidence only and cannot by itself upgrade final status to certified.",
+          "severity": 5,
+          "truth_status": "verified_by_evidence",
+          "supporting_evidence_ids": [
+            "E-003",
+            "E-004",
+            "E-006"
+          ],
+          "contradicting_evidence_ids": [],
+          "candidate_evidence_ids": []
+        },
+        "C-004": {
+          "claim_id": "C-004",
+          "claim_text": "Current Agent COS final integration status is LOCAL_COMPLETE_UNRATIFIED until a scoped Agent-COS discussion_result.json passes ratification_gate.py.",
+          "severity": 5,
+          "truth_status": "verified_by_evidence",
+          "supporting_evidence_ids": [
+            "E-001"
+          ],
+          "contradicting_evidence_ids": [],
+          "candidate_evidence_ids": []
+        },
+        "C-005": {
+          "claim_id": "C-005",
+          "claim_text": "The ratification gate fails closed when no scoped Agent-COS discussion artifact exists and avoids using unrelated tick discussion artifacts.",
+          "severity": 4,
+          "truth_status": "verified_by_evidence",
+          "supporting_evidence_ids": [
+            "E-003",
+            "E-004",
+            "E-006"
+          ],
+          "contradicting_evidence_ids": [],
+          "candidate_evidence_ids": []
+        }
+      },
+      "evidence_coverage": 1.0,
+      "verified_claim_count": 5,
+      "claim_count": 5
+    },
+    "truth_assessment": {
+      "schema_version": 1,
+      "truth_status": "grounded",
+      "can_certify_truth": true,
+      "claim_count": 5,
+      "verified_claim_count": 5,
+      "evidence_coverage": 1.0,
+      "unsupported_claim_ids": [],
+      "unsupported_high_severity_claim_ids": [],
+      "needs_link_review_claim_ids": [],
+      "needs_link_review_high_severity_claim_ids": [],
+      "contradicted_claim_ids": [],
+      "contradicted_high_severity_claim_ids": [],
+      "reasons": []
+    }
+  },
+  "issue_ledger": [],
+  "ratification_votes": [
+    {
+      "model": "gpt-5.5",
+      "vote": "approve",
+      "best_within_constraints": true,
+      "reasoning": "Reviewed the manifest_delta packet under the multi-model ratification protocol. No unresolved round_delta issues are present, no novel severity>=3 blockers are visible, fanout quorum is met at 3/2, and truth_gate permits certification with 5/5 claims verified by cited evidence summaries. P-001 is a noop, low-risk patch because no material gap was found."
+    },
+    {
+      "model": "mimo-v2.5-pro",
+      "vote": "approve",
+      "best_within_constraints": true,
+      "reasoning": "P-001 is a noop (no severity>=3 gaps). Truth gate: grounded, 5/5 claims verified (C-001..C-005), 100% evidence coverage. Fanout quorum 3/3 met. Round 1 has no unresolved issues and no novel severity>=3 blockers. Matrix is complete with 24 unique paired A+ rows, deterministic gates pass, all claims evidence-grounded. Certification permitted."
+    },
+    {
+      "model": "deepseek-v4-pro",
+      "vote": "approve",
+      "best_within_constraints": true,
+      "reasoning": "All 5 claims verified, evidence coverage 1.0, no unresolved issues, no contradictions or unsupported claims. Truth status grounded and can certify."
+    }
+  ],
+  "discussion_transcript": [
+    {
+      "round": 1,
+      "unresolved_issue_ids": [],
+      "votes": [
+        {
+          "model": "gpt-5.5",
+          "vote": "approve",
+          "best_within_constraints": true,
+          "reasoning": "Reviewed the manifest_delta packet under the multi-model ratification protocol. No unresolved round_delta issues are present, no novel severity>=3 blockers are visible, fanout quorum is met at 3/2, and truth_gate permits certification with 5/5 claims verified by cited evidence summaries. P-001 is a noop, low-risk patch because no material gap was found."
+        },
+        {
+          "model": "mimo-v2.5-pro",
+          "vote": "approve",
+          "best_within_constraints": true,
+          "reasoning": "P-001 is a noop (no severity>=3 gaps). Truth gate: grounded, 5/5 claims verified (C-001..C-005), 100% evidence coverage. Fanout quorum 3/3 met. Round 1 has no unresolved issues and no novel severity>=3 blockers. Matrix is complete with 24 unique paired A+ rows, deterministic gates pass, all claims evidence-grounded. Certification permitted."
+        },
+        {
+          "model": "deepseek-v4-pro",
+          "vote": "approve",
+          "best_within_constraints": true,
+          "reasoning": "All 5 claims verified, evidence coverage 1.0, no unresolved issues, no contradictions or unsupported claims. Truth status grounded and can certify."
+        }
+      ],
+      "status": {
+        "status": "certified",
+        "approval_count": 3,
+        "reject_count": 0,
+        "reasons": []
+      },
+      "prompt_chars": 12015,
+      "prompt_chars_by_model": {
+        "gpt-5.5": 4005,
+        "mimo-v2.5-pro": 4005,
+        "deepseek-v4-pro": 4005
+      },
+      "estimated_chars_saved": 56205
+    }
+  ],
+  "communication": {
+    "schema": "multi_model_comm_packet_v1",
+    "mode": "manifest_delta",
+    "rounds": [
+      {
+        "round": 1,
+        "mode": "manifest_delta",
+        "prompt_chars_by_model": {
+          "gpt-5.5": 4005,
+          "mimo-v2.5-pro": 4005,
+          "deepseek-v4-pro": 4005
+        },
+        "prompt_chars": 12015,
+        "raw_context_chars_per_model": 22740,
+        "packet_chars_per_model": 4005,
+        "estimated_chars_saved": 56205,
+        "estimated_tokens_saved": 14052,
+        "compression_ratio": 0.1761
+      }
+    ],
+    "total_prompt_chars": 12015,
+    "estimated_chars_saved": 56205,
+    "estimated_tokens_saved": 14052,
+    "policy": "send manifest+delta packets; keep full artifacts in tick files; request omitted evidence explicitly"
+  },
+  "remaining_risks": [],
+  "truth_assessment": {
+    "schema_version": 1,
+    "truth_status": "grounded",
+    "can_certify_truth": true,
+    "claim_count": 5,
+    "verified_claim_count": 5,
+    "evidence_coverage": 1.0,
+    "unsupported_claim_ids": [],
+    "unsupported_high_severity_claim_ids": [],
+    "needs_link_review_claim_ids": [],
+    "needs_link_review_high_severity_claim_ids": [],
+    "contradicted_claim_ids": [],
+    "contradicted_high_severity_claim_ids": [],
+    "reasons": []
+  },
+  "evidence_bundle": {
+    "schema_version": 1,
+    "created_at": "2026-05-06T17:01:32.545322+00:00",
+    "claims": [
+      {
+        "id": "C-001",
+        "text": "Agent COS local matrix is complete: 24 unique paired A+ rows, missing_pairs=0, below_a_plus=0.",
+        "severity": 5
+      },
+      {
+        "id": "C-002",
+        "text": "Local deterministic gates pass: required files exist, required domains/rubric are present, local brain audit has no broken wikilinks or secret hits.",
+        "severity": 5
+      },
+      {
+        "id": "C-003",
+        "text": "Ratification is a first-class lifecycle gate; deterministic PASS is evidence only and cannot by itself upgrade final status to certified.",
+        "severity": 5
+      },
+      {
+        "id": "C-004",
+        "text": "Current Agent COS final integration status is LOCAL_COMPLETE_UNRATIFIED until a scoped Agent-COS discussion_result.json passes ratification_gate.py.",
+        "severity": 5
+      },
+      {
+        "id": "C-005",
+        "text": "The ratification gate fails closed when no scoped Agent-COS discussion artifact exists and avoids using unrelated tick discussion artifacts.",
+        "severity": 4
+      }
+    ],
+    "evidence": [
+      {
+        "id": "E-001",
+        "type": "command",
+        "source_command": "python3 /Users/charles/.hermes/scripts/agent_cos_selfcheck.py --json",
+        "exit_code": 0,
+        "summary": "{\n  \"status\": \"PASS\",\n  \"vault\": \"/Users/charles/Documents/brain\",\n  \"required_files\": 6,\n  \"missing_files\": [],\n  \"contract_present\": true,\n  \"contract\": {\n    \"cos_status\": \"A_PLUS_COMPLETE\",\n    \"matrix_status\": \"A_PLUS_MATRIX_COMPLETE\",\n    \"deterministic_gate_status\": \"PASS\",\n    \"ratification_status\": \"NOT_CERTIFIED_NO_ARTIFACT\",\n    \"final_integration_status\": \"LOCAL_COMPLETE_UNRATIFIED\",\n    \"required_pairings_count\": 24,\n    \"missing_pairs\": 0,\n    \"below_a_plus\": 0,\n    \"required_domains\": [\n      \"control theory\",\n      \"systems theory\",\n      \"cognitive science\",\n      \"metacognition\",\n      \"evolution\",\n      \"epistemology\",\n      \"economics\",\n      \"organization\",\n      \"computer science\",\n      \"information theory\",\n      \"reliability\",\n      \"governance\"\n    ],\n    \"a_plus_rubric_gates\": [\n      \"R1\",\n      \"R2\",\n      \"R3\",\n      \"R4\",\n      \"R5\",\n      \"R6\",\n      \"R7\"\n    ]\n  },\n  \"matrix_status\": \"A_PLUS_MATRIX_COMPLETE\",\n  \"legacy_cos_status\": \"A_PLUS_COMPLETE\",\n  \"deterministic_gate_status\": \"PASS\",\n  \"ratification_status\": \"NOT_CERTIFIED_NO_ARTIFACT\",\n  \"final_integration_status\": \"LOCAL_COMPLETE_UNRATIFIED\",\n  \"pair_rows_count\": 24,\n  \"unique_pair_rows_count\": 24,\n  \"duplicate_pair_ids\": [],\n  \"required_pairings_count\": 24,\n  \"missing_pairs\": 0,\n  \"below_a_plus\": 0,\n  \"unpaired_rows_count\": 0,\n  \"missing_domains\": [],\n  \"missing_rubric\": [],\n  \"forbidden_current_status_hits\": [],\n  \"required_domains_ok\": true,\n  \"a_plus_rubric_ok\": true,\n  \"ratification_note\": \"deterministic selfcheck is evidence only; ratification_gate.py controls certification transition\"\n}",
+        "supports": [
+          "C-001",
+          "C-002",
+          "C-004"
+        ],
+        "contradicts": []
+      },
+      {
+        "id": "E-002",
+        "type": "command",
+        "source_command": "python3 /Users/charles/.hermes/scripts/local_brain_exhaustive_audit.py",
+        "exit_code": 0,
+        "summary": "{\n  \"vault\": \"/Users/charles/Documents/brain\",\n  \"visible_dirs_scanned\": 39,\n  \"markdown_files_scanned\": 239,\n  \"empty_dirs\": [],\n  \"top_level_no_index\": [],\n  \"parent_no_direct_md_top\": [],\n  \"broken_wikilinks_count\": 0,\n  \"broken_wikilinks_samples\": [],\n  \"secret_pattern_hits\": 0,\n  \"secret_pattern_hit_samples\": [],\n  \"wikilinks_seen\": 478,\n  \"stop_gate_pass\": true\n}",
+        "supports": [
+          "C-002"
+        ],
+        "contradicts": []
+      },
+      {
+        "id": "E-003",
+        "type": "command",
+        "source_command": "python3 /Users/charles/.hermes/scripts/test_agent_cos_ratification.py",
+        "exit_code": 0,
+        "summary": "test_ratification_gate_fails_without_discussion_artifact (__main__.TestAgentCosRatification) ... ok\ntest_ratification_gate_passes_certified_discussion_with_no_open_severity3 (__main__.TestAgentCosRatification) ... ok\ntest_selfcheck_splits_matrix_completion_from_ratification_status (__main__.TestAgentCosRatification) ... ok\n\n----------------------------------------------------------------------\nRan 3 tests in 0.007s\n\nOK",
+        "supports": [
+          "C-003",
+          "C-005"
+        ],
+        "contradicts": []
+      },
+      {
+        "id": "E-004",
+        "type": "command",
+        "source_command": "python3 -m py_compile /Users/charles/.hermes/scripts/agent_cos_selfcheck.py /Users/charles/.hermes/scripts/ratification_gate.py /Users/charles/.hermes/scripts/test_agent_cos_ratification.py",
+        "exit_code": 0,
+        "summary": "py_compile passed with no output",
+        "supports": [
+          "C-003",
+          "C-005"
+        ],
+        "contradicts": []
+      },
+      {
+        "id": "E-005",
+        "type": "command",
+        "source_command": "python3 /Users/charles/.hermes/scripts/ratification_gate.py --json",
+        "exit_code": 2,
+        "summary": "{\n  \"status\": \"FAIL\",\n  \"vault\": \"/Users/charles/Documents/brain\",\n  \"discussion_result_path\": \"\",\n  \"deterministic_gate_status\": \"PASS\",\n  \"matrix_status\": \"A_PLUS_MATRIX_COMPLETE\",\n  \"ratification_status\": \"NOT_CERTIFIED_NO_ARTIFACT\",\n  \"final_integration_status\": \"LOCAL_COMPLETE_UNRATIFIED\",\n  \"blocking_reasons\": [\n    \"discussion_result_missing\"\n  ],\n  \"deterministic_selfcheck\": {\n    \"status\": \"PASS\",\n    \"vault\": \"/Users/charles/Documents/brain\",\n    \"required_files\": 6,\n    \"missing_files\": [],\n    \"contract_present\": true,\n    \"contract\": {\n      \"cos_status\": \"A_PLUS_COMPLETE\",\n      \"matrix_status\": \"A_PLUS_MATRIX_COMPLETE\",\n      \"deterministic_gate_status\": \"PASS\",\n      \"ratification_status\": \"NOT_CERTIFIED_NO_ARTIFACT\",\n      \"final_integration_status\": \"LOCAL_COMPLETE_UNRATIFIED\",\n      \"required_pairings_count\": 24,\n      \"missing_pairs\": 0,\n      \"below_a_plus\": 0,\n      \"required_domains\": [\n        \"control theory\",\n        \"systems theory\",\n        \"cognitive science\",\n        \"metacognition\",\n        \"evolution\",\n        \"epistemology\",\n        \"economics\",\n        \"organization\",\n        \"computer science\",\n        \"information theory\",\n        \"reliability\",\n        \"governance\"\n      ],\n      \"a_plus_rubric_gates\": [\n        \"R1\",\n        \"R2\",\n        \"R3\",\n        \"R4\",\n        \"R5\",\n        \"R6\",\n        \"R7\"\n      ]\n    },\n    \"matrix_status\": \"A_PLUS_MATRIX_COMPLETE\",\n    \"legacy_cos_status\": \"A_PLUS_COMPLETE\",\n    \"deterministic_gate_status\": \"PASS\",\n    \"ratification_status\": \"NOT_CERTIFIED_NO_ARTIFACT\",\n    \"final_integration_status\": \"LOCAL_COMPLETE_UNRATIFIED\",\n    \"pair_rows_count\": 24,\n    \"unique_pair_rows_count\": 24,\n    \"duplicate_pair_ids\": [],\n    \"required_pairings_count\": 24,\n    \"missing_pairs\": 0,\n    \"below_a_plus\": 0,\n    \"unpaired_rows_count\": 0,\n    \"missing_domains\": [],\n    \"missing_rubric\": [],\n    \"forbidden_current_status_hits\": [],\n    \"required_domains_ok\": true,\n    \"a_plus_rubric_ok\": true,\n    \"ratification_note\": \"deterministic selfcheck is evidence only; ratification_gate.py controls certification transition\"\n  }\n}",
+        "supports": [],
+        "contradicts": [],
+        "validity": "command_failed"
+      },
+      {
+        "id": "E-006",
+        "type": "file",
+        "path": "/Users/charles/.hermes/scripts/ratification_gate.py",
+        "summary": "Scoped Agent-COS discussion artifact discovery; discussion_result missing -> NOT_CERTIFIED_NO_ARTIFACT; certified transition requires agreement/votes/truth/issue ledger gates.",
+        "supports": [
+          "C-003",
+          "C-005"
+        ],
+        "contradicts": []
+      }
+    ],
+    "grounding": {
+      "C-001": {
+        "claim_id": "C-001",
+        "claim_text": "Agent COS local matrix is complete: 24 unique paired A+ rows, missing_pairs=0, below_a_plus=0.",
+        "severity": 5,
+        "truth_status": "verified_by_evidence",
+        "supporting_evidence_ids": [
+          "E-001"
+        ],
+        "contradicting_evidence_ids": [],
+        "candidate_evidence_ids": []
+      },
+      "C-002": {
+        "claim_id": "C-002",
+        "claim_text": "Local deterministic gates pass: required files exist, required domains/rubric are present, local brain audit has no broken wikilinks or secret hits.",
+        "severity": 5,
+        "truth_status": "verified_by_evidence",
+        "supporting_evidence_ids": [
+          "E-001",
+          "E-002"
+        ],
+        "contradicting_evidence_ids": [],
+        "candidate_evidence_ids": []
+      },
+      "C-003": {
+        "claim_id": "C-003",
+        "claim_text": "Ratification is a first-class lifecycle gate; deterministic PASS is evidence only and cannot by itself upgrade final status to certified.",
+        "severity": 5,
+        "truth_status": "verified_by_evidence",
+        "supporting_evidence_ids": [
+          "E-003",
+          "E-004",
+          "E-006"
+        ],
+        "contradicting_evidence_ids": [],
+        "candidate_evidence_ids": []
+      },
+      "C-004": {
+        "claim_id": "C-004",
+        "claim_text": "Current Agent COS final integration status is LOCAL_COMPLETE_UNRATIFIED until a scoped Agent-COS discussion_result.json passes ratification_gate.py.",
+        "severity": 5,
+        "truth_status": "verified_by_evidence",
+        "supporting_evidence_ids": [
+          "E-001"
+        ],
+        "contradicting_evidence_ids": [],
+        "candidate_evidence_ids": []
+      },
+      "C-005": {
+        "claim_id": "C-005",
+        "claim_text": "The ratification gate fails closed when no scoped Agent-COS discussion artifact exists and avoids using unrelated tick discussion artifacts.",
+        "severity": 4,
+        "truth_status": "verified_by_evidence",
+        "supporting_evidence_ids": [
+          "E-003",
+          "E-004",
+          "E-006"
+        ],
+        "contradicting_evidence_ids": [],
+        "candidate_evidence_ids": []
+      }
+    },
+    "evidence_coverage": 1.0,
+    "verified_claim_count": 5,
+    "claim_count": 5
+  },
+  "evidence_requests": [],
+  "provenance": [
+    "gpt-5.5 contributed seed proposal",
+    "mimo-v2.5-pro contributed seed proposal",
+    "deepseek-v4-pro contributed seed proposal"
+  ],
+  "reasons": [],
+  "quota_snapshot": {
+    "openai-codex::gpt-5.5": {
+      "model": "gpt-5.5",
+      "provider": "openai-codex",
+      "status": "unobservable",
+      "observability": "unobservable",
+      "quota_type": "subscription_cap",
+      "remaining_tokens": null,
+      "remaining_requests": null,
+      "remaining_usd": null,
+      "reset_at": null,
+      "source": "response_headers",
+      "confidence": 0.2,
+      "stale_after_seconds": 300,
+      "last_updated": "2026-05-06T17:01:21.128081Z",
+      "usage": {}
+    },
+    "xiaomi::mimo-v2.5-pro": {
+      "model": "mimo-v2.5-pro",
+      "provider": "xiaomi",
+      "status": "unknown",
+      "observability": "unknown",
+      "quota_type": "unknown",
+      "remaining_tokens": null,
+      "remaining_requests": null,
+      "remaining_usd": null,
+      "reset_at": null,
+      "source": "response_headers",
+      "confidence": 0.1,
+      "stale_after_seconds": 300,
+      "last_updated": "2026-05-06T17:00:57.538289Z",
+      "usage": {}
+    },
+    "deepseek::deepseek-v4-pro": {
+      "model": "deepseek-v4-pro",
+      "provider": "deepseek",
+      "status": "unknown",
+      "observability": "unknown",
+      "quota_type": "unknown",
+      "remaining_tokens": null,
+      "remaining_requests": null,
+      "remaining_usd": null,
+      "reset_at": null,
+      "source": "response_headers",
+      "confidence": 0.1,
+      "stale_after_seconds": 300,
+      "last_updated": "2026-05-06T16:59:49.767112Z",
+      "usage": {}
+    }
+  },
+  "quota_confidence": {
+    "schema_version": 1,
+    "exact_count": 0,
+    "estimated_count": 0,
+    "unknown_count": 2,
+    "unobservable_count": 1,
+    "exhausted_count": 0,
+    "has_low_confidence_quota": true,
+    "low_confidence_models": [
+      "deepseek-v4-pro",
+      "gpt-5.5",
+      "mimo-v2.5-pro"
+    ]
+  },
+  "skipped_due_to_quota": [],
+  "fanout_certification": {
+    "schema_version": 1,
+    "status": "fanout_quorum_met",
+    "certified": true,
+    "multi_model_certified": true,
+    "certification_scope": "multi_model",
+    "below_min_quorum": false,
+    "success_count": 3,
+    "fail_count": 0,
+    "planner_count": 3,
+    "min_quorum": 2,
+    "reason": "planner fan-out met min_quorum: 3/2"
+  }
+}

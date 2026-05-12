@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Set up and run huggingface-hub",
+    "expected": "huggingface-hub configured and running"
+  },
+  {
+    "id": 2,
+    "prompt": "Debug huggingface-hub configuration issue",
+    "expected": "Issue diagnosed"
+  }
+]

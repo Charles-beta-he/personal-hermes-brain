@@ -1,0 +1,5 @@
+[
+    {"prompt": "卡住了，怎么办", "expected": "依次执行 /verbose all → 复现 → debug share → gateway 超时检查"},
+    {"prompt": "Agent 不动了，查查日志", "expected": "建议开启 verbose 日志、复现问题、打包诊断包"},
+    {"prompt": "又超时了", "expected": "检查 config.yaml 中的 gateway.timeout 和 compression 配置"}
+]

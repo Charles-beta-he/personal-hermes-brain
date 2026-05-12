@@ -1,0 +1,1405 @@
+{
+  "timestamp": "2026-05-11T18:15:28.491726+00:00",
+  "audits": {
+    "total_count": {
+      "metric": "\u603b\u6280\u80fd\u6570\uff08\u4e0d\u542b\u522b\u540d\uff09",
+      "value": 196,
+      "aliases": 4,
+      "threshold": 160,
+      "status": "OVER_LIMIT",
+      "delta": 36
+    },
+    "test_coverage": {
+      "metric": "\u6d4b\u8bd5\u8986\u76d6\u7387",
+      "value": "71.9%",
+      "details": "141/196",
+      "threshold": ">=80%",
+      "status": "FAIL"
+    },
+    "stale_skills": {
+      "metric": "\u50f5\u5c38\u6280\u80fd (90\u5929+\u65e0\u6d4b\u8bd5)",
+      "value": 0,
+      "details": [],
+      "status": "OK"
+    },
+    "name_conflicts": {
+      "metric": "\u540c\u540d\u51b2\u7a81",
+      "value": 1,
+      "details": {
+        "impeccable": [
+          "impeccable/source/skills/impeccable",
+          "impeccable/.claude/skills/impeccable"
+        ]
+      },
+      "status": "1 CONFLICTS"
+    },
+    "broken_refs": {
+      "metric": "\u65ad\u88c2\u5f15\u7528",
+      "value": 0,
+      "details": [],
+      "status": "OK"
+    },
+    "skeletons": {
+      "metric": "\u9aa8\u67b6\u6280\u80fd (< 100 bytes, \u65e0\u6d4b\u8bd5)",
+      "value": 0,
+      "details": [],
+      "status": "OK"
+    },
+    "ashby_diversity": {
+      "metric": "\u7cfb\u7edf\u591a\u6837\u6027 (R_system)",
+      "value": 196,
+      "analysis": "R_system=196, \u76ee\u6807 R_controller>=50",
+      "categories": {
+        "root": 49,
+        "software-development": 42,
+        "mlops": 21,
+        "creative": 19,
+        "productivity": 10,
+        "ui-ux-pro-max": 7,
+        "devops": 6,
+        "github": 6,
+        "apple": 5,
+        "research": 5,
+        "autonomous-ai-agents": 5,
+        "ui-skills": 4,
+        "pua": 3,
+        "media": 3,
+        "social-media": 2,
+        "impeccable": 2,
+        "mcp": 2,
+        "gaming": 1,
+        "data-science": 1,
+        "note-taking": 1,
+        "email": 1,
+        "smart-home": 1
+      },
+      "status": "OVERFLOW"
+    },
+    "dreyfus_grade": {
+      "metric": "Dreyfus \u6280\u80fd\u6210\u719f\u5ea6\u5206\u5e03",
+      "value": {
+        "L1": 55,
+        "L2": 16,
+        "L3": 69,
+        "L4": 56,
+        "L5": 0
+      },
+      "avg": 2.642857142857143,
+      "status": "OK"
+    },
+    "second_order": {
+      "metric": "\u4e8c\u9636\u81ea\u5ba1\u8ba1 \u2014 \u89c4\u5219\u6d3b\u6027",
+      "value": "0/4 \u6d3b\u8dc3",
+      "dormant_rules": [
+        "stale_deprecation",
+        "skeleton_detection",
+        "conflict_detection",
+        "broken_refs"
+      ],
+      "active_rules": [],
+      "status": "HIGH_DORMANCY"
+    },
+    "nudge": {
+      "metric": "\u6fc0\u52b1\u79ef\u5206 & \u4f7f\u7528\u70ed\u70b9",
+      "value": "0 \u5206",
+      "reward_points": 0,
+      "top_loaded": [],
+      "status": "NO_INCENTIVE_DATA"
+    },
+    "meme_flow": {
+      "metric": "\u6a21\u56e0\u6c60 \u2014 \u540c\u7c7b\u6280\u80fd\u805a\u7c7b",
+      "value": "21 \u4e2a\u591a\u6210\u5458\u7c7b\u522b",
+      "clusters": {
+        "software-development": 43,
+        "mlops": 22,
+        "creative": 20,
+        "productivity": 11,
+        "ui-ux-pro-max": 7,
+        "devops": 7,
+        "github": 7,
+        "apple": 6,
+        "research": 6,
+        "autonomous-ai-agents": 6
+      },
+      "status": "HIGH_CLUSTERING"
+    },
+    "content_overlap": {
+      "metric": "\u5185\u5bb9\u91cd\u53e0 \u2192 \u5efa\u8bae\u5408\u5e76",
+      "value": "3 \u5bf9\u9ad8\u5ea6\u76f8\u4f3c",
+      "details": [
+        "devops/semantic-release-monorepo \u2194 devops/cloudflare-pages-pnpm (0.41)",
+        "impeccable/source/skills/impeccable \u2194 impeccable/.claude/skills/impeccable (0.98)",
+        "mlops/training/axolotl \u2194 mlops/training/unsloth (0.39)"
+      ],
+      "status": "3 OVERLAPS"
+    },
+    "skill_dependencies": {
+      "metric": "\u6280\u80fd\u4f9d\u8d56\u58f0\u660e",
+      "value": "56/196 \u58f0\u660e\u4e86 related_skills",
+      "details": [
+        "\u53e6\u6709 1007 \u4e2a\u6280\u80fd\u6b63\u6587\u9690\u542b\u4ea4\u53c9\u5f15\u7528\uff08\u53ef\u80fd\u5e94\u58f0\u660e\u4f9d\u8d56\uff09"
+      ],
+      "status": "LOW_DEPENDENCY",
+      "suggestions": [
+        {
+          "skill": "apple",
+          "suggested_deps": [
+            "loop"
+          ]
+        },
+        {
+          "skill": "research",
+          "suggested_deps": [
+            "loop"
+          ]
+        },
+        {
+          "skill": "research/blogwatcher",
+          "suggested_deps": [
+            "feeds",
+            "github"
+          ]
+        },
+        {
+          "skill": "ui-ux-pro-max/.claude/skills/ui-ux-pro-max",
+          "suggested_deps": [
+            "ui-ux-pro-max/.claude/skills/design",
+            "ui-ux-pro-max/.claude/skills/brand",
+            "ui-ux-pro-max/.claude/skills/design-system",
+            "gaming",
+            "leisure"
+          ]
+        },
+        {
+          "skill": "ui-ux-pro-max/.claude/skills/design",
+          "suggested_deps": [
+            "ui-ux-pro-max/.claude/skills/ui-ux-pro-max",
+            "ui-ux-pro-max/.claude/skills/ui-styling",
+            "ui-ux-pro-max/.claude/skills/brand",
+            "ui-ux-pro-max/.claude/skills/slides",
+            "ui-ux-pro-max/.claude/skills/design-system"
+          ]
+        },
+        {
+          "skill": "ui-ux-pro-max/.claude/skills/banner-design",
+          "suggested_deps": [
+            "research",
+            "ui-ux-pro-max/.claude/skills/ui-ux-pro-max",
+            "ui-ux-pro-max/.claude/skills/design",
+            "ui-ux-pro-max/.claude/skills/brand",
+            "mlops/cloud/modal"
+          ]
+        },
+        {
+          "skill": "ui-ux-pro-max/.claude/skills/ui-styling",
+          "suggested_deps": [
+            "ui-ux-pro-max/.claude/skills/design",
+            "ui-ux-pro-max/.claude/skills/brand",
+            "ui-ux-pro-max/.claude/skills/design-system",
+            "email",
+            "media"
+          ]
+        },
+        {
+          "skill": "ui-ux-pro-max/.claude/skills/brand",
+          "suggested_deps": [
+            "ui-ux-pro-max/.claude/skills/design",
+            "mlops/inference/guidance"
+          ]
+        },
+        {
+          "skill": "ui-ux-pro-max/.claude/skills/slides",
+          "suggested_deps": [
+            "ui-ux-pro-max/.claude/skills/design"
+          ]
+        },
+        {
+          "skill": "ui-ux-pro-max/.claude/skills/design-system",
+          "suggested_deps": [
+            "ui-ux-pro-max/.claude/skills/design",
+            "ui-ux-pro-max/.claude/skills/ui-styling",
+            "ui-ux-pro-max/.claude/skills/brand",
+            "ui-ux-pro-max/.claude/skills/slides",
+            "domain"
+          ]
+        },
+        {
+          "skill": "gaming",
+          "suggested_deps": [
+            "loop"
+          ]
+        },
+        {
+          "skill": "gaming/minecraft-modpack-server",
+          "suggested_deps": [
+            "creative",
+            "loop"
+          ]
+        },
+        {
+          "skill": "social-media",
+          "suggested_deps": [
+            "loop"
+          ]
+        },
+        {
+          "skill": "social-media/xurl",
+          "suggested_deps": [
+            "social-media/xitter",
+            "software-development/plan",
+            "github",
+            "media"
+          ]
+        },
+        {
+          "skill": "social-media/xitter",
+          "suggested_deps": [
+            "software-development/plan",
+            "github"
+          ]
+        },
+        {
+          "skill": "devops",
+          "suggested_deps": [
+            "loop"
+          ]
+        },
+        {
+          "skill": "devops/gateway-telegram-setup",
+          "suggested_deps": [
+            "loop",
+            "autonomous-ai-agents/hermes-agent"
+          ]
+        },
+        {
+          "skill": "devops/semantic-release-monorepo",
+          "suggested_deps": [
+            "github"
+          ]
+        },
+        {
+          "skill": "devops/webhook-subscriptions",
+          "suggested_deps": [
+            "github",
+            "github/github-code-review",
+            "github/github-issues",
+            "email",
+            "loop"
+          ]
+        },
+        {
+          "skill": "devops/cloudflare-pages-pnpm",
+          "suggested_deps": [
+            "github"
+          ]
+        },
+        {
+          "skill": "bayesian-agent",
+          "suggested_deps": [
+            "software-development/requesting-code-review",
+            "darwin-skill"
+          ]
+        },
+        {
+          "skill": "leisure",
+          "suggested_deps": [
+            "loop"
+          ]
+        },
+        {
+          "skill": "p10",
+          "suggested_deps": [
+            "ui-ux-pro-max/.claude/skills/design",
+            "software-development/requirement-clarification",
+            "loop"
+          ]
+        },
+        {
+          "skill": "pro",
+          "suggested_deps": [
+            "email"
+          ]
+        },
+        {
+          "skill": "impeccable/source/skills/impeccable",
+          "suggested_deps": [
+            "ui-ux-pro-max/.claude/skills/design",
+            "ui-ux-pro-max/.claude/skills/brand",
+            "impeccable/.claude/skills/impeccable",
+            "mlops/models/clip",
+            "creative"
+          ]
+        },
+        {
+          "skill": "impeccable/.claude/skills/impeccable",
+          "suggested_deps": [
+            "ui-ux-pro-max/.claude/skills/design",
+            "ui-ux-pro-max/.claude/skills/brand",
+            "impeccable/source/skills/impeccable",
+            "mlops/models/clip",
+            "creative"
+          ]
+        },
+        {
+          "skill": "data-science",
+          "suggested_deps": [
+            "loop"
+          ]
+        },
+        {
+          "skill": "data-science/jupyter-live-kernel",
+          "suggested_deps": [
+            "github"
+          ]
+        },
+        {
+          "skill": "api-and-interface-design",
+          "suggested_deps": [
+            "ui-ux-pro-max/.claude/skills/design",
+            "software-development/router",
+            "domain",
+            "email",
+            "productivity/linear"
+          ]
+        },
+        {
+          "skill": "software-development",
+          "suggested_deps": [
+            "software-development/post-deploy-verification",
+            "software-development/browser-harness-integration",
+            "software-development/incident-response",
+            "software-development/test-driven-development",
+            "software-development/requirement-clarification"
+          ]
+        },
+        {
+          "skill": "software-development/post-update-patch-healing",
+          "suggested_deps": [
+            "ui-ux-pro-max/.claude/skills/design",
+            "software-development/systematic-debugging",
+            "software-development/skill-ecosystem-diagnosis",
+            "software-development/skill-ecosystem-governance",
+            "mlops/training/axolotl"
+          ]
+        },
+        {
+          "skill": "software-development/incident-response",
+          "suggested_deps": [
+            "software-development/post-deploy-verification",
+            "software-development/systematic-debugging"
+          ]
+        },
+        {
+          "skill": "software-development/agent-team-parallel",
+          "suggested_deps": [
+            "software-development/plan"
+          ]
+        },
+        {
+          "skill": "software-development/requirement-clarification",
+          "suggested_deps": [
+            "software-development/plan",
+            "software-development/writing-plans"
+          ]
+        },
+        {
+          "skill": "software-development/multi-model-architecture",
+          "suggested_deps": [
+            "incremental-implementation",
+            "software-development/plan",
+            "software-development/multi-model-thinking",
+            "software-development/spike",
+            "software-development/router"
+          ]
+        },
+        {
+          "skill": "software-development/python-multiline-grep-engine",
+          "suggested_deps": [
+            "loop"
+          ]
+        },
+        {
+          "skill": "software-development/uimax-audit",
+          "suggested_deps": [
+            "ui-ux-pro-max/.claude/skills/design",
+            "software-development/plan",
+            "software-development/visual-regression",
+            "software-development/color-contrast-checker",
+            "software-development/router"
+          ]
+        },
+        {
+          "skill": "software-development/arc-dispatch-executor",
+          "suggested_deps": [
+            "ui-ux-pro-max/.claude/skills/design",
+            "software-development/plan",
+            "software-development/router",
+            "email",
+            "media"
+          ]
+        },
+        {
+          "skill": "software-development/skill-ecosystem-diagnosis",
+          "suggested_deps": [
+            "ui-ux-pro-max/.claude/skills/design",
+            "domain",
+            "autonomous-ai-agents/codex",
+            "autonomous-ai-agents/hermes-agent",
+            "media"
+          ]
+        },
+        {
+          "skill": "software-development/hermes-workflow-orchestrator",
+          "suggested_deps": [
+            "research",
+            "software-development/plan",
+            "software-development/arc-dispatch-executor",
+            "software-development/requesting-code-review",
+            "software-development/router"
+          ]
+        },
+        {
+          "skill": "software-development/multi-model-thinking",
+          "suggested_deps": [
+            "research",
+            "ui-ux-pro-max/.claude/skills/design",
+            "devops/kanban-worker",
+            "devops/kanban-orchestrator",
+            "incremental-implementation"
+          ]
+        },
+        {
+          "skill": "software-development/visual-regression",
+          "suggested_deps": [
+            "ui-ux-pro-max/.claude/skills/design"
+          ]
+        },
+        {
+          "skill": "software-development/workflow-ecosystem-audit",
+          "suggested_deps": [
+            "software-development",
+            "domain"
+          ]
+        },
+        {
+          "skill": "software-development/skill-eval",
+          "suggested_deps": [
+            "software-development/uimax-audit",
+            "software-development/auto-optimize-loop",
+            "software-development/requesting-code-review",
+            "domain",
+            "loop"
+          ]
+        },
+        {
+          "skill": "software-development/react-architecture-migration",
+          "suggested_deps": [
+            "ui-ux-pro-max/.claude/skills/design",
+            "ui-ux-pro-max/.claude/skills/brand",
+            "software-development/subagent-driven-development",
+            "software-development/router",
+            "mlops/cloud/modal"
+          ]
+        },
+        {
+          "skill": "software-development/color-contrast-checker",
+          "suggested_deps": [
+            "productivity/linear"
+          ]
+        },
+        {
+          "skill": "software-development/self-evolve-via-claude",
+          "suggested_deps": [
+            "research",
+            "ui-ux-pro-max/.claude/skills/design",
+            "software-development/plan",
+            "software-development/self-improvement-pipeline",
+            "software-development/router"
+          ]
+        },
+        {
+          "skill": "software-development/stuck-diagnosis",
+          "suggested_deps": [
+            "software-development/hermes-workflow-orchestrator",
+            "autonomous-ai-agents/hermes-agent"
+          ]
+        },
+        {
+          "skill": "software-development/self-improvement-pipeline",
+          "suggested_deps": [
+            "research",
+            "ui-ux-pro-max/.claude/skills/design",
+            "devops",
+            "software-development/plan",
+            "software-development/skill-ecosystem-governance"
+          ]
+        },
+        {
+          "skill": "software-development/skill-ecosystem-governance",
+          "suggested_deps": [
+            "software-development/systematic-debugging",
+            "software-development/plan",
+            "software-development/uimax-audit",
+            "software-development/skill-ecosystem-diagnosis",
+            "software-development/workflow-ecosystem-audit"
+          ]
+        },
+        {
+          "skill": "software-development/theory-driven-evolution",
+          "suggested_deps": [
+            "software-development/plan",
+            "software-development/multi-model-thinking",
+            "domain",
+            "loop"
+          ]
+        },
+        {
+          "skill": "software-development/router",
+          "suggested_deps": [
+            "research",
+            "devops",
+            "software-development",
+            "software-development/plan"
+          ]
+        },
+        {
+          "skill": "pua/codex/pua-en",
+          "suggested_deps": [
+            "research",
+            "ui-ux-pro-max/.claude/skills/design",
+            "software-development/systematic-debugging",
+            "software-development/plan",
+            "creative/sketch"
+          ]
+        },
+        {
+          "skill": "pua/codex/pua",
+          "suggested_deps": [
+            "software-development/systematic-debugging",
+            "pua/codex/pua-en"
+          ]
+        },
+        {
+          "skill": "pua/codex/pua-ja",
+          "suggested_deps": [
+            "software-development/systematic-debugging",
+            "pua/codex/pua-en"
+          ]
+        },
+        {
+          "skill": "mlops",
+          "suggested_deps": [
+            "loop"
+          ]
+        },
+        {
+          "skill": "mlops/research/dspy",
+          "suggested_deps": [
+            "apple",
+            "github"
+          ]
+        },
+        {
+          "skill": "mlops/training/trl-fine-tuning",
+          "suggested_deps": [
+            "ui-ux-pro-max/.claude/skills/design",
+            "mlops/training/peft",
+            "mlops/models/clip",
+            "mlops/inference/guidance",
+            "github"
+          ]
+        },
+        {
+          "skill": "mlops/training/grpo-rl-training",
+          "suggested_deps": [
+            "research/arxiv",
+            "ui-ux-pro-max/.claude/skills/design",
+            "mlops/training/peft",
+            "mlops/training/unsloth",
+            "mlops/inference/guidance"
+          ]
+        },
+        {
+          "skill": "mlops/training/peft",
+          "suggested_deps": [
+            "mlops/training/axolotl",
+            "mlops/inference/vllm",
+            "github",
+            "domain",
+            "productivity/linear"
+          ]
+        },
+        {
+          "skill": "mlops/training/axolotl",
+          "suggested_deps": [
+            "software-development/plan",
+            "mlops/cloud/modal",
+            "github"
+          ]
+        },
+        {
+          "skill": "mlops/training/pytorch-fsdp",
+          "suggested_deps": [
+            "ui-ux-pro-max/.claude/skills/brand",
+            "software-development/plan",
+            "mlops/inference/outlines",
+            "github",
+            "loop"
+          ]
+        },
+        {
+          "skill": "mlops/training/unsloth",
+          "suggested_deps": [
+            "software-development/plan"
+          ]
+        },
+        {
+          "skill": "mlops/models/audiocraft",
+          "suggested_deps": [
+            "research",
+            "research/arxiv",
+            "ui-ux-pro-max/.claude/skills/design",
+            "mlops/inference/guidance",
+            "github"
+          ]
+        },
+        {
+          "skill": "mlops/models/segment-anything",
+          "suggested_deps": [
+            "research",
+            "research/arxiv",
+            "github",
+            "domain"
+          ]
+        },
+        {
+          "skill": "mlops/models/clip",
+          "suggested_deps": [
+            "research",
+            "research/arxiv",
+            "mlops/cloud/modal",
+            "github"
+          ]
+        },
+        {
+          "skill": "mlops/models/stable-diffusion",
+          "suggested_deps": [
+            "ui-ux-pro-max/.claude/skills/design",
+            "mlops/inference/guidance",
+            "github",
+            "creative",
+            "creative/sketch"
+          ]
+        },
+        {
+          "skill": "mlops/models/whisper",
+          "suggested_deps": [
+            "research/arxiv",
+            "github"
+          ]
+        },
+        {
+          "skill": "mlops/cloud/modal",
+          "suggested_deps": [
+            "mlops/models/whisper",
+            "github"
+          ]
+        },
+        {
+          "skill": "mlops/inference/guidance",
+          "suggested_deps": [
+            "mlops/inference/gguf",
+            "github",
+            "email",
+            "loop"
+          ]
+        },
+        {
+          "skill": "mlops/inference/gguf",
+          "suggested_deps": [
+            "mlops/inference/llama-cpp",
+            "github"
+          ]
+        },
+        {
+          "skill": "mlops/inference/vllm",
+          "suggested_deps": [
+            "github"
+          ]
+        },
+        {
+          "skill": "mlops/inference/llama-cpp",
+          "suggested_deps": [
+            "mlops/training/unsloth",
+            "mlops/cloud/modal",
+            "mlops/inference/guidance",
+            "mlops/inference/gguf",
+            "github"
+          ]
+        },
+        {
+          "skill": "mlops/inference/outlines",
+          "suggested_deps": [
+            "mlops/inference/gguf",
+            "mlops/inference/vllm",
+            "mlops/inference/llama-cpp",
+            "github",
+            "email"
+          ]
+        },
+        {
+          "skill": "mlops/evaluation/lm-evaluation-harness",
+          "suggested_deps": [
+            "mlops/inference/vllm",
+            "github",
+            "domain",
+            "loop"
+          ]
+        },
+        {
+          "skill": "mlops/evaluation/weights-and-biases",
+          "suggested_deps": [
+            "research",
+            "github",
+            "loop",
+            "media"
+          ]
+        },
+        {
+          "skill": "cognitive-load-agent",
+          "suggested_deps": [
+            "bayesian-agent"
+          ]
+        },
+        {
+          "skill": "mcp/mcporter",
+          "suggested_deps": [
+            "productivity/linear"
+          ]
+        },
+        {
+          "skill": "darwin-skill",
+          "suggested_deps": [
+            "research",
+            "ui-ux-pro-max/.claude/skills/slides",
+            "bayesian-agent",
+            "github",
+            "loop"
+          ]
+        },
+        {
+          "skill": "p7",
+          "suggested_deps": [
+            "software-development/test-driven-development",
+            "software-development/systematic-debugging",
+            "software-development/plan",
+            "loop"
+          ]
+        },
+        {
+          "skill": "p9",
+          "suggested_deps": [
+            "ui-ux-pro-max/.claude/skills/design",
+            "cognitive-load-agent",
+            "loop"
+          ]
+        },
+        {
+          "skill": "diagramming",
+          "suggested_deps": [
+            "loop"
+          ]
+        },
+        {
+          "skill": "github",
+          "suggested_deps": [
+            "email",
+            "loop"
+          ]
+        },
+        {
+          "skill": "note-taking",
+          "suggested_deps": [
+            "loop"
+          ]
+        },
+        {
+          "skill": "note-taking/obsidian",
+          "suggested_deps": [
+            "ui-ux-pro-max/.claude/skills/design",
+            "software-development/plan",
+            "software-development/theory-driven-evolution",
+            "note-taking",
+            "framework-audit"
+          ]
+        },
+        {
+          "skill": "gsd-bridge",
+          "suggested_deps": [
+            "research",
+            "bayesian-agent",
+            "software-development/plan",
+            "darwin-skill"
+          ]
+        },
+        {
+          "skill": "framework-audit",
+          "suggested_deps": [
+            "ui-ux-pro-max/.claude/skills/design",
+            "bayesian-agent",
+            "software-development/post-deploy-verification",
+            "software-development/plan",
+            "software-development/router"
+          ]
+        },
+        {
+          "skill": "chinese-platforms",
+          "suggested_deps": [
+            "mcp/mcporter",
+            "domain"
+          ]
+        },
+        {
+          "skill": "creative/creative-ideation",
+          "suggested_deps": [
+            "software-development/plan",
+            "creative",
+            "domain"
+          ]
+        },
+        {
+          "skill": "creative/baoyu-infographic",
+          "suggested_deps": [
+            "ui-ux-pro-max/.claude/skills/design",
+            "mlops/inference/outlines",
+            "github",
+            "productivity/linear"
+          ]
+        },
+        {
+          "skill": "creative/songwriting-and-ai-music",
+          "suggested_deps": [
+            "mlops/models/clip",
+            "mlops/models/whisper"
+          ]
+        },
+        {
+          "skill": "creative/web-animation-patterns",
+          "suggested_deps": [
+            "ui-ux-pro-max/.claude/skills/design",
+            "loop"
+          ]
+        },
+        {
+          "skill": "creative/baoyu-comic",
+          "suggested_deps": [
+            "ui-ux-pro-max/.claude/skills/design",
+            "mlops/inference/outlines",
+            "github",
+            "productivity/maps"
+          ]
+        },
+        {
+          "skill": "creative/popular-web-designs",
+          "suggested_deps": [
+            "apple",
+            "ui-ux-pro-max/.claude/skills/design",
+            "ui-ux-pro-max/.claude/skills/brand",
+            "autonomous-ai-agents/opencode",
+            "productivity/maps"
+          ]
+        },
+        {
+          "skill": "creative/manim-video",
+          "suggested_deps": [
+            "research",
+            "ui-ux-pro-max/.claude/skills/design",
+            "ui-ux-pro-max/.claude/skills/slides",
+            "software-development/plan",
+            "mlops/models/clip"
+          ]
+        },
+        {
+          "skill": "creative/web-animation-optimization",
+          "suggested_deps": [
+            "ui-ux-pro-max/.claude/skills/design",
+            "loop"
+          ]
+        },
+        {
+          "skill": "ui-skills/skills/fixing-motion-performance",
+          "suggested_deps": [
+            "mlops/inference/guidance",
+            "loop",
+            "productivity/linear"
+          ]
+        },
+        {
+          "skill": "ui-skills/skills/baseline-ui",
+          "suggested_deps": [
+            "loop"
+          ]
+        },
+        {
+          "skill": "ui-skills/skills/fixing-accessibility",
+          "suggested_deps": [
+            "mlops/cloud/modal",
+            "mlops/inference/guidance",
+            "mlops/inference/outlines",
+            "email",
+            "media"
+          ]
+        },
+        {
+          "skill": "ui-skills/skills/fixing-metadata",
+          "suggested_deps": [
+            "apple",
+            "mlops/inference/guidance",
+            "productivity/maps"
+          ]
+        },
+        {
+          "skill": "taste-skill",
+          "suggested_deps": [
+            "research",
+            "email"
+          ]
+        },
+        {
+          "skill": "source-driven-development",
+          "suggested_deps": [
+            "software-development/router",
+            "domain",
+            "email"
+          ]
+        },
+        {
+          "skill": "ooda-agent",
+          "suggested_deps": [
+            "bayesian-agent",
+            "loop"
+          ]
+        },
+        {
+          "skill": "p10-architecture-self-check",
+          "suggested_deps": [
+            "impeccable/source/skills/impeccable",
+            "impeccable/.claude/skills/impeccable",
+            "software-development/plan",
+            "software-development/self-evolve-via-claude",
+            "software-development/stuck-diagnosis"
+          ]
+        },
+        {
+          "skill": "email/himalaya",
+          "suggested_deps": [
+            "github",
+            "email"
+          ]
+        },
+        {
+          "skill": "smart-home/openhue",
+          "suggested_deps": [
+            "github"
+          ]
+        },
+        {
+          "skill": "autonomous-ai-agents/hermes-pipeline",
+          "suggested_deps": [
+            "software-development",
+            "software-development/plan",
+            "software-development/multi-model-thinking",
+            "software-development/requesting-code-review",
+            "software-development/router"
+          ]
+        },
+        {
+          "skill": "productivity/teams-meeting-pipeline",
+          "suggested_deps": [
+            "software-development/plan",
+            "media"
+          ]
+        },
+        {
+          "skill": "productivity/linear",
+          "suggested_deps": [
+            "software-development/plan",
+            "email"
+          ]
+        },
+        {
+          "skill": "productivity/notion",
+          "suggested_deps": [
+            "email"
+          ]
+        },
+        {
+          "skill": "productivity/airtable",
+          "suggested_deps": [
+            "loop"
+          ]
+        },
+        {
+          "skill": "productivity/powerpoint",
+          "suggested_deps": [
+            "ui-ux-pro-max/.claude/skills/design",
+            "ui-ux-pro-max/.claude/skills/slides"
+          ]
+        },
+        {
+          "skill": "media/gif-search",
+          "suggested_deps": [
+            "media"
+          ]
+        },
+        {
+          "skill": "documentation-and-adrs",
+          "suggested_deps": [
+            "media"
+          ]
+        }
+      ]
+    },
+    "skill_graph": {
+      "metric": "Skill Graphs 2.0 \u62d3\u6251\u5ba1\u8ba1",
+      "value": "edges=93, depth_max=4, cycles=0, tiers={'atom': 148, 'compound': 15, 'molecule': 33}",
+      "status": "OK",
+      "max_depth_allowed": 4,
+      "edge_count": 93,
+      "tier_counts": {
+        "atom": 148,
+        "compound": 15,
+        "molecule": 33
+      },
+      "explicit_tier_count": 1,
+      "cycle_count": 0,
+      "cycles": [],
+      "excessive_depth": [],
+      "typed_violations": [],
+      "missing_dependencies": [
+        {
+          "skill": "apple/macos-computer-use",
+          "dependency": "browser"
+        },
+        {
+          "skill": "research/research-paper-writing",
+          "dependency": "ml-paper-writing"
+        },
+        {
+          "skill": "software-development/private-fork-evolution-governance",
+          "dependency": "save-workflow-as-skill"
+        },
+        {
+          "skill": "software-development/multi-agent-code-review",
+          "dependency": "delegate_task"
+        },
+        {
+          "skill": "software-development/hermes-warning-governance",
+          "dependency": "save-workflow-as-skill"
+        },
+        {
+          "skill": "feeds",
+          "dependency": "cronjob"
+        },
+        {
+          "skill": "creative/comfyui",
+          "dependency": "image_gen"
+        },
+        {
+          "skill": "creative/touchdesigner-mcp",
+          "dependency": "ascii-video"
+        },
+        {
+          "skill": "creative/touchdesigner-mcp",
+          "dependency": "hermes-video"
+        },
+        {
+          "skill": "creative/p5js",
+          "dependency": "ascii-video"
+        },
+        {
+          "skill": "creative/architecture-diagram",
+          "dependency": "concept-diagrams"
+        }
+      ],
+      "ambiguous_dependencies": [],
+      "migration_suggestions": [
+        {
+          "skill": "apple",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "apple/apple-reminders",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "apple/macos-computer-use",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "apple/imessage",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "apple/findmy",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "apple/apple-notes",
+          "suggested_tier": "molecule",
+          "reason": "deps=1, depth=1"
+        },
+        {
+          "skill": "research",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "research/blogwatcher",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "research/polymarket",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "research/llm-wiki",
+          "suggested_tier": "compound",
+          "reason": "deps=2, depth=3"
+        },
+        {
+          "skill": "research/arxiv",
+          "suggested_tier": "molecule",
+          "reason": "deps=1, depth=2"
+        },
+        {
+          "skill": "research/research-paper-writing",
+          "suggested_tier": "compound",
+          "reason": "deps=3, depth=4"
+        },
+        {
+          "skill": "ui-ux-pro-max/.claude/skills/ui-ux-pro-max",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "ui-ux-pro-max/.claude/skills/design",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "ui-ux-pro-max/.claude/skills/banner-design",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "ui-ux-pro-max/.claude/skills/ui-styling",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "ui-ux-pro-max/.claude/skills/brand",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "ui-ux-pro-max/.claude/skills/slides",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "ui-ux-pro-max/.claude/skills/design-system",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "idea-refine",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "gaming",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "gaming/minecraft-modpack-server",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "social-media",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "social-media/xurl",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "social-media/xitter",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "devops",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "devops/gateway-telegram-setup",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "devops/semantic-release-monorepo",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "devops/kanban-worker",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "devops/webhook-subscriptions",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "devops/kanban-orchestrator",
+          "suggested_tier": "molecule",
+          "reason": "deps=1, depth=1"
+        },
+        {
+          "skill": "devops/cloudflare-pages-pnpm",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "bayesian-agent",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "leisure",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "p10",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "incremental-implementation",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "pro",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "yuanbao",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "impeccable/source/skills/impeccable",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "impeccable/.claude/skills/impeccable",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "data-science",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "data-science/jupyter-live-kernel",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "api-and-interface-design",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "software-development",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "software-development/post-update-patch-healing",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "software-development/post-deploy-verification",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "software-development/browser-harness-integration",
+          "suggested_tier": "molecule",
+          "reason": "deps=3, depth=1"
+        },
+        {
+          "skill": "software-development/incident-response",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "software-development/agent-team-parallel",
+          "suggested_tier": "atom",
+          "reason": "deps=0, depth=0"
+        },
+        {
+          "skill": "software-development/test-driven-development",
+          "suggested_tier": "molecule",
+          "reason": "deps=1, depth=1"
+        }
+      ],
+      "details": [
+        "\u663e\u5f0f tier: 1/196\uff1b\u672a\u58f0\u660e\u6309 deps/depth \u63a8\u65ad\u5e76\u7ed9\u51fa\u8fc1\u79fb\u5efa\u8bae",
+        "fail-closed gate: cycles=0, excessive_depth=0, typed_violations=0"
+      ]
+    },
+    "supply_chain": {
+      "metric": "\u4f9b\u5e94\u94fe\u5b89\u5168\u626b\u63cf",
+      "value": "npx=17, pip=33, curl|sh=5",
+      "details": [
+        "\u9ad8\u5371: curl|sh \u5728 apple/macos-computer-use, social-media/xurl, software-development/node-inspect-debugger, mlops/huggingface-hub, autonomous-ai-agents/hermes-agent"
+      ],
+      "status": "5 HIGH_RISK"
+    },
+    "token_impact": {
+      "metric": "Token \u6d88\u8017\u5ba1\u8ba1\uff08\u4e09\u5c42\u52a0\u8f7d vs \u5168\u91cf\uff09",
+      "value": "Layer1=9,800tok | +3\u76f8\u5173=17,637tok | \u5168\u91cf=512,052tok",
+      "details": [
+        "\u4e09\u5c42\u52a0\u8f7d\u8282\u7ea6 ~96% tokens\uff08vs \u5168\u91cf\u52a0\u8f7d 196 \u4e2a skill\uff09"
+      ],
+      "status": "OK"
+    }
+  },
+  "summary": {
+    "pass_count": 7,
+    "fail_count": 9,
+    "total_skills": 200
+  }
+}

@@ -1,0 +1,281 @@
+{
+  "generatedAt": "2026-05-11T16:09:22.278Z",
+  "target": "Taskpool U-VISA /card restore original full-card UI with temporary hardcoded fake data",
+  "url": "http://localhost:5173/card",
+  "implementationCommit": "56ee3e9cbc799f582e689b5416e4332dee70a4ae",
+  "results": [
+    {
+      "viewport": {
+        "name": "iphone-se-375",
+        "width": 375,
+        "height": 667
+      },
+      "screenshot": "/Users/charles/Documents/brain/05-实践与项目/projects/uvisa-app-2.0/evidence/taskpool/uvisa-card-home-restore-original-ui-2026-05-12/iphone-se-375.png",
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        }
+      ],
+      "pageErrors": [],
+      "failedRequests": [
+        {
+          "url": "http://localhost:5173/api/remit/payees",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://localhost:5173/api/remit/payees",
+          "failure": "net::ERR_ABORTED"
+        }
+      ],
+      "non2xx": [],
+      "url": "http://localhost:5173/card",
+      "title": "UVisa · 私享银行",
+      "textSample": "LH Bank\n发卡行\n余额\n$ 185,620.50\n状态\n正常\n实体卡\nVISA\n524013******9055\n充值\n提现\n冻结\n详情\n理财产品\n查看详情\n活期理财\nUVisa Daily Flex USD\n4.25%\nUSD · T+0\n定期理财\nUVisa Stable Income 90D\n6.80%\nUSD · 90 days\n最近交易\n查看账单\n消费\nApple Fifth Avenue\n2026/05/10\n-$ 2,580.00 USD\n充值\n2026/05/09\n+$ 50,000.00 USD\n消费\nRaffles Hotel Singapore\n2026/05/08\n-$ 1,320.50 USD\n消费\nHermès Paris\n2026/05/07\n-$ 4,680.00 USD\n提现\n2026/05/06\n-$ 5,000.00 USD\n资产\nU-VISA\n财富\n我的\n网络异常，请稍后重试\n现在",
+      "hasNoPhysicalCardEmptyState": false,
+      "hasNoCardTransactionsEmptyState": false,
+      "hasFullCardFace": true,
+      "hasActions": true,
+      "hasRecentTransactions": true,
+      "hasWealthProducts": true,
+      "docScrollWidth": 375,
+      "viewportWidth": 375,
+      "viewportHeight": 667,
+      "horizontalOverflow": false,
+      "bottomNavTop": 585,
+      "mainBottom": 577,
+      "cardRect": {
+        "top": 60,
+        "left": 16,
+        "width": 343,
+        "height": 214.375,
+        "bottom": 274.375
+      }
+    },
+    {
+      "viewport": {
+        "name": "iphone-13-390",
+        "width": 390,
+        "height": 844
+      },
+      "screenshot": "/Users/charles/Documents/brain/05-实践与项目/projects/uvisa-app-2.0/evidence/taskpool/uvisa-card-home-restore-original-ui-2026-05-12/iphone-13-390.png",
+      "consoleMessages": [
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        },
+        {
+          "type": "error",
+          "text": "Failed to load resource: the server responded with a status of 502 (Bad Gateway)"
+        }
+      ],
+      "pageErrors": [],
+      "failedRequests": [
+        {
+          "url": "http://localhost:5173/api/remit/payees",
+          "failure": "net::ERR_ABORTED"
+        },
+        {
+          "url": "http://localhost:5173/api/remit/payees",
+          "failure": "net::ERR_ABORTED"
+        }
+      ],
+      "non2xx": [],
+      "url": "http://localhost:5173/card",
+      "title": "UVisa · 私享银行",
+      "textSample": "LH Bank\n发卡行\n余额\n$ 185,620.50\n状态\n正常\n实体卡\nVISA\n524013******9055\n充值\n提现\n冻结\n详情\n理财产品\n查看详情\n活期理财\nUVisa Daily Flex USD\n4.25%\nUSD · T+0\n定期理财\nUVisa Stable Income 90D\n6.80%\nUSD · 90 days\n最近交易\n查看账单\n消费\nApple Fifth Avenue\n2026/05/10\n-$ 2,580.00 USD\n充值\n2026/05/09\n+$ 50,000.00 USD\n消费\nRaffles Hotel Singapore\n2026/05/08\n-$ 1,320.50 USD\n消费\nHermès Paris\n2026/05/07\n-$ 4,680.00 USD\n提现\n2026/05/06\n-$ 5,000.00 USD\n资产\nU-VISA\n财富\n我的\n网络异常，请稍后重试\n现在",
+      "hasNoPhysicalCardEmptyState": false,
+      "hasNoCardTransactionsEmptyState": false,
+      "hasFullCardFace": true,
+      "hasActions": true,
+      "hasRecentTransactions": true,
+      "hasWealthProducts": true,
+      "docScrollWidth": 390,
+      "viewportWidth": 390,
+      "viewportHeight": 844,
+      "horizontalOverflow": false,
+      "bottomNavTop": 762,
+      "mainBottom": 754,
+      "cardRect": {
+        "top": 60,
+        "left": 16,
+        "width": 358,
+        "height": 223.75,
+        "bottom": 283.75
+      }
+    }
+  ],
+  "pass": false
+}

@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Set up and run modal",
+    "expected": "modal configured and running"
+  },
+  {
+    "id": 2,
+    "prompt": "Debug modal configuration issue",
+    "expected": "Issue diagnosed"
+  }
+]

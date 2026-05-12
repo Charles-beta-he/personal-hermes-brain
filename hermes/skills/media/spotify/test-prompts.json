@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Use spotify to process media",
+    "expected": "Media processed"
+  },
+  {
+    "id": 2,
+    "prompt": "Configure spotify settings",
+    "expected": "Settings applied"
+  }
+]

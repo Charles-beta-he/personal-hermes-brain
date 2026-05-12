@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Set up and run llama-cpp",
+    "expected": "llama-cpp configured and running"
+  },
+  {
+    "id": 2,
+    "prompt": "Debug llama-cpp configuration issue",
+    "expected": "Issue diagnosed"
+  }
+]

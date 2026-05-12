@@ -1,0 +1,7 @@
+[
+  {
+    "id": 1,
+    "prompt": "全面测试这个应用的功能",
+    "expected": "Exploratory QA report"
+  }
+]

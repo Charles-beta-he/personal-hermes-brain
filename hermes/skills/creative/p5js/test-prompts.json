@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Create something using p5js",
+    "expected": "Creative output generated"
+  },
+  {
+    "id": 2,
+    "prompt": "Use p5js with specific parameters",
+    "expected": "Custom output produced"
+  }
+]

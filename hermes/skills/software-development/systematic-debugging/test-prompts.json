@@ -1,0 +1,7 @@
+[
+  {
+    "id": 1,
+    "prompt": "这个测试一直失败，帮我排查",
+    "expected": "Systematic root cause analysis"
+  }
+]

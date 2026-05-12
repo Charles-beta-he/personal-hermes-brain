@@ -1,0 +1,27 @@
+[
+  {
+    "id": 1,
+    "prompt": "评估 requesting-code-review 这个 skill 的可靠性",
+    "expected": "读取 confidence-db.json，输出该 skill 的置信度 mean、等级、使用次数、95% 可信区间"
+  },
+  {
+    "id": 2,
+    "prompt": "我要重构前端架构，推荐用哪个 skill",
+    "expected": "查询所有 skill 的 relevance × confidence 排序，推荐 top-3 并说明理由"
+  },
+  {
+    "id": 3,
+    "prompt": "更新 bayesian-agent 的置信度：这次任务成功了，用户给了好评",
+    "expected": "对应 skill 的 alpha += 2，重新计算 mean 和可信区间，输出更新后状态"
+  },
+  {
+    "id": 4,
+    "prompt": "展示当前所有 skill 的置信度分布",
+    "expected": "输出表格：skill 名 | mean | 等级 | 使用次数 | 95% 区间"
+  },
+  {
+    "id": 5,
+    "prompt": "p10 skill 的置信度太低了，为什么",
+    "expected": "分析 beta/alpha 比率，解释低置信原因，给出提升建议（增加成功样本）"
+  }
+]

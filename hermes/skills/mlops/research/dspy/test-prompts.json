@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Set up and run dspy",
+    "expected": "dspy configured and running"
+  },
+  {
+    "id": 2,
+    "prompt": "Debug dspy configuration issue",
+    "expected": "Issue diagnosed"
+  }
+]

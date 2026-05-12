@@ -1,0 +1,235 @@
+{
+  "schema": "rowboat_evidence_pack_v1",
+  "created_at": "2026-05-12T00:16:09+08:00",
+  "task_id": "2026-05-10-多模型分析-rowboatlabs-rowboat-并完善-hermes-自身",
+  "repo": {
+    "url": "https://github.com/rowboatlabs/rowboat",
+    "commit": "a9b4e0601806b36466a4f3932816f4f788962e38",
+    "files_tracked": 1129,
+    "license": "Apache-2.0 evidence from LICENSE/package metadata"
+  },
+  "status": "truth_grounded_advisory_not_ratified",
+  "claims": [
+    {
+      "id": "C-001",
+      "text": "Rowboat positions itself as a local-first AI coworker that stores long-lived working memory as Obsidian-compatible Markdown notes on the user's machine.",
+      "evidence": [
+        "E-README-LOCAL"
+      ]
+    },
+    {
+      "id": "C-002",
+      "text": "Rowboat's Electron app exposes typed agent definitions with built-in, MCP, and agent-as-tool attachments, plus scheduled agent entries for cron/window/once runs.",
+      "evidence": [
+        "E-AGENT-SCHEMA",
+        "E-SCHEDULE-SCHEMA"
+      ]
+    },
+    {
+      "id": "C-003",
+      "text": "Rowboat's run runtime has a run log/lock/abort flow, emits permission and ask-human events, supports agent subflows, and limits each LLM step to one step before processing tool calls.",
+      "evidence": [
+        "E-RUNTIME-LOCK",
+        "E-RUNTIME-PERMISSION",
+        "E-RUNTIME-STEP"
+      ]
+    },
+    {
+      "id": "C-004",
+      "text": "Rowboat Live Notes implement a concrete note-agent pattern: one objective in frontmatter, backend-only writes for live metadata, 15s timed scheduler, 5min backoff, per-note concurrency guard, event queue, FIFO event processing, and two-pass event routing.",
+      "evidence": [
+        "E-LIVE-DOC",
+        "E-LIVE-SCHEDULER",
+        "E-LIVE-RUNNER",
+        "E-LIVE-EVENTS",
+        "E-LIVE-ROUTING"
+      ]
+    },
+    {
+      "id": "C-005",
+      "text": "Rowboat includes local tool surfaces and external integrations that are useful references but are not safe to wholesale import into Hermes without sandbox/permission/proof review: shell command execution, MCP clients, Composio/API-key integrations, and OAuth/service integrations.",
+      "evidence": [
+        "E-README-TOOLS",
+        "E-COMMAND-EXECUTOR",
+        "E-MCP",
+        "E-LICENSE"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "id": "E-README-LOCAL",
+      "supports": [
+        "C-001"
+      ],
+      "source": "README.md:28-33,84-91,102-110,146-150",
+      "quote": "Open-source AI coworker... local-first... maintains an Obsidian-compatible vault of plain Markdown notes... everything lives on your machine as plain Markdown."
+    },
+    {
+      "id": "E-AGENT-SCHEMA",
+      "supports": [
+        "C-002"
+      ],
+      "source": "apps/x/packages/shared/src/agent.ts:3-35",
+      "quote": "ToolAttachment is a discriminated union of builtin, mcp, and agent; Agent has name/provider/model/description/instructions/tools."
+    },
+    {
+      "id": "E-SCHEDULE-SCHEMA",
+      "supports": [
+        "C-002"
+      ],
+      "source": "apps/x/packages/shared/src/agent-schedule.ts:3-44",
+      "quote": "CronSchedule, WindowSchedule, OnceSchedule, AgentScheduleEntry, AgentScheduleConfig."
+    },
+    {
+      "id": "E-RUNTIME-LOCK",
+      "supports": [
+        "C-003"
+      ],
+      "source": "apps/x/packages/core/src/agents/runtime.ts:143-227; apps/x/packages/core/src/runs/runs.ts:16-44,92-107",
+      "quote": "AgentRuntime.trigger locks a run, creates abort signal, appends/broadcasts events, cleans abort registry and releases lock; runs.ts creates runs/messages and stop() aborts."
+    },
+    {
+      "id": "E-RUNTIME-PERMISSION",
+      "supports": [
+        "C-003"
+      ],
+      "source": "apps/x/packages/core/src/agents/runtime.ts:938-1053,1219-1265; apps/x/packages/core/src/runs/runs.ts:47-78",
+      "quote": "ask-human calls wait; blocked executeCommand emits tool-permission-request; agent tools spawn subflows; permission responses resume runtime and optional always approval persists command names."
+    },
+    {
+      "id": "E-RUNTIME-STEP",
+      "supports": [
+        "C-003"
+      ],
+      "source": "apps/x/packages/core/src/agents/runtime.ts:1280-1297",
+      "quote": "streamText(... stopWhen: stepCountIs(1), abortSignal: signal)."
+    },
+    {
+      "id": "E-LIVE-DOC",
+      "supports": [
+        "C-004"
+      ],
+      "source": "apps/x/LIVE_NOTE.md:1-5,46-64,87-101,105-126,131-198,217-220",
+      "quote": "One live: frontmatter block with objective/triggers/runtime fields; renderer never writes live key; scheduler/event processor/runLiveNoteAgent; per-note serialization."
+    },
+    {
+      "id": "E-LIVE-SCHEDULER",
+      "supports": [
+        "C-004"
+      ],
+      "source": "apps/x/packages/core/src/knowledge/live-note/scheduler.ts:8-96",
+      "quote": "POLL_INTERVAL_MS=15_000; scans knowledge markdown; skips inactive; checks dueTimedTrigger and backoffRemainingMs; fires runLiveNoteAgent asynchronously."
+    },
+    {
+      "id": "E-LIVE-RUNNER",
+      "supports": [
+        "C-004"
+      ],
+      "source": "apps/x/packages/core/src/knowledge/live-note/runner.ts:103-235",
+      "quote": "runningLiveNotes Set concurrency guard; lastAttemptAt/lastRunId before execution; lastRunAt only on success; failure records lastRunError; cleanup in finally."
+    },
+    {
+      "id": "E-LIVE-EVENTS",
+      "supports": [
+        "C-004"
+      ],
+      "source": "apps/x/packages/core/src/knowledge/live-note/events.ts:13-35,87-157,160-204",
+      "quote": "events/pending and done JSON dirs; monotonic ID filenames; malformed events moved to done with error; filenames sorted; candidates processed sequentially and enriched."
+    },
+    {
+      "id": "E-LIVE-ROUTING",
+      "supports": [
+        "C-004"
+      ],
+      "source": "apps/x/packages/core/src/knowledge/live-note/routing.ts:18-33,64-111",
+      "quote": "Routing classifier is liberal and prefers false positives; targetFilePath short-circuits; batches of 20 generate Pass1OutputSchema filePaths."
+    },
+    {
+      "id": "E-README-TOOLS",
+      "supports": [
+        "C-005"
+      ],
+      "source": "README.md:63-75,139-144",
+      "quote": "Optional Deepgram/ElevenLabs/Exa/Composio API keys; MCP external tools; examples include search, databases, CRMs, support tools, automations."
+    },
+    {
+      "id": "E-COMMAND-EXECUTOR",
+      "supports": [
+        "C-005"
+      ],
+      "source": "apps/x/packages/core/src/application/lib/command-executor.ts:47-63,77-107,139-170",
+      "quote": "isBlocked uses allowlist/session allowed commands; executeCommand runs arbitrary shell through exec; abortable execution uses spawn shell with process group."
+    },
+    {
+      "id": "E-MCP",
+      "supports": [
+        "C-005"
+      ],
+      "source": "apps/x/packages/core/src/mcp/mcp.ts:22-77,120-138",
+      "quote": "MCP config supports stdio command/args/env and remote URL transports; executeTool calls client.callTool."
+    },
+    {
+      "id": "E-LICENSE",
+      "supports": [
+        "C-005"
+      ],
+      "source": "LICENSE:1-5; apps/x/apps/main/package.json:8; apps/cli/package.json:21",
+      "quote": "Apache License 2.0; main and CLI package metadata license Apache-2.0."
+    }
+  ],
+  "recommendations": [
+    {
+      "id": "R-P0-1",
+      "decision": "adopt_as_hermes_native_spike",
+      "title": "Event queue + proofed pending/done ledger for taskpool signals",
+      "why": "Rowboat's pending/done event queue and malformed-event quarantine map well to Hermes taskpool watcher events without importing runtime.",
+      "evidence": [
+        "E-LIVE-EVENTS"
+      ],
+      "next_slice": "Design a local-brain event artifact schema with source/type/payload/processedAt/error/proof_hash, read-only processor first."
+    },
+    {
+      "id": "R-P0-2",
+      "decision": "adopt_as_pattern_not_code",
+      "title": "Single-objective live task note envelope",
+      "why": "Rowboat's one objective + triggers + runtime fields is a clean control-plane invariant; Hermes already has mission envelopes and can add a lightweight validator/audit for objective/triggers/runtime separation.",
+      "evidence": [
+        "E-LIVE-DOC",
+        "E-LIVE-RUNNER"
+      ],
+      "next_slice": "Compare existing mission_envelope fields with live objective/triggers fields and add a schema-diff note before any validator patch."
+    },
+    {
+      "id": "R-P1-1",
+      "decision": "spike",
+      "title": "Liberal pass-1 routing + executor veto for multimodel/taskpool intervention",
+      "why": "This addresses Hermes keyword false-positive pressure: route broadly, but require executor/task verifier veto before mutation.",
+      "evidence": [
+        "E-LIVE-ROUTING"
+      ],
+      "next_slice": "Prototype offline classifier against current taskpool trigger logs; no write surface."
+    },
+    {
+      "id": "R-REJECT-1",
+      "decision": "reject_wholesale_adoption",
+      "title": "Do not import Rowboat runtime/Electron/Composio/MCP stack wholesale",
+      "why": "It overlaps with Hermes gateway/cron/memory/tooling, adds external key/tool surfaces, and lacks Hermes proof-chain/ratification gates by default.",
+      "evidence": [
+        "E-README-TOOLS",
+        "E-COMMAND-EXECUTOR",
+        "E-MCP"
+      ],
+      "next_slice": "Clean-room documentation only; no dependency or code copy."
+    }
+  ],
+  "verification": {
+    "deterministic": "repo cloned; files read with line citations; JSON validated",
+    "multimodel": "not run in this bounded slice; required before closeout/implementation certification"
+  },
+  "remaining_risks": [
+    "No target-bound Claude+GPT+DeepSeek+MiMo discussion_result for this Rowboat evidence pack yet.",
+    "No Hermes code patch was made in this slice; recommendations are advisory/spike candidates only.",
+    "Need deeper supply-chain review before any dependency/import/install decision."
+  ]
+}

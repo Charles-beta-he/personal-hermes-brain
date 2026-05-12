@@ -1,0 +1,20 @@
+{
+  "operation": "archive_legacy_top_dashboard",
+  "created": "2026-05-08T19:05:00+08:00",
+  "reason": "Close main hierarchy migration residue: remove top-level 06-仪表盘 while preserving historical dashboard snapshots under governance history.",
+  "items": [
+    {
+      "source": "06-仪表盘/00-仪表盘索引.md",
+      "target": "06-治理与评审/历史快照/legacy-06-dashboard-20260508/00-仪表盘索引.md",
+      "sha256_before": "efe36dd759cfec944d35921397a3373a323f1076457eed8244f3f153c86bd53f",
+      "bytes": 388
+    },
+    {
+      "source": "06-仪表盘/技能生态健康度.md",
+      "target": "06-治理与评审/历史快照/legacy-06-dashboard-20260508/技能生态健康度.md",
+      "sha256_before": "1e4b40f2a5b2d82a89dd12d245f3657d34effd3d5028316b71885e38e0b50ca4",
+      "bytes": 1311
+    }
+  ],
+  "rollback": "move files from archive target back to /06-仪表盘 and rerun selfchecks"
+}

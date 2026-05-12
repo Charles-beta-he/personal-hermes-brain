@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Set up and run gguf",
+    "expected": "gguf configured and running"
+  },
+  {
+    "id": 2,
+    "prompt": "Debug gguf configuration issue",
+    "expected": "Issue diagnosed"
+  }
+]

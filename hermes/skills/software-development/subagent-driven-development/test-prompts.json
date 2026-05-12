@@ -1,0 +1,7 @@
+[
+  {
+    "id": 1,
+    "prompt": "用子 agent 并行实现这个功能",
+    "expected": "Parallel execution workflow"
+  }
+]

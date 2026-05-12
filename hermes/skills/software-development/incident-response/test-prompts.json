@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Run incident-response on the current codebase",
+    "expected": "incident-response completed"
+  },
+  {
+    "id": 2,
+    "prompt": "Use incident-response with specific options",
+    "expected": "Options applied correctly"
+  }
+]

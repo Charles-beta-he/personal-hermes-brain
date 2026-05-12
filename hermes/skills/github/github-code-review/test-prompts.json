@@ -1,0 +1,7 @@
+[
+  {
+    "id": 1,
+    "prompt": "审查这个 PR 的代码质量",
+    "expected": "Code review with inline comments"
+  }
+]

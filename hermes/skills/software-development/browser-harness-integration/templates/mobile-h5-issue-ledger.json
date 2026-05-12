@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "matrix_version": "mobile-mainstream-v1",
+  "device_matrix": [
+    { "id": "ios-modern", "class": "Apple/iOS Safari/WebKit", "viewport": { "width": 390, "height": 844 }, "required": true },
+    { "id": "ios-short", "class": "Apple/iOS Safari/WebKit short-H5", "viewport": { "width": 390, "height": 667 }, "required": true },
+    { "id": "android-modern", "class": "Android Chrome/OEM WebView", "viewport": { "width": 412, "height": 915 }, "required": true },
+    { "id": "android-short", "class": "Android Chrome/OEM WebView short-H5", "viewport": { "width": 393, "height": 600 }, "required": true },
+    { "id": "harmony-modern", "class": "HarmonyOS/WebView", "viewport": { "width": 393, "height": 852 }, "required": true },
+    { "id": "harmony-short", "class": "HarmonyOS/WebView short-H5", "viewport": { "width": 393, "height": 580 }, "required": true }
+  ],
+  "issues": [
+    {
+      "issue_id": "UI-PIN-KEYPAD-CLIP-android-short",
+      "status": "open",
+      "severity": "P0",
+      "classification": "true_clip",
+      "device_id": "android-short",
+      "flow_step": "pin-step1",
+      "control": "random-number-keypad/delete-key",
+      "selector_or_text": "delete / keypad digit",
+      "bbox": { "x": 0, "y": 0, "w": 0, "h": 0, "bottom": 0, "viewport_height": 0 },
+      "evidence": {
+        "screenshot": "screenshots/33-android-short-393x600-pin-step1.png",
+        "layout_json": "evidence.json",
+        "vision_summary": "delete key or keypad row is clipped"
+      },
+      "scroll_probe": {
+        "attempted": false,
+        "result": "not_applicable_for_fixed_keypad"
+      },
+      "owner": "ui_css",
+      "resolution": null,
+      "fixed_in_commit": null
+    }
+  ],
+  "ratchet": {
+    "flow_completion_required": true,
+    "no_new_true_clip_p0": true,
+    "unclassified_high_allowed": false,
+    "may_reduce_device_matrix": false,
+    "may_relax_thresholds": false
+  }
+}

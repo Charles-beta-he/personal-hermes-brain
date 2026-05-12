@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Run skill-ecosystem-governance on the current codebase",
+    "expected": "skill-ecosystem-governance completed"
+  },
+  {
+    "id": 2,
+    "prompt": "Use skill-ecosystem-governance with specific options",
+    "expected": "Options applied correctly"
+  }
+]

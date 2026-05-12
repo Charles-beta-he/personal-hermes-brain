@@ -1,0 +1,8 @@
+{
+  "source": "/Users/charles/Library/Containers/com.larksuite.macos.lark/Data/Library/Application Support/LarkInternational/sdk_storage/f860a8b25f5ba958f164d39bf7fed0f5/resources/images/img_v3_0211h_23cfea26-4ba0-456e-85e5-62f5e00799hu.jpg",
+  "copied_to": "/Users/charles/Documents/brain/05-实践与项目/projects/uvisa-app-2.0/evidence/screenshots/uvisa-me-id-empty-20260510-160341.jpg",
+  "sha256": "66cdf3f00d6513a4f6dbe570af22826ed003735659ac694f44b5d11626d5c6c6",
+  "bytes": 27768,
+  "captured_from": "LarkInternational local sdk_storage image path supplied by user",
+  "observed_issue": "uvisa-app-2.0 personal/me page user info card shows `ID:` with copy icon but no visible ID value"
+}

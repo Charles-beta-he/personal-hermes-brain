@@ -1,0 +1,12 @@
+[
+  {
+    "id": 1,
+    "prompt": "Use google-workspace to create or access content",
+    "expected": "Content accessed"
+  },
+  {
+    "id": 2,
+    "prompt": "Manage google-workspace resources",
+    "expected": "Resources managed"
+  }
+]
