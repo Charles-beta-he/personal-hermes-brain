@@ -1,11 +1,33 @@
 ---
 name: fixing-accessibility
-description: Audit and fix HTML accessibility issues including ARIA labels, keyboard navigation, focus management, color contrast, and form errors. Use when adding interactive controls, forms, dialogs, or reviewing WCAG compliance.
+description: Use when adding interactive controls, forms, dialogs, or reviewing WCAG compliance.
+version: 1.0.0
+author: Hermes Agent
+license: MIT
+metadata:
+  hermes:
+    tags:
+    - fixing
+    - accessibility
+    - review
+    related_skills:
+    - email
+    - guidance
+    - media
+    - modal
+    - outlines
 ---
 
 # fixing-accessibility
 
+## Overview
+
+
 Fix accessibility issues.
+
+## When to Use
+
+- Adding interactive controls, forms, dialogs, or reviewing WCAG compliance
 
 ## how to use
 
@@ -134,3 +156,16 @@ Reference these guidelines when:
 - prefer native HTML before adding aria
 - quote the exact snippet, state the failure, propose a small fix
 - for complex widgets (menu, dialog, combobox), prefer established accessible primitives over custom behavior
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

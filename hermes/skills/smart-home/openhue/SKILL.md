@@ -1,18 +1,29 @@
 ---
 name: openhue
-description: Control Philips Hue lights, rooms, and scenes via the OpenHue CLI. Turn lights on/off, adjust brightness, color, color temperature, and activate scenes.
+description: Use when you need to control Philips Hue lights, rooms, and scenes via the OpenHue CLI.
 version: 1.0.0
 author: community
 license: MIT
+prerequisites:
+  commands:
+  - openhue
 metadata:
   hermes:
-    tags: [Smart-Home, Hue, Lights, IoT, Automation]
+    tags:
+    - Smart-Home
+    - Hue
+    - Lights
+    - IoT
+    - Automation
     homepage: https://www.openhue.io/cli
-prerequisites:
-  commands: [openhue]
+    related_skills:
+    - github
 ---
 
 # OpenHue CLI
+
+## Overview
+
 
 Control Philips Hue lights and scenes via a Hue Bridge from the terminal.
 
@@ -106,3 +117,16 @@ openhue set room "Living Room" --off
 - Colors only work on color-capable bulbs (not white-only models)
 - Light and room names are case-sensitive — use `openhue get light` to check exact names
 - Works great with cron jobs for scheduled lighting (e.g. dim at bedtime, bright at wake)
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

@@ -6,8 +6,20 @@ author: Hermes Agent (adapted from obra/superpowers)
 license: MIT
 metadata:
   hermes:
-    tags: [planning, design, implementation, workflow, documentation]
-    related_skills: []
+    tags:
+    - planning
+    - design
+    - implementation
+    - workflow
+    - documentation
+    related_skills:
+    - design
+    - domain
+    - email
+    - guidance
+    - plan
+    - subagent-driven-development
+    - test-driven-development
 ---
 
 # Writing Implementation Plans
@@ -281,6 +293,13 @@ When executing, use the `subagent-driven-development` skill:
 - Code quality review after spec passes
 - Proceed only when both reviews approve
 
+## Context Compaction Recovery
+
+For long-running or delegated work, make the plan file a recovery anchor, not just a design artifact:
+- Include a `Resume Protocol` section with: exact plan path, canonical task/workpad path, current step marker, completed steps, pending next action, blockers, and validation commands already run.
+- After context compaction, session restart, or subagent handoff, read the plan/workpad from disk before continuing and reconcile it against the taskpool status.
+- Do not keep progress only in chat/todo state; update the file after each verifiable slice so recovery from file alone is possible.
+
 ## Remember
 
 ```
@@ -294,3 +313,16 @@ Frequent commits
 ```
 
 **A good plan makes implementation obvious.**
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

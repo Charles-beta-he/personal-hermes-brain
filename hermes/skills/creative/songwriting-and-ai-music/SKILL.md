@@ -1,26 +1,51 @@
 ---
 name: songwriting-and-ai-music
-description: >
-  Songwriting craft, AI music generation prompts (Suno focus), parody/adaptation
-  techniques, phonetic tricks, and lessons learned. These are tools and ideas,
-  not rules. Break any of them when the art calls for it.
-tags: [songwriting, music, suno, parody, lyrics, creative]
+description: Use when you need guidance on songwriting craft, AI music generation prompts (Suno focus), parody/adaptation techniques, phonetic tricks, and lessons learned.
+version: 1.0.0
+author: Hermes Agent
+license: MIT
 triggers:
-  - writing a song
-  - song lyrics
-  - music prompt
-  - suno prompt
-  - parody song
-  - adapting a song
-  - AI music generation
+- writing a song
+- song lyrics
+- music prompt
+- suno prompt
+- parody song
+- adapting a song
+- AI music generation
+metadata:
+  hermes:
+    tags:
+    - songwriting
+    - music
+    - suno
+    - parody
+    - lyrics
+    - creative
+    related_skills:
+    - clip
+    - whisper
 ---
 
 # Songwriting & AI Music Generation
+
+## Overview
+
 
 Everything here is a GUIDELINE, not a rule. Art breaks rules on purpose.
 Use what serves the song. Ignore what doesn't.
 
 ---
+
+## When to Use
+
+- You need guidance on songwriting craft, AI music generation prompts (Suno focus), parody/adaptation techniques, phonetic tricks, and lessons learned
+- writing a song
+- song lyrics
+- music prompt
+- suno prompt
+- parody song
+- adapting a song
+- AI music generation
 
 ## 1. Song Structure (Pick One or Invent Your Own)
 
@@ -287,3 +312,16 @@ Style can drift in extensions — restate genre/mood when extending.
 - Don't be precious about rules. If a line breaks meter but hits
   harder, keep it. The feeling is what matters. Craft serves art,
   not the other way around.
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

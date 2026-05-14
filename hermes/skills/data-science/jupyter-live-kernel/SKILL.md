@@ -1,21 +1,27 @@
 ---
 name: jupyter-live-kernel
-description: >
-  Use a live Jupyter kernel for stateful, iterative Python execution via hamelnb.
-  Load this skill when the task involves exploration, iteration, or inspecting
-  intermediate results — data science, ML experimentation, API exploration, or
-  building up complex code step-by-step. Uses terminal to run CLI commands against
-  a live Jupyter kernel. No new tools required.
+description: Use when you need to use a live Jupyter kernel for stateful, iterative Python execution via hamelnb.
 version: 1.0.0
 author: Hermes Agent
 license: MIT
 metadata:
   hermes:
-    tags: [jupyter, notebook, repl, data-science, exploration, iterative]
+    tags:
+    - jupyter
+    - notebook
+    - repl
+    - data-science
+    - exploration
+    - iterative
     category: data-science
+    related_skills:
+    - github
 ---
 
 # Jupyter Live Kernel (hamelnb)
+
+## Overview
+
 
 Gives you a **stateful Python REPL** via a live Jupyter kernel. Variables persist
 across executions. Use this instead of `execute_code` when you need to build up
@@ -169,3 +175,16 @@ uv run "$SCRIPT" restart-run-all --path <notebook.ipynb> --save-outputs --compac
 The script has a 30-second default timeout per execution. For long-running
 operations, pass `--timeout 120`. Use generous timeouts (60+) for initial
 setup or heavy computation.
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

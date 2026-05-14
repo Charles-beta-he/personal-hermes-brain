@@ -1,11 +1,29 @@
 ---
 name: baseline-ui
-description: Validates animation durations, enforces typography scale, checks component accessibility, and prevents layout anti-patterns in Tailwind CSS projects. Use when building UI components, reviewing CSS utilities, styling React views, or enforcing design consistency.
+description: Use when building UI components, reviewing CSS utilities, styling React views, or enforcing design consistency.
+version: 1.0.0
+author: Hermes Agent
+license: MIT
+metadata:
+  hermes:
+    tags:
+    - baseline
+    - design
+    - review
+    related_skills:
+    - design
 ---
 
 # Baseline UI
 
+## Overview
+
+
 Enforces an opinionated UI baseline to prevent AI-generated interface slop.
+
+## When to Use
+
+- Building UI components, reviewing CSS utilities, styling React views, or enforcing design consistency
 
 ## How to use
 
@@ -83,3 +101,16 @@ Enforces an opinionated UI baseline to prevent AI-generated interface slop.
 - MUST give empty states one clear next action
 - SHOULD limit accent color usage to one per view
 - SHOULD use existing theme or Tailwind CSS color tokens before introducing new ones
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

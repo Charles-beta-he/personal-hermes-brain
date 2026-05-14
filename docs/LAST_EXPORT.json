@@ -1,22 +1,22 @@
 {
   "schema": "personal_hermes_brain_export_result_v1",
-  "generated_at": "2026-05-12T07:14:29Z",
+  "generated_at": "2026-05-14T20:05:32Z",
   "dest": "/Users/charles/personal-hermes-brain",
   "remote": "https://github.com/Charles-beta-he/personal-hermes-brain.git",
   "stats": {
     "brain": {
-      "copied": 340,
-      "skipped": 29,
-      "secret_skipped": 51
+      "copied": 383,
+      "skipped": 32,
+      "secret_skipped": 136
     },
     "skills": {
-      "copied": 1496,
-      "skipped": 927,
-      "secret_skipped": 49
+      "copied": 1594,
+      "skipped": 929,
+      "secret_skipped": 52
     },
     "scripts": {
       "copied": 24,
-      "skipped": 336,
+      "skipped": 363,
       "secret_skipped": 3
     }
   }

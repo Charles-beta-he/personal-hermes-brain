@@ -1,17 +1,41 @@
 ---
 name: hermes-agent
-description: Complete guide to using and extending Hermes Agent — CLI usage, setup, configuration, spawning additional agents, gateway platforms, skills, voice, tools, profiles, and a concise contributor reference. Load this skill when helping users configure Hermes, troubleshoot issues, spawn agent instances, or make code contributions.
+description: Use when extending or operating Hermes Agent including CLI/setup, skills, tools, profiles, gateway, taskpool hooks, certified auto-done, blocked-task closure, memory-cap selfcheck, and self-evolution / PUA-loop workflows. See references/ for taskpool hook debugging, evolution-task add rules, pre-ingest triage, memory compaction, bad-case to proposal to benchmark self-optimization, `references/budget-handoff-automation.md` for default-safe budget/context exhaustion handoff automation, `references/self-evolution-pua-loop.md` for Hermes-hosted OpenClaw SE-AOS fusion, and `references/openclaw-inspired-hermes-control-plane.md` (OpenClaw/external agent framework to Hermes-local control-plane hardening with gap extraction, opt-in router hints, strict schema validation, scoped policy context, memory write gate, benchmark, and post-update-check productized regression) for using an external agent framework as a reference architecture to improve Hermes-local control-plane capabilities without live integration.
 version: 2.0.0
 author: Hermes Agent + Teknium
 license: MIT
 metadata:
   hermes:
-    tags: [hermes, setup, configuration, multi-agent, spawning, cli, gateway, development]
+    tags:
+    - hermes
+    - setup
+    - configuration
+    - multi-agent
+    - spawning
+    - cli
+    - gateway
+    - development
     homepage: https://github.com/NousResearch/hermes-agent
-    related_skills: [claude-code, codex, opencode]
+    related_skills:
+    - claude-code
+    - codex
+    - opencode
 ---
 
-# Hermes Agent
+## OpenClaw SE-AOS / PUA-loop fusion note
+
+When the user asks for PUA-loop落地/融合, 每轮P10检验, or OpenClaw Self-Evolving Agent Operating System fusion, use `references/openclaw-seaos-hermes-fusion.md`. The expected shape is runnable Hermes-hosted evidence, not only architecture prose: `evolve-round`/`p10-check`, `hook-ingest`, `run-benchmarks`, `seaos-status`, and `~/.hermes/pua-loop/dashboard.md`. Be explicit about the boundary between Hermes-hosted MVP and full OpenClaw production runtime integration.
+
+For OpenClaw-informed productization or taskpool budget-handoff work, also use `references/openclaw-productization-and-taskpool-budget-handoff.md`. It captures post-update regression integration, fallback-threshold/quota-observability/relay-ordering convergence slices, continuation packet ordering, and ratification/economy-pause pitfalls.
+
+
+Quick references:
+- `references/agent-harness-nine-components.md` — compact note on the nine harness components plus why context compression and iteration budgets are orthogonal controls.
+
+Reference update: for taskpool event-first dispatch and multi-model-certified automated closeout, see `references/taskpool-event-hooks-and-multimodel-autodone.md`.
+
+## Overview
+
 
 Hermes Agent is an open-source AI agent framework by Nous Research that runs in your terminal, messaging platforms, and IDEs. It belongs to the same category as Claude Code (Anthropic), Codex (OpenAI), and OpenClaw — autonomous coding and task-execution agents that use tool calling to interact with your system. Hermes works with any LLM provider (OpenRouter, Anthropic, OpenAI, DeepSeek, local models, and 15+ others) and runs on Linux, macOS, and WSL.
 
@@ -54,7 +78,23 @@ hermes doctor
 
 ---
 
-## CLI Reference
+## References
+
+- `references/hermes-hosted-seaos-pua-loop.md`: detailed checklist/state files for Hermes-hosted SE-AOS / PUA-loop and OpenClaw trace ingestion MVP; use with `references/self-evolution-pua-loop.md`.
+
+## Taskpool intake policy
+- For external repo/article/idea intake, prefer pre-ingest multimodel triage before formal task creation.
+- Assign P1/P2/P3, lane, architecture target, and rationale at create time so taskpool stays independent and downstream dispatch sees already-governed work.
+- If the user explicitly wants raw capture, mark that prioritization was deferred by request instead of silently defaulting everything to the same priority.
+- See `references/taskpool-pre-ingest-triage.md` for the concrete checklist and duplicate-after-timeout verification pattern.
+
+## Self-evolving agent architecture
+
+When designing agent self-improvement systems, use `references/self-evolving-agent-architecture.md` for the class pattern: layered memory, harness-constrained execution, production bad-case generalization/synthesis, dynamic benchmarks, and the core paper map.
+
+## References
+
+- `references/hermes-hosted-seaos-pua-loop.md`: detailed checklist/state files for Hermes-hosted SE-AOS / PUA-loop and OpenClaw trace ingestion MVP; use with `references/self-evolution-pua-loop.md`.
 
 ### Global Flags
 
@@ -185,11 +225,13 @@ Operational troubleshooting pattern:
 - For cron jobs that drive local task pools/envelope buses, watch for two coupled failure modes: (1) `script` values like `pipeline_tick.py tick` being parsed as one path instead of path+argv, and (2) `human_escape` counting all historical `FAILED`/`BLOCKED` rows, causing permanent熔断. In reviewer mode, recommend structured `script` + `script_args`, fail-closed script status, and human ack/watermark semantics. See `references/cron-taskpool-script-args-and-human-escape.md`.
 - For envelope executors that spawn `hermes chat`, verify process lifecycle as well as DB state: `ps -ax -o pid,etime,command | grep -E 'envelope_executor|hermes chat'` should show no orphan worker after timeout/completion. Run workers in their own process group (`start_new_session=True`) and kill the whole process group on timeout/SIGTERM; otherwise the envelope may be marked FAILED/PENDING while the old worker keeps editing concurrently.
 - For `deliver=origin` jobs, `last_delivery_error: no delivery target resolved for deliver=origin` is a delivery binding problem, not necessarily a job/runtime failure. Prefer explicit delivery targets for recurring status reports after checking user intent.
+- Telegram cron delivery pitfall: bare `deliver=telegram` still depends on a configured home channel and can fail with `No home channel set for telegram`. Fix recurring jobs by (1) listing concrete messaging targets, (2) sending one manual test to the exact target string, (3) updating the cron job to an explicit target like `telegram:<name> (dm)` instead of `origin` or bare `telegram`, and (4) triggering `hermes cron run <id>` then verifying both a new output artifact under `~/.hermes/cron/output/<job_id>/` and `last_delivery_error=null` / updated `last_run_at` in `hermes cron list`.
 - For long-running multi-model jobs, wrap them with explicit timeouts and record `timeout_recorded`/`degraded_recorded`; then run a lightweight health/score script afterward so the cron still leaves an auditable result.
 - Local-brain multimodel intervention scripts are guarded by an explicit safety flag: if `brain_task_orchestrator.py multimodel-intervention-parallel-step ... --json` returns `{"status":"SKIP","reason":"autorun_multimodel_disabled"}`, rerun with `HERMES_LOCAL_BRAIN_AUTORUN_MULTIMODEL=1` rather than reporting an empty/no-op result. These runs can exceed normal terminal timeouts; start them as background processes with unbuffered output (`PYTHONUNBUFFERED=1`), poll/wait until exit, then summarize the JSON from the process log. Treat gate `SKIP` results such as `no_discussion_result` as task errors for reporting if the command summary counts them in `tasks_errors`.
 - Keep local-brain safe summary heartbeats cheap and explicit: do not let ambient `HERMES_LOCAL_BRAIN_AUTORUN_MULTIMODEL=1` alone trigger expensive multimodel execution from `brain_task_dispatch_tick.py --summary`. Expensive steps should be double-gated by an explicit CLI flag plus env var, and subprocess timeouts should be recorded as structured JSON (`subprocess_timeout` / `timeout_recorded`) instead of crashing the cron tick.
-- When local-brain/taskpool cron jobs repeatedly time out, prefer the dynamic no-agent pattern in `references/local-brain-dynamic-cron.md`: collect cron/log evidence, classify provider-model mismatch separately from taskpool corruption, keep the cron tick short/event-gated, and move T3/quorum4 multi-model work into a pid-locked detached worker without weakening certification gates.
-- When `evidence-spine` is WARN only because `local-brain-taskpool-auto-completer` has `last_status=error`, inspect the semantic content before treating it as scheduler failure. `Request timed out`, `timeout_recorded`, `truth_grounded_advisory_not_ratified`, `not_certified`, missing `discussion_result.json`, or “T3 still running / cannot closeout” are usually retryable/task-level certification states; classify them separately and keep unknown errors fail-closed. Keep evidence-spine and autonomy-readiness using the same scheduler-safe semantic set, and add ratchet fixtures for each safe error class. See `references/taskpool-auto-completer-semantics.md`.
+- When local-brain/taskpool cron jobs repeatedly time out, prefer the dynamic no-agent pattern in `references/local-brain-dynamic-cron.md`: collect cron/log evidence, classify provider-model mismatch separately from taskpool corruption, keep the cron tick short/event-gated, move T3/quorum4 multi-model work into a pid-locked detached worker without weakening certification gates, and close `review -> done` only through a proof-gated auto-closer that reuses normal lifecycle gates and records multi-model ratification artifacts as explicit evidence.
+- When `evidence-spine` is WARN only because `local-brain-taskpool-auto-completer` has `last_status=error`, inspect the semantic content before treating it as scheduler failure. `Request timed out`, `timeout_recorded`, `truth_grounded_advisory_not_ratified`, `not_certified`, missing `discussion_result.json`, “T3 still running / cannot closeout”, or a nested `taskpool_dynamic_runner_v1` → tick → evidence_spine self-lock are usually retryable/task-level/recursive gate states; classify them separately and keep unknown errors fail-closed. Keep evidence-spine and autonomy-readiness using the same scheduler-safe semantic set, parse structured stdout even on non-zero subprocess exits, and add ratchet fixtures for each safe error class. See `references/taskpool-auto-completer-semantics.md`.
+- Local-brain/taskpool priority can be globally switched without cron env hacks by writing `~/.hermes/state/taskpool_priority_mode.json` with `{"mode":"evolution-first"}` (or `work-first`). The orchestrator also accepts `HERMES_TASKPOOL_PRIORITY_MODE`, but the state file is durable for cron/no-agent ticks. Verify with `brain_task_orchestrator.py boundary-check --json` gates `priority_mode`, `next --json`, `parallel-dispatch-dry-run --json`, and `eligibility-check --json`. See `references/taskpool-priority-mode.md` for the full implementation/verification pattern.
 - After editing a job, use `hermes cron run <id>` or the cronjob tool's run action, wait for scheduler execution, then re-check `hermes cron list` and any health script. Do not assume `next_run_at` change means it already ran.
 - `last_run_at=null` is not automatically a failure for daily/weekly jobs; compare `next_run_at` with current time and distinguish first-run-pending from missed windows.
 
@@ -408,6 +450,8 @@ When working on Hermes local-brain/taskpool automation that dispatches Markdown 
 - `~/.hermes/scripts/brain_task_orchestrator.py` resolves task `project` frontmatter to `~/.hermes/project-profiles/<project>.json`, then slug fallback, then `hermes.json`.
 - Missing profile is **fail-closed**: the task becomes non-dispatchable and `claim` fails with `project_profile_missing`.
 - Worker dispatch injects project-profile context (tech stack, conventions, acceptance, forbidden rules) into the spawned agent prompt, so mismatched project IDs silently weaken execution quality even when dispatch still works.
+- For rich project-profile policy that is not ready for fail-closed enforcement, use a semantic control-plane soft launch: generate a typed `profile_policy_contract_v1`, inject it into dispatch prompts, add a read-only `semantic-control-plane-dry-run` classifier, and report profile/runtime-consumer gaps in `selfcheck` as WARN only. Do not turn planner fanout or weak consensus into proof/closeout authority without target-bound T3 ratification, impact map, rollback boundary, and soft-launch review evidence.
+- After landing brain-vault documentation or Workpad updates, reindex/search with `python3 ~/.hermes/scripts/brainctl.py --json reindex` and `python3 ~/.hermes/scripts/brainctl.py --json search "<query>"`; the `--json` flag belongs before the subcommand.
 - When renaming a canonical project key (for example consolidating `foo-work` into `foo`), migrate task frontmatter and tests first, but keep a deprecated alias profile temporarily with the same constraints plus explicit alias metadata. Remove the alias only after searches/tests show no remaining references.
 - If two profiles describe the same project at different strictness levels, prefer one canonical profile and make any alias byte-equivalent in constraints except alias metadata. This prevents work tasks from inheriting weaker rules than the main project profile.
 
@@ -534,6 +578,12 @@ Voice commands: `/voice on` (voice-to-voice), `/voice tts` (always voice), `/voi
 For long autonomous loops, single-session tool-call limits, and permission problems, use `references/tool-budget-and-permission-gates.md`: batch mechanical calls into scripts, externalize state into durable artifacts, split work into resumable ticks, use subagents/background jobs for long work, and enforce least-privilege typed tool proxies with dry-run-first external effects.
 
 For the specific `Iteration budget reached (N/N) — response may be incomplete` failure mode in cron/task-pool/idle-runner work, use `references/p10-iteration-budget-loop.md`: diagnose effective caps, run a bounded task tick, write a durable handoff, and require structured proof before done.
+
+For provider/model quota tracking and token-usage evidence, use `references/provider-quota-evidence-hygiene.md`: sanitize quota/usage state and JSONL logs before persistence, preserve safe numeric fields, and exclude credentials plus prompt/completion text from durable evidence.
+
+For OpenClaw-informed Hermes control-plane evolution, use `references/openclaw-inspired-hermes-control-plane.md`: keep OpenClaw as an OSS architecture reference only, implement Hermes-local/default-off/fail-soft helpers, validate strict schemas including unknown-field rejection, render scoped policy context safely, gate memory writes, and verify with benchmarks plus multi-view acceptance.
+
+For productizing OpenClaw-informed hardening and budget-handoff taskpool convergence, use `references/openclaw-productization-and-taskpool-budget-handoff.md`: extend `post-update-check.py` instead of creating a parallel updater, keep pytest optional with manual fallback, preserve default-off gates, and decompose `loop_non_convergence` parent tasks into fallback-threshold / quota-observability / relay-ordering proof artifacts before parent ratification.
 
 ### Spawning Additional Hermes Instances
 
@@ -786,6 +836,7 @@ python -m pytest tests/tools/ -q            # Specific area
 - Tests auto-redirect `HERMES_HOME` to temp dirs — never touch real `~/.hermes/`
 - Run full suite before pushing any change
 - Use `-o 'addopts='` to clear any baked-in pytest flags
+- When testing user-local Hermes scripts under `~/.hermes/scripts/`, do not assume the system `python3` has pytest. Prefer the Hermes checkout venv first (`~/.hermes/hermes-agent/.venv/bin/python -m pytest ...`, then `venv/bin/python` fallback), and only then fall back to system Python. Record the interpreter used in validation evidence so a missing global pytest is not mistaken for a product/test failure.
 
 ### Commit Conventions
 
@@ -804,3 +855,55 @@ Types: `fix:`, `feat:`, `refactor:`, `docs:`, `chore:`
 - Use `get_hermes_home()` from `hermes_constants` for all paths (profile-safe)
 - Config values go in `config.yaml`, secrets go in `.env`
 - New tools need a `check_fn` so they only appear when requirements are met
+
+## Self-evolution / PUA-loop / P10
+
+When the user asks for Hermes/OpenClaw/agent self-optimization, PUA-loop landing, Harness/Memory/Benchmark evolution, or “每轮 P10 自检”, do not stop at conceptual analysis. Use the local PUA-loop MVP and record evidence:
+
+```bash
+python3 ~/.hermes/scripts/pua_loop_self_optimize.py p10-check \
+  --goal "本轮战略目标" \
+  --boundary "本轮不做什么/权限红线/防范围蔓延" \
+  --evidence "本轮产物或验证证据路径" \
+  --next-action "下一步可执行动作"
+```
+
+If the round exposes a failure or missing behavior, also ingest a case and generate proposals/benchmarks:
+
+```bash
+python3 ~/.hermes/scripts/pua_loop_self_optimize.py ingest-case \
+  --goal "用户目标" \
+  --expected "期望行为" \
+  --actual "实际行为" \
+  --failure "失败/风险描述" \
+  --stage "阶段" \
+  --severity P1 \
+  --evidence "证据路径/命令输出/日志" \
+  --root-cause verification
+python3 ~/.hermes/scripts/pua_loop_self_optimize.py run
+python3 ~/.hermes/scripts/pua_loop_self_optimize.py report
+```
+
+PUA is non-manipulative: Positive signal + Useful action + Accountability verification. Prefer Harness / Skill / Tool / Benchmark fixes over prompt-only fixes; keep holdout benchmarks out of prompts/skills/training examples. Details: `references/pua-loop-p10-self-check.md`.
+
+## OpenClaw / external agent framework reference work
+
+When asked to improve Hermes based on OpenClaw or another agent framework, distinguish two modes before coding: live integration vs reference-architecture extraction. If the user wants reference extraction, use `references/openclaw-inspired-hermes-control-plane.md` (OpenClaw/external agent framework to Hermes-local control-plane hardening with gap extraction, opt-in router hints, strict schema validation, scoped policy context, memory write gate, benchmark, and post-update-check productized regression): keep Hermes as the subject, build local control-plane artifacts (manifest catalog, activation plan, scoped policy map, protocol inventory, memory contract, gap report), and verify with P10, multimodel review, and final-gate. Do not keep discussing production trace/webhook integration after the user pivots away from live integration.
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+4. For external repo/article taskpool intake, adding tasks before running the fixed pre-ingest multimodel triage. For this user, priority and P1/P2/P3 tiering belong before `brain_task_orchestrator.py add`, so the queue stays independent instead of becoming a mixed inbox + prioritization workspace.
+
+## PUA-loop self-optimization
+
+For agent self-evolution requests, use `references/pua-loop-self-optimization.md`: normalize production/user-correction bad cases, classify root cause, generate accountable memory/skill/harness/tool proposals, create dev+holdout benchmarks, and track evidence-backed readiness metrics. Treat PUA as Positive signal + Useful action + Accountability verification, never as persuasion or self-praise.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

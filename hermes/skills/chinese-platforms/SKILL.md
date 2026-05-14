@@ -1,13 +1,30 @@
 ---
 name: chinese-platforms
-description: "中文互联网平台路由 — B站/小红书/抖音/微博/V2EX/微信公众号/雪球/小宇宙/Reddit/LinkedIn。路由知识来自 Agent-Reach 选择性借鉴, 全部映射为 Hermes 原生工具。触发词: 小红书, xhs, 抖音, douyin, B站, bilibili, b站, 微博, weibo, V2EX, v2ex, 公众号, 微信文章, 雪球, 股票, xueqiu, 小宇宙, 播客, reddit, linkedin, 领英, 职场"
+description: Use when the task falls under 中文互联网平台路由.
+version: 1.0.0
+author: Hermes Agent
 license: MIT
-attribution: "路由知识借鉴自 Agent-Reach (https://github.com/Panniantong/Agent-Reach), MIT License"
+attribution: 路由知识借鉴自 Agent-Reach (https://github.com/Panniantong/Agent-Reach), MIT License
+metadata:
+  hermes:
+    tags:
+    - chinese
+    - platforms
+    related_skills:
+    - domain
+    - mcporter
 ---
 
 # 中文互联网平台路由
 
+## Overview
+
+
 > 路由知识选择性借鉴自 Agent-Reach。全部映射为 Hermes 原生工具，零新增依赖。
+
+## When to Use
+
+- The task falls under 中文互联网平台路由
 
 ## 路由表
 
@@ -81,9 +98,18 @@ curl -s "https://r.jina.ai/https://linkedin.com/in/username"
 - 不把原始 Cookie/API key/token 粘贴进 prompt、日志、shell history 或任务正文；优先放入权限受限配置文件并只引用“已配置/未配置”。
 - 对高风控平台优先 dry-run/safe-mode 说明，不在无确认时自动安装或登录。
 
-## 验证
+## Verification Checklist
 
 ```bash
 which xhs yt-dlp bili rdt 2>/dev/null
 python3 ~/.hermes/scripts/skill-steward.py --graph-check --json
 ```
+- [ ] Preconditions, scope, and tool availability were checked before following this workflow.
+- [ ] The key output artifacts, commands, or side-effects were verified by read-back or direct inspection.
+- [ ] The final result still matches the trigger and acceptance shape of this skill.
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+

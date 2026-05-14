@@ -1,13 +1,39 @@
 ---
 name: self-improvement-pipeline
-description: "自进化管线 — L0-L5 完整架构。自动挖取需求、按 bandit score 选最优路线、eval harness 准入、灰度放量。全部基于 Hermes 原生能力构建。触发词：'自进化', '自进化管线', '自优化 pipeline', 'self-improvement pipeline', '改进信号', 'autopsy', 'evolution baseline', 'l0-l5', '自进化架构'。"
+description: Use when the task falls under Self-Improvement Pipeline — 自进化优先调度层 (L0-L5).
+version: 1.0.0
+author: Hermes Agent
 license: MIT
+metadata:
+  hermes:
+    tags:
+    - software
+    - development
+    - self
+    - improvement
+    - pipeline
+    related_skills:
+    - darwin-skill
+    - design
+    - devops
+    - loop
+    - mcp
+    - p10
+    - p7
+    - p9
 ---
 
 # Self-Improvement Pipeline — 自进化优先调度层 (L0-L5)
 
+## Overview
+
+
 > 自动挖取改进需求、按 bandit score 选最优路线、eval 准入门。
 > 核心原则: **不重造轮子 — 用 Hermes 原生能力 (hooks/cron/sqlite/skills/config) 填补缺口。**
+
+## When to Use
+
+- The task falls under Self-Improvement Pipeline — 自进化优先调度层 (L0-L5)
 
 ## Architecture
 
@@ -240,7 +266,7 @@ cat ~/.hermes/mcp/proposals/mcp-proposal-*.md
 - 真正需要 MCP 的是**结构性操作**(git commit 带多个参数, 状态检查)而非自动化无关的 shell 单行
 - 实施前必须确认提案的 suggestion 是否合理
 
-## Verification
+## Verification Checklist
 
 ```bash
 # 全组件自测
@@ -301,7 +327,9 @@ Use when the user says “触发自进化 loop”, “run self-evolution now”,
    git commit -m "chore(evolve): trigger self-improvement loop"
    git status --short -- logs/evolve.log notes/improvement-action-plan.json notes/improvement-signals.jsonl
    ```
-
+- [ ] Preconditions, scope, and tool availability were checked before following this workflow.
+- [ ] The key output artifacts, commands, or side-effects were verified by read-back or direct inspection.
+- [ ] The final result still matches the trigger and acceptance shape of this skill.
 ## Post-trigger audit: distinguish “ran” from “evolved”
 
 Use this when a user asks to analyze a just-triggered self-evolution loop, especially after manual `hermes cron run <self-evolve-job>` or `self-improvement-pipeline.py --write --auto-exec`.
@@ -486,7 +514,21 @@ When landing this slice, treat it as a governance-code change and close the loop
       3. 本轮只做审计和迁移建议，不直接清理旧 skill，不改 runtime loader
       4. self-test 必须含 valid fixture 与 invalid fixture，证明 fail-closed 行为
     - 验证目标: `self-test.py` 全绿；`skill-graph-audit.schema.json` parseable；steward full report 含 `audits.skill_graph`。
+
+20. **Advisory-only multimodel PASS 要“消费弱触发”，但不能变成认证权威**:
+    - 症状: taskpool multimodel 对弱触发（如 `P0_priority`/`closeout_ratification`/`architecture_target`/`accuracy_keyword`）跑出 advisory-only PASS 后，任务仍以 `not_certified` 反复进入队列，浪费模型预算并遮挡真正需要认证的任务。
+    - 修复模式: advisory-only plan 若 gate 返回 `PASS + LOOP_DONE`，持久化为 `PASS_ADVISORY_ONLY` + `decision=continue_loop`，写 `multimodel_status: advisory_completed`、`multimodel_round_status: advisory_passed`、`multimodel_advisory_only: true`、`multimodel_certification_authority: false`。
+    - 关键边界: 不写 `multimodel_ratification_artifact`，`task_multimodel_passed()` 仍必须为 false；只消费弱 advisory trigger，不得屏蔽 `stale_claim`、`p0_evolution_blast_radius`、`loop_non_convergence` 等强认证触发。
+    - 回归测试: 构造 weak-only P1 evolution task，写入 `PASS_ADVISORY_ONLY` 后验证不再重复触发；再设置 `retry_count >= 2` 验证强触发仍恢复。
+    - 详细 runbook: `references/advisory-only-multimodel-pass-consumption.md`。
 - `pro` — PUA Pro 自进化追踪 (依赖 evolution.md)
 - `darwin-skill` — 单个 skill 优化
 - `skill-ecosystem-governance` — 生态治理
 - `loop` — 迭代执行
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+

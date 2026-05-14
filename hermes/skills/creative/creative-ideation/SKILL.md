@@ -1,20 +1,35 @@
 ---
 name: ideation
-title: Creative Ideation — Constraint-Driven Project Generation
-description: "Generate project ideas through creative constraints. Use when the user says 'I want to build something', 'give me a project idea', 'I'm bored', 'what should I make', 'inspire me', or any variant of 'I have tools but no direction'. Works for code, art, hardware, writing, tools, and anything that can be made."
+description: Use when the user says 'I want to build something', 'give me a project idea', 'I'm bored', 'what should I make', 'inspire me', or any variant of 'I have tools but no direction'. Works for code, art, hardware, writing, tools, and anything that can be made.
 version: 1.0.0
 author: SHL0MS
 license: MIT
+title: Creative Ideation — Constraint-Driven Project Generation
 metadata:
   hermes:
-    tags: [Creative, Ideation, Projects, Brainstorming, Inspiration]
+    tags:
+    - Creative
+    - Ideation
+    - Projects
+    - Brainstorming
+    - Inspiration
     category: creative
     requires_toolsets: []
+    related_skills:
+    - creative
+    - domain
 ---
 
 # Creative Ideation
 
+## Overview
+
+
 Generate project ideas through creative constraints. Constraint + direction = creativity.
+
+## When to Use
+
+- The user says 'I want to build something', 'give me a project idea', 'I'm bored', 'what should I make', 'inspire me', or any variant of 'I have tools but no direction'. Works for code, art, hardware, writing, tools, and anything that can be made
 
 ## How It Works
 
@@ -145,3 +160,16 @@ After the user picks one, start building — create the project, write the code,
 ## Attribution
 
 Constraint approach inspired by [wttdotm.com/prompts.html](https://wttdotm.com/prompts.html). Adapted and expanded for software development and general-purpose ideation.
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

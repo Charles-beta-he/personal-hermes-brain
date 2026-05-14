@@ -1,15 +1,30 @@
 ---
 name: youtube-content
-description: >
-  Fetch YouTube video transcripts and transform them into structured content
-  (chapters, summaries, threads, blog posts). Use when the user shares a YouTube
-  URL or video link, asks to summarize a video, requests a transcript, or wants
-  to extract and reformat content from any YouTube video.
+description: Use when the user shares a YouTube URL or video link, asks to summarize a video, requests a transcript, or wants to extract and reformat content from any YouTube video.
+version: 1.0.0
+author: Hermes Agent
+license: MIT
+metadata:
+  hermes:
+    tags:
+    - media
+    - youtube
+    - content
+    - video
+    related_skills:
+    - media
 ---
 
 # YouTube Content Tool
 
+## Overview
+
+
 Extract transcripts from YouTube videos and convert them into useful formats.
+
+## When to Use
+
+- The user shares a YouTube URL or video link, asks to summarize a video, requests a transcript, or wants to extract and reformat content from any YouTube video
 
 ## Setup
 
@@ -70,3 +85,16 @@ After fetching the transcript, format it based on what the user asks for:
 - **Private/unavailable video**: relay the error and ask the user to verify the URL.
 - **No matching language**: retry without `--language` to fetch any available transcript, then note the actual language to the user.
 - **Dependency missing**: run `pip install youtube-transcript-api` and retry.
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

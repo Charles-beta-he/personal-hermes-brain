@@ -1,20 +1,28 @@
 ---
 name: macos-computer-use
-description: |
-  Drive the macOS desktop in the background — screenshots, mouse, keyboard,
-  scroll, drag — without stealing the user's cursor, keyboard focus, or
-  Space. Works with any tool-capable model. Load this skill whenever the
-  `computer_use` tool is available.
+description: Use when you need to drive the macOS desktop in the background — screenshots, mouse, keyboard, scroll, drag — without stealing the user's cursor, keyboard focus, or Space.
 version: 1.0.0
-platforms: [macos]
+author: Hermes Agent
+license: MIT
+platforms:
+- macos
 metadata:
   hermes:
-    tags: [computer-use, macos, desktop, automation, gui]
+    tags:
+    - computer-use
+    - macos
+    - desktop
+    - automation
+    - gui
     category: desktop
-    related_skills: [browser]
+    related_skills:
+    - browser
 ---
 
 # macOS Computer Use (universal, any-model)
+
+## Overview
+
 
 You have a `computer_use` tool that drives the Mac in the **background**.
 Your actions do NOT move the user's cursor, steal keyboard focus, or switch
@@ -25,6 +33,10 @@ Everything here works with any tool-capable model — Claude, GPT, Gemini, or
 an open model running through a local OpenAI-compatible endpoint. There is
 no Anthropic-native schema to learn.
 
+## When to Use
+
+- You need to drive the macOS desktop in the background — screenshots, mouse, keyboard, scroll, drag — without stealing the user's cursor, keyboard focus, or Space
+- Don't use for: requests that do not need you need to drive the macOS desktop in the background — screenshots, mouse, keyboard, scroll, drag — without stealing the user's cursor, keyboard focus, or Space; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## The canonical workflow
 
 **Step 1 — Capture first.** Almost every task starts with:
@@ -243,3 +255,16 @@ If any check fails, report to user before proceeding.
 - File edits — use `read_file` / `write_file` / `patch`, not `type` into
   an editor window.
 - Shell commands — use `terminal`, not `type` into Terminal.app.
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

@@ -1,9 +1,25 @@
 ---
 name: web-animation-optimization
-description: "Optimize web application animations by analyzing reference sites, creating reusable animation utilities (easing curves, RAF-driven animations, spring physics, particles), CSS animation systems, and scroll-triggered effects. Use when enhancing UI/UX with smooth, performant animations."
+description: Use when enhancing UI/UX with smooth, performant animations.
+version: 1.0.0
+author: Hermes Agent
+license: MIT
+metadata:
+  hermes:
+    tags:
+    - creative
+    - web
+    - animation
+    - optimization
+    - ux
+    related_skills:
+    - loop
 ---
 
 # Web Animation Optimization
+
+## Overview
+
 
 Analyze reference sites for animation techniques and implement a comprehensive animation system for React/web projects.
 
@@ -275,15 +291,17 @@ useEffect(() => {
 4. **Intersection Observer**: Only animate visible elements
 5. **OffscreenCanvas**: Pre-render static content
 
-## Pitfalls
+## Common Pitfalls
 
 - **Over-animation**: Too many simultaneous animations feel chaotic
 - **Layout thrash**: Avoid reading layout in animation loops
 - **Memory leaks**: Cancel RAF callbacks on unmount
 - **jank on mobile**: Test on real devices, reduce particle counts
 - **CSS specificity**: Utility classes may conflict with component styles
-
-## Verification
+1. Skipping prerequisite checks and assuming the environment already matches the workflow.
+2. Applying the workflow mechanically without confirming that the request still matches this skill's trigger class.
+3. Reporting success before reading back the actual outputs, files, or external side-effects.
+## Verification Checklist
 
 After implementing animations:
 ```bash
@@ -291,3 +309,6 @@ pnpm test           # Ensure no regressions
 pnpm -F web build   # Verify production build
 # Manual: Test each animation in browser, check 60fps in DevTools Performance tab
 ```
+- [ ] Preconditions, scope, and tool availability were checked before following this workflow.
+- [ ] The key output artifacts, commands, or side-effects were verified by read-back or direct inspection.
+- [ ] The final result still matches the trigger and acceptance shape of this skill.

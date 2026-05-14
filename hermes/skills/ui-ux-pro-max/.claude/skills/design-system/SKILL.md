@@ -1,14 +1,32 @@
 ---
 name: ckm:design-system
-description: Token architecture, component specifications, and slide generation. Three-layer tokens (primitive→semantic→component), CSS variables, spacing/typography scales, component specs, strategic slide creation. Use for design tokens, systematic design, brand-compliant presentations.
-argument-hint: "[component or token]"
+description: Use when you need guidance on token architecture, component specifications, and slide generation.
+version: 1.0.0
+author: Hermes Agent
 license: MIT
+argument-hint: '[component or token]'
 metadata:
   author: claudekit
-  version: "1.0.0"
+  version: 1.0.0
+  hermes:
+    tags:
+    - ux
+    - pro
+    - max
+    - design
+    - system
+    related_skills:
+    - brand
+    - design
+    - domain
+    - slides
+    - ui-styling
 ---
 
 # Design System
+
+## Overview
+
 
 Token architecture, component specifications, systematic design, slide generation.
 
@@ -242,3 +260,16 @@ assets/designs/slides/claudekit-pitch-251223.html
 4. Use HSL format for opacity control
 5. Document every token's purpose
 6. **Slides must import design-tokens.css and use var() exclusively**
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

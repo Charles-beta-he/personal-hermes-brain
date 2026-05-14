@@ -1,19 +1,41 @@
 ---
 name: clip
-description: OpenAI's model connecting vision and language. Enables zero-shot image classification, image-text matching, and cross-modal retrieval. Trained on 400M image-text pairs. Use for image search, content moderation, or vision-language tasks without fine-tuning. Best for general-purpose image understanding.
+description: Use when you need guidance on openAI's model connecting vision and language.
 version: 1.0.0
 author: Orchestra Research
 license: MIT
-dependencies: [transformers, torch, pillow]
+dependencies:
+- transformers
+- torch
+- pillow
 metadata:
   hermes:
-    tags: [Multimodal, CLIP, Vision-Language, Zero-Shot, Image Classification, OpenAI, Image Search, Cross-Modal Retrieval, Content Moderation]
-
+    tags:
+    - Multimodal
+    - CLIP
+    - Vision-Language
+    - Zero-Shot
+    - Image Classification
+    - OpenAI
+    - Image Search
+    - Cross-Modal Retrieval
+    - Content Moderation
+    related_skills:
+    - arxiv
+    - github
+    - research
 ---
 
 # CLIP - Contrastive Language-Image Pre-Training
 
+## Overview
+
+
 OpenAI's model that understands images from natural language.
+
+## When to Use
+
+- You need guidance on openAI's model connecting vision and language
 
 ## When to use CLIP
 
@@ -253,4 +275,15 @@ results = collection.query(
 - **Colab**: https://colab.research.google.com/github/openai/clip/
 - **License**: MIT
 
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
 

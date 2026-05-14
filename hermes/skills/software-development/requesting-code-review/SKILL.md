@@ -1,19 +1,26 @@
 ---
 name: requesting-code-review
-description: >
-  Pre-commit verification pipeline — static security scan, baseline-aware
-  quality gates, independent reviewer subagent, and auto-fix loop. Use after
-  code changes and before committing, pushing, or opening a PR.
+description: Use when you need guidance on pre-commit verification pipeline — static security scan, baseline-aware quality gates, independent reviewer subagent, and auto-fix loop.
 version: 2.0.0
 author: Hermes Agent (adapted from obra/superpowers + MorAlekss)
 license: MIT
 metadata:
   hermes:
-    tags: [code-review, security, verification, quality, pre-commit, auto-fix]
-    related_skills: [writing-plans]
+    tags:
+    - code-review
+    - security
+    - verification
+    - quality
+    - pre-commit
+    - auto-fix
+    related_skills:
+    - writing-plans
 ---
 
 # Pre-Commit Code Verification
+
+## Overview
+
 
 Automated verification pipeline before code lands. Static scans, baseline-aware
 quality gates, an independent reviewer subagent, and an auto-fix loop.
@@ -277,7 +284,7 @@ tests exist, tests pass, no regressions.
 - [ ] **Style**: Verdict includes security_concerns + logic_errors + suggestions as separate lists, commit message has [verified] prefix
 - [ ] **Efficiency**: Auto-fix loop max 2 cycles, no self-review (fresh context reviewer), lint skips silent on missing tools
 
-## Pitfalls
+## Common Pitfalls
 
 - **Empty diff** — check `git status`, tell user nothing to verify
 - **Not a git repo** — skip and tell user
@@ -300,7 +307,8 @@ tests exist, tests pass, no regressions.
 - **Backend-controlled SPA links need URL-normalization adversarial review** — when API payloads feed React Router/Vue Router links, CTAs, `to`, `href`, `target`, or deep-link fields, do not only reject obvious `https://` and `javascript:` strings. Require app-relative allowlisting and regression tests for protocol-relative URLs (`//evil.example`), scheme URLs, absolute URLs, and browser normalization bypasses with backslashes such as `/\\evil.example` or `/\\\\evil.example`. If multiple candidate fields exist (`target`, `url`, `deepLink`), sanitize each candidate independently and skip unsafe candidates to later safe fallbacks instead of either trusting the first string or discarding all fallbacks.
 - **Timestamp normalizers must iterate candidates and support numeric strings** — API normalization code that chooses among `occurredAt` / `createdAt` / `updatedAt` / `timestamp` / `eventTime` / `timeAt` should parse each candidate independently. Do not use nullish coalescing before parsing, because an invalid earlier non-empty value can block a later valid timestamp. Support Unix seconds/milliseconds supplied as both numbers and numeric strings, and add tests for invalid-earlier-valid-later fallback plus local-time formatting. For backend boolean-ish fields, avoid `Boolean(value)` on strings; trim and explicitly parse `"true"` / `"false"`.
 - **Certification/audit code needs shape-level review** — when reviewing code that certifies artifacts, explicitly ask the reviewer to probe non-dict top-level JSON and malformed nested gates, not only happy-path booleans. Common Python false-pass/crash cases: `bool` accepted as `int`/`float`, `NaN`/`Infinity` accepted as numbers, `OverflowError` from `int(float("inf"))`, whitespace-only `kind` masking `type`, `.get()` on JSON strings/lists, `Path("")` resolving to the current directory and crashing instead of writing a fail-closed artifact, fallback from a malformed discussion gate to a cleaner merged artifact, vote/participant counts passing despite duplicate or fake model identities, missing negative-evidence arrays treated as empty, and minimal success shells such as `{ "ok": true }` passing quota/readiness gates because defaults silently fill required fields. For multi-model ratification, reviewers should try same-family spoof names, family aliases, omitted planned participants, duplicate approvers, and fake/unconsulted voters. For readiness/quota gates, reviewers should try hollow-but-shaped payloads: aggregate-only observability, snapshots not matching checked models, missing confidence/timestamps, and self-declared low `min_confidence` below the caller's expected threshold. Block commit until these have named regression tests if they affect certification/security logic.
-- **Fail-closed gates must test subprocess/report failure, not only negative booleans** — when reviewing readiness/certification gates that shell out to monitors, require adversarial tests for child returncode != 0, empty JSON `{}`, missing required fields, and semantic gate fields such as `gate_failed`, warning counts, or route signals. A gate that only checks `dominance_warning == true` can silently PASS when the monitor itself failed or reported a different blocking shape. The reviewer should ask for explicit `*_unavailable` / `*_invalid` failure reasons and a no-mutation assertion (`automatic_rebalance_performed=false`, `route_mutation_allowed=false`) for router/readiness code.
+- **Fail-closed gates must test subprocess/report failure, not only negative booleans** — when reviewing readiness/certification gates that shell out to monitors, require adversarial tests for child returncode != 0, empty JSON `{}`, missing required fields, and semantic gate fields such as `gate_failed`, warning counts, or route signals. A gate that only checks `dominance_warning == true` can silently PASS when the monitor itself failed or reported a different blocking shape. The reviewer should ask for explicit `*_unavailable` / `*_invalid` failure reasons and a no-mutation assertion (`automatic_rebalance_performed=false`, `route_mutation_allowed=false`) for router/readiness code. If a wrapper parses structured stdout from a non-zero child process, it must still force the parent status to `ERROR` and preserve the child's claimed status separately (for example `reported_status`); add a regression where non-zero stdout says `{ "status": "OK" }`.
+- **Safe-semantic classifiers need exact positive proof plus negative fixtures** — when a scheduler/cron/evidence classifier downgrades an error to a safe retryable semantic, reviewers should require exact machine-checkable proof, not broad substrings. For nested task-runner loops, verify command identity by argv/basename and exact flags, require exact return codes, and add negative fixtures for wrong command, wrong recovery command, wrong error count, timeout/string return codes, malformed JSON, and missing fields before accepting `safe_for_next_tick=true`.
 - **Reviewer-fix loops can expose meta-verifier bugs** — if a reviewer flags that your verifier/advisory classifier is too broad, add a negative regression for the exact false-pass string, not just the intended positive case. Example: a generic `"if "` substring should not make `"add regression for if statement parsing"` advisory; concrete verifier/implementation proposals must remain blockers unless they use explicit conditional phrases such as `only if missing` or `verify whether`.
 - **No-action certification needs explicit intent artifacts** — if a multi-model/code-review diff intentionally has no concrete implementation patch left, do not rely on empty `patches=[]` plus model approval. Stage/review an explicit summary such as `planner_patch_summary` showing `concrete_patch_count=0`, noop/advisory counts, and `certification_intent=no_action_certification`; otherwise an independent reviewer should treat empty merged patches as possible dropped work.
 - **Financial/product UI redaction needs domain denylist review** — when reviewing funds movement, PRD/product-logic guards, or financial UI copy, do not accept “visible page smoke passed” as proof. Ask the reviewer to scan user-visible strings in all relevant locales for backend/supplier/channel leakage, including close synonyms (`Channel/channel`, `通道`, `渠道`, `provider`, `supplier`, vendor names, callback/API/error-code terms). If the product rule says backend rails are transparent, labels like `order.channel` can still be blockers even when specific vendor names were removed.
@@ -314,3 +322,13 @@ tests exist, tests pass, no regressions.
 - **Maven multi-module targeted tests need reactor-safe flags** — in multi-module Spring/Maven repos, `mvn -pl app/module -Dtest=SomeTest test` can fail before reaching the target module because upstream modules have no matching tests or dependencies are not installed. Use `-am` plus `-Dsurefire.failIfNoSpecifiedTests=false` for targeted test verification, e.g. `mvn -pl app/uvisa-app -am -Dtest=FrontendCompatibilityApiContractTest -Dsurefire.failIfNoSpecifiedTests=false test`. If full reactor tests fail on known baseline architecture gates unrelated to the diff, still run a compile/package gate such as `mvn -pl app/uvisa-app -am -DskipTests package`, the targeted test, `git diff --check`, static scan, and independent review; report the full-test baseline failure explicitly rather than treating it as green.
 - **Manual Python test runners must invoke every new `test_*`** — if a repo uses a direct script runner (`python3 scripts/test_foo.py`) instead of pytest, adding a `test_*` function is not enough. Add the new function to the `if __name__ == "__main__":` block, and ask the reviewer to compare top-level `test_*` definitions against runner calls (an AST one-liner is fine). A direct-script PASS can otherwise be a false green because the new regression was never executed.
 - **Shell here-docs consume stdin, so do not pipe JSON into `python3 - <<'PY'`** — commands shaped like `producer --json | python3 - <<'PY' ... json.load(sys.stdin) ... PY` feed the Python program from the here-doc, not the producer output, causing empty-input JSON errors and broken pipes. For final commit verification, either write producer output to a temp file and read it (`producer > /tmp/out.json; python3 -c 'import json; ...'`) or use `python3 -c '...'` as the pipeline consumer. This matters when summarizing selfcheck/lifecycle/skill graph JSON before commit.
+1. Skipping prerequisite checks and assuming the environment already matches the workflow.
+2. Applying the workflow mechanically without confirming that the request still matches this skill's trigger class.
+3. Reporting success before reading back the actual outputs, files, or external side-effects.
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] The Definition of Done items above were explicitly checked, not assumed.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

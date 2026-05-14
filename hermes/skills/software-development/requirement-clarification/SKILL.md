@@ -1,21 +1,34 @@
 ---
 name: requirement-clarification
-description: "需求澄清与验收定义 — 接任务时的标准流程。确保理解正确、验收标准明确、边界清晰后再动手。Use when receiving a new task, feature request, or bug report."
+description: Use when a new task, feature request, or bug report arrives and you must clarify goals, acceptance criteria, scope, risks, and priorities before execution.
+version: 1.0.0
+author: Hermes Agent
 license: MIT
-tags: [requirements, planning, clarification, acceptance-criteria]
+metadata:
+  hermes:
+    tags:
+    - requirements
+    - planning
+    - clarification
+    - acceptance-criteria
+    related_skills:
+    - writing-plans
+    - source-driven-development
+    - test-driven-development
 ---
 
 # Requirement Clarification — 需求澄清与验收定义
 
-> 接任务时先对齐再动手。理解错了就做错了——先对齐再动手。
+## Overview
 
-## 何时使用
+接任务时先对齐再动手。理解错了就做错了——先对齐再动手。. In practice, load it when a new task, feature request, or bug report arrives and you must clarify goals, acceptance criteria, scope, risks, and priorities before execution. It defines the expected execution lane, scope boundaries, and verification shape for this class of work.
+## When to Use
 
 - 收到新需求/功能请求
 - 接到 bug 报告
 - 任务描述模糊或缺少验收标准
 - 用户说"帮我做个 XXX"但没有细节
-
+- Don't use for: requests that do not need a new task, feature request, or bug report arrives and you must clarify goals, acceptance criteria, scope, risks, and priorities before execution; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## 核心原则
 
 **不澄清不动手。** 任务描述越短，澄清工作越重要。
@@ -130,3 +143,16 @@ tags: [requirements, planning, clarification, acceptance-criteria]
 - ❌ 假设用户想要的是 X，实际用户想要的是 Y
 - ❌ 验收标准模糊，做完后用户说"不是我要的"
 - ❌ 范围蔓延——做着做着加了新功能
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

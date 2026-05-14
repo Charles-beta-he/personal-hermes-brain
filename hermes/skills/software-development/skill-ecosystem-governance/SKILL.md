@@ -1,8 +1,31 @@
 ---
 name: skill-ecosystem-governance
-description: "技能生态系统治理 — 自净化、自审计、自进化的代理技能治理系统。基于 11 个跨学科理论框架，解决 5 大系统硬伤（无筛选/无淘汰/孤岛/无冲突检测/无追踪）。触发模式：'生态治理', '技能审计', '自净化', '熵债', 'steward audit', '生态系统自检', '治理 loop', 'governance cycle'。自动创建一个 steward 审计脚本 + Obsidian 大脑 vault + cron 调度，迭代直至系统收敛。"
+description: Use when the task falls under Skill Ecosystem Governance — 技能生态系统治理.
+version: 1.0.0
+author: Hermes Agent
+license: MIT
+metadata:
+  hermes:
+    tags:
+    - software
+    - development
+    - ecosystem
+    - governance
+    related_skills:
+    - claude-code
+    - codex
+    - darwin-skill
+    - dogfood
+    - hermes-agent
+    - loop
+    - obsidian
+    - opencode
 ---
+
 # Skill Ecosystem Governance — 技能生态系统治理
+
+## Overview
+
 
 > 基于 11 个跨学科理论框架的代理技能自净化系统。
 > 解决控制论治不了的"只管生不管养"问题。
@@ -289,8 +312,7 @@ The system runs on cron, but quarterly reviews should check:
 | Nudge + Mechanism Design | Nudge (2008), Hurwicz (2007) | 激励缺口 | Choice architecture + points |
 | Memetics | The Selfish Gene (1976) | 知识传递缺口 | Cross-skill meme flow detection |
 
-## Pitfalls
-
+## Common Pitfalls
 ### File handling
 
 1. **DO NOT use `read_file()` output as `write_file()` input.** The `read_file` tool returns formatted lines with line number prefixes (`   276|`). Writing this back corrupts the file. Always use `terminal("cat path")` or read with Python stdlib for file-in-file-out operations.
@@ -349,3 +371,11 @@ The system runs on cron, but quarterly reviews should check:
 - `skill-eval` — individual skill evaluation with test prompts (this does ecosystem-level audit)
 - `loop` — iterative execution loop (this uses self-check loop for convergence)
 - `skill-ecosystem-diagnosis` — pre-governance diagnosis (this builds on it)
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] The Definition of Done items above were explicitly checked, not assumed.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

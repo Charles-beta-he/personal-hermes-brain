@@ -1,23 +1,38 @@
 ---
 name: spotify
-description: Control Spotify — play music, search the catalog, manage playlists and library, inspect devices and playback state. Loads when the user asks to play/pause/queue music, search tracks/albums/artists, manage playlists, or check what's playing. Assumes the Hermes Spotify toolset is enabled and `hermes auth spotify` has been run.
+description: Use when you need to control Spotify — play music, search the catalog, manage playlists and library, inspect devices and playback state.
 version: 1.0.0
 author: Hermes Agent
 license: MIT
 prerequisites:
-  tools: [spotify_playback, spotify_devices, spotify_queue, spotify_search, spotify_playlists, spotify_albums, spotify_library]
+  tools:
+  - spotify_playback
+  - spotify_devices
+  - spotify_queue
+  - spotify_search
+  - spotify_playlists
+  - spotify_albums
+  - spotify_library
 metadata:
   hermes:
-    tags: [spotify, music, playback, playlists, media]
-    related_skills: [gif-search]
+    tags:
+    - spotify
+    - music
+    - playback
+    - playlists
+    - media
+    related_skills:
+    - gif-search
 ---
 
 # Spotify
 
+## Overview
+
+
 Control the user's Spotify account via the Hermes Spotify toolset (7 tools). Setup guide: https://hermes-agent.nousresearch.com/docs/user-guide/features/spotify
 
-## When to use this skill
-
+## When to Use
 The user says something like "play X", "pause", "skip", "queue up X", "what's playing", "search for X", "add to my X playlist", "make a playlist", "save this to my library", etc.
 
 ## The 7 tools
@@ -132,3 +147,16 @@ Entity types: `track`, `album`, `artist`, `playlist`, `show`, `episode`. Use the
 - **Don't retry on `403 Premium required` or `403 No active device`.** Those are permanent until user action.
 - **Don't use `spotify_search` to find a playlist by name** — that searches the public Spotify catalog. User playlists come from `spotify_playlists list`.
 - **Don't mix `kind: "tracks"` with album URIs** in `spotify_library` (or vice versa). The tool normalizes IDs but the API endpoint differs.
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

@@ -1,18 +1,29 @@
 ---
 name: codebase-inspection
-description: Inspect and analyze codebases using pygount for LOC counting, language breakdown, and code-vs-comment ratios. Use when asked to check lines of code, repo size, language composition, or codebase stats.
+description: Use when asked to check lines of code, repo size, language composition, or codebase stats.
 version: 1.0.0
 author: Hermes Agent
 license: MIT
+prerequisites:
+  commands:
+  - pygount
 metadata:
   hermes:
-    tags: [LOC, Code Analysis, pygount, Codebase, Metrics, Repository]
-    related_skills: [github-repo-management]
-prerequisites:
-  commands: [pygount]
+    tags:
+    - LOC
+    - Code Analysis
+    - pygount
+    - Codebase
+    - Metrics
+    - Repository
+    related_skills:
+    - github-repo-management
 ---
 
 # Codebase Inspection with pygount
+
+## Overview
+
 
 Analyze repositories for lines of code, language breakdown, file counts, and code-vs-comment ratios using `pygount`.
 
@@ -107,8 +118,7 @@ Special pseudo-languages:
 - `__duplicate__` — files with identical content
 - `__unknown__` — unrecognized file types
 
-## Pitfalls
-
+## Common Pitfalls
 1. **Always exclude .git, node_modules, venv** — without `--folders-to-skip`, pygount will crawl everything and may take minutes or hang on large dependency trees.
 2. **Markdown shows 0 code lines** — pygount classifies all Markdown content as comments, not code. This is expected behavior.
 3. **JSON files show low code counts** — pygount may count JSON lines conservatively. For accurate JSON line counts, use `wc -l` directly.
@@ -123,3 +133,10 @@ PY
 )
    [ -n "$PYGOUNT" ] && "$PYGOUNT" --format=summary --folders-to-skip=".git,node_modules,venv,.venv,__pycache__,.cache,dist,build,.next,.tox,vendor,third_party" .
    ```
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

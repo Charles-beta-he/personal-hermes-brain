@@ -1,0 +1,408 @@
+{
+  "timestamp": "2026-05-13T19:29:01",
+  "root": "/Users/charles/.hermes/skills",
+  "candidate_count": 23,
+  "modified_count": 23,
+  "modified": [
+    {
+      "path": "/Users/charles/.hermes/skills/apple/SKILL.md",
+      "related_skills": [
+        "apple-notes",
+        "apple-reminders",
+        "findmy",
+        "imessage",
+        "macos-computer-use"
+      ],
+      "tags": [
+        "apple",
+        "workflow",
+        "umbrella",
+        "routing"
+      ],
+      "preserved_sections": [
+        "iCloud Documents organization",
+        "Desktop safe organization"
+      ],
+      "routing_items": 5
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/autonomous-ai-agents/SKILL.md",
+      "related_skills": [
+        "claude-code",
+        "codex",
+        "hermes-agent",
+        "hermes-pipeline",
+        "opencode"
+      ],
+      "tags": [
+        "autonomous",
+        "ai",
+        "agents",
+        "agent",
+        "umbrella",
+        "routing"
+      ],
+      "preserved_sections": [],
+      "routing_items": 5
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/creative/SKILL.md",
+      "related_skills": [
+        "architecture-diagram",
+        "ascii-art",
+        "baoyu-comic",
+        "baoyu-infographic",
+        "claude-design",
+        "comfyui"
+      ],
+      "tags": [
+        "creative",
+        "workflow",
+        "umbrella",
+        "routing"
+      ],
+      "preserved_sections": [],
+      "routing_items": 19
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/data-science/SKILL.md",
+      "related_skills": [
+        "jupyter-live-kernel"
+      ],
+      "tags": [
+        "data",
+        "science",
+        "umbrella",
+        "routing"
+      ],
+      "preserved_sections": [],
+      "routing_items": 1
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/devops/SKILL.md",
+      "related_skills": [
+        "cloudflare-pages-pnpm",
+        "gateway-telegram-setup",
+        "hermes-storage-governance",
+        "kanban-orchestrator",
+        "kanban-worker",
+        "semantic-release-monorepo"
+      ],
+      "tags": [
+        "devops",
+        "workflow",
+        "umbrella",
+        "routing"
+      ],
+      "preserved_sections": [],
+      "routing_items": 8
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/diagramming/SKILL.md",
+      "related_skills": [
+        "loop",
+        "pua"
+      ],
+      "tags": [
+        "diagramming",
+        "diagram",
+        "umbrella",
+        "routing"
+      ],
+      "preserved_sections": [],
+      "routing_items": 0
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/domain/SKILL.md",
+      "related_skills": [
+        "pua"
+      ],
+      "tags": [
+        "domain",
+        "workflow",
+        "umbrella",
+        "routing"
+      ],
+      "preserved_sections": [],
+      "routing_items": 0
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/email/SKILL.md",
+      "related_skills": [
+        "himalaya"
+      ],
+      "tags": [
+        "email",
+        "workflow",
+        "umbrella",
+        "routing"
+      ],
+      "preserved_sections": [],
+      "routing_items": 1
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/gaming/SKILL.md",
+      "related_skills": [
+        "minecraft-modpack-server"
+      ],
+      "tags": [
+        "gaming",
+        "workflow",
+        "umbrella",
+        "routing"
+      ],
+      "preserved_sections": [],
+      "routing_items": 1
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/github/SKILL.md",
+      "related_skills": [
+        "codebase-inspection",
+        "github-auth",
+        "github-code-review",
+        "github-issues",
+        "github-pr-workflow",
+        "github-repo-management"
+      ],
+      "tags": [
+        "github",
+        "workflow",
+        "umbrella",
+        "routing"
+      ],
+      "preserved_sections": [
+        "Upstream Sync with Local WIP",
+        "References"
+      ],
+      "routing_items": 6
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/inference-sh/SKILL.md",
+      "related_skills": [
+        "pua",
+        "loop"
+      ],
+      "tags": [
+        "inference",
+        "workflow",
+        "umbrella",
+        "routing"
+      ],
+      "preserved_sections": [
+        "边界条件"
+      ],
+      "routing_items": 0
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/leisure/SKILL.md",
+      "related_skills": [
+        "loop",
+        "pua"
+      ],
+      "tags": [
+        "leisure",
+        "workflow",
+        "umbrella",
+        "routing"
+      ],
+      "preserved_sections": [],
+      "routing_items": 0
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/mcp/SKILL.md",
+      "related_skills": [
+        "mcporter",
+        "native-mcp"
+      ],
+      "tags": [
+        "mcp",
+        "protocol",
+        "integration",
+        "umbrella",
+        "routing"
+      ],
+      "preserved_sections": [
+        "边界条件",
+        "Skill 路由决策树",
+        "MCP Server minimal template / test checklist",
+        "Code-intelligence MCP patterns",
+        "native-mcp vs mcporter 选型"
+      ],
+      "routing_items": 2
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/media/SKILL.md",
+      "related_skills": [
+        "gif-search",
+        "spotify",
+        "youtube-content"
+      ],
+      "tags": [
+        "media",
+        "workflow",
+        "umbrella",
+        "routing"
+      ],
+      "preserved_sections": [],
+      "routing_items": 3
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/mlops/SKILL.md",
+      "related_skills": [
+        "modal-serverless-gpu",
+        "evaluating-llms-harness",
+        "weights-and-biases",
+        "huggingface-hub",
+        "gguf-quantization",
+        "guidance"
+      ],
+      "tags": [
+        "mlops",
+        "workflow",
+        "umbrella",
+        "routing"
+      ],
+      "preserved_sections": [],
+      "routing_items": 7
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/note-taking/SKILL.md",
+      "related_skills": [
+        "obsidian"
+      ],
+      "tags": [
+        "note",
+        "taking",
+        "umbrella",
+        "routing"
+      ],
+      "preserved_sections": [],
+      "routing_items": 1
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/pro/SKILL.md",
+      "related_skills": [
+        "email",
+        "p10",
+        "p7",
+        "p9",
+        "pua"
+      ],
+      "tags": [
+        "pro",
+        "workflow",
+        "umbrella",
+        "routing"
+      ],
+      "preserved_sections": [
+        "自进化协议",
+        "Platform 层",
+        "PUA 排行榜"
+      ],
+      "routing_items": 0
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/productivity/SKILL.md",
+      "related_skills": [
+        "airtable",
+        "google-workspace",
+        "lark-docx-reading",
+        "linear",
+        "maps",
+        "nano-pdf"
+      ],
+      "tags": [
+        "productivity",
+        "workflow",
+        "umbrella",
+        "routing"
+      ],
+      "preserved_sections": [],
+      "routing_items": 10
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/red-teaming/SKILL.md",
+      "related_skills": [
+        "pua"
+      ],
+      "tags": [
+        "red",
+        "teaming",
+        "umbrella",
+        "routing"
+      ],
+      "preserved_sections": [
+        "Security step-up / trusted-device audit pattern"
+      ],
+      "routing_items": 0
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/research/SKILL.md",
+      "related_skills": [
+        "arxiv",
+        "blogwatcher",
+        "llm-wiki",
+        "polymarket",
+        "research-paper-writing"
+      ],
+      "tags": [
+        "research",
+        "workflow",
+        "umbrella",
+        "routing"
+      ],
+      "preserved_sections": [],
+      "routing_items": 5
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/smart-home/SKILL.md",
+      "related_skills": [
+        "openhue"
+      ],
+      "tags": [
+        "smart",
+        "home",
+        "umbrella",
+        "routing"
+      ],
+      "preserved_sections": [],
+      "routing_items": 1
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/social-media/SKILL.md",
+      "related_skills": [
+        "xitter",
+        "xurl"
+      ],
+      "tags": [
+        "social",
+        "media",
+        "umbrella",
+        "routing"
+      ],
+      "preserved_sections": [],
+      "routing_items": 2
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/software-development/SKILL.md",
+      "related_skills": [
+        "agent-team-parallel",
+        "arc-dispatch-executor",
+        "architecture-optimization-loop",
+        "auto-optimize-loop",
+        "browser-harness-integration",
+        "code-simplifier"
+      ],
+      "tags": [
+        "software",
+        "development",
+        "umbrella",
+        "routing"
+      ],
+      "preserved_sections": [
+        "References"
+      ],
+      "routing_items": 45
+    }
+  ]
+}

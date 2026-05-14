@@ -1,14 +1,36 @@
 ---
 name: p5js
-description: "Production pipeline for interactive and generative visual art using p5.js. Creates browser-based sketches, generative art, data visualizations, interactive experiences, 3D scenes, audio-reactive visuals, and motion graphics — exported as HTML, PNG, GIF, MP4, or SVG. Covers: 2D/3D rendering, noise and particle systems, flow fields, shaders (GLSL), pixel manipulation, kinetic typography, WebGL scenes, audio analysis, mouse/keyboard interaction, and headless high-res export. Use when users request: p5.js sketches, creative coding, generative art, interactive visualizations, canvas animations, browser-based visual art, data viz, shader effects, or any p5.js project."
+description: 'Use when users request: p5.js sketches, creative coding, generative art, interactive visualizations, canvas animations, browser-based visual art, data viz, shader effects, or any p5.js project.'
 version: 1.0.0
+author: Hermes Agent
+license: MIT
 metadata:
   hermes:
-    tags: [creative-coding, generative-art, p5js, canvas, interactive, visualization, webgl, shaders, animation]
-    related_skills: [ascii-video, manim-video, excalidraw]
+    tags:
+    - creative-coding
+    - generative-art
+    - p5js
+    - canvas
+    - interactive
+    - visualization
+    - webgl
+    - shaders
+    - animation
+    related_skills:
+    - ascii-video
+    - manim-video
+    - excalidraw
 ---
 
 # p5.js Production Pipeline
+
+## Overview
+
+Production pipeline for interactive and generative visual art using p5.js.
+
+## When to Use
+
+- Users request: p5.js sketches, creative coding, generative art, interactive visualizations, canvas animations, browser-based visual art, data viz, shader effects, or any p5.js project
 
 ## Creative Standard
 
@@ -545,3 +567,16 @@ Take a known generative pattern (flow field, particle system, L-system, cellular
    - Medium (interesting): one fish in a school swimming the wrong way, a phone with no notifications, the gap between subway cars
    - Far (abstract): prime numbers, asymptotic curves, the color of 3am
 3. Develop the medium-distance associations — they're specific enough to visualize but unexpected enough to be interesting
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

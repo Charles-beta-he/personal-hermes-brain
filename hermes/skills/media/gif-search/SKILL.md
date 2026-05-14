@@ -1,20 +1,37 @@
 ---
 name: gif-search
-description: Search and download GIFs from Tenor using curl. No dependencies beyond curl and jq. Useful for finding reaction GIFs, creating visual content, and sending GIFs in chat.
+description: Use when you need to search and download GIFs from Tenor using curl.
 version: 1.1.0
 author: Hermes Agent
 license: MIT
 prerequisites:
-  env_vars: [TENOR_API_KEY]
-  commands: [curl, jq]
+  env_vars:
+  - TENOR_API_KEY
+  commands:
+  - curl
+  - jq
 metadata:
   hermes:
-    tags: [GIF, Media, Search, Tenor, API]
+    tags:
+    - GIF
+    - Media
+    - Search
+    - Tenor
+    - API
+    related_skills:
+    - media
 ---
 
 # GIF Search (Tenor API)
 
+## Overview
+
+
 Search and download GIFs directly via the Tenor API using curl. No extra tools needed.
+
+## When to Use
+
+- You need to search and download GIFs from Tenor using curl
 
 ## Setup
 
@@ -84,3 +101,16 @@ Each result has multiple formats under `.media_formats`:
 - URL-encode the query: spaces as `+`, special chars as `%XX`
 - For sending in chat, `tinygif` URLs are lighter weight
 - GIF URLs can be used directly in markdown: `![alt](url)`
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

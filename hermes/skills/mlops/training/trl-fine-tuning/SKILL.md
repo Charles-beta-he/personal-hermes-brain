@@ -1,17 +1,46 @@
 ---
 name: fine-tuning-with-trl
-description: Fine-tune LLMs using reinforcement learning with TRL - SFT for instruction tuning, DPO for preference alignment, PPO/GRPO for reward optimization, and reward model training. Use when need RLHF, align model with preferences, or train from human feedback. Works with HuggingFace Transformers.
+description: Use when need RLHF, align model with preferences, or train from human feedback. Works with HuggingFace Transformers.
 version: 1.0.0
 author: Orchestra Research
 license: MIT
-dependencies: [trl, transformers, datasets, peft, accelerate, torch]
+dependencies:
+- trl
+- transformers
+- datasets
+- peft
+- accelerate
+- torch
 metadata:
   hermes:
-    tags: [Post-Training, TRL, Reinforcement Learning, Fine-Tuning, SFT, DPO, PPO, GRPO, RLHF, Preference Alignment, HuggingFace]
-
+    tags:
+    - Post-Training
+    - TRL
+    - Reinforcement Learning
+    - Fine-Tuning
+    - SFT
+    - DPO
+    - PPO
+    - GRPO
+    - RLHF
+    - Preference Alignment
+    - HuggingFace
+    related_skills:
+    - design
+    - github
+    - guidance
+    - peft
 ---
 
 # TRL - Transformer Reinforcement Learning
+
+## Overview
+
+Fine-tune LLMs using reinforcement learning with TRL - SFT for instruction tuning, DPO for preference alignment, PPO/GRPO for reward optimization, and reward model training.
+
+## When to Use
+
+- Need RLHF, align model with preferences, or train from human feedback. Works with HuggingFace Transformers
 
 ## Quick start
 
@@ -458,5 +487,15 @@ config = PPOConfig(
   - "Group Relative Policy Optimization" (GRPO, 2024)
 - Examples: https://github.com/huggingface/trl/tree/main/examples/scripts
 
+## Common Pitfalls
 
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
 

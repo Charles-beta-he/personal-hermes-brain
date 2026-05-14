@@ -1,13 +1,29 @@
 ---
 name: ckm:brand
-description: Brand voice, visual identity, messaging frameworks, asset management, brand consistency. Activate for branded content, tone of voice, marketing assets, brand compliance, style guides.
-argument-hint: "[update|review|create] [args]"
+description: Use when you need guidance on brand voice, visual identity, messaging frameworks, asset management, brand consistency.
+version: 1.0.0
+author: Hermes Agent
+license: MIT
+argument-hint: '[update|review|create] [args]'
 metadata:
   author: claudekit
-  version: "1.0.0"
+  version: 1.0.0
+  hermes:
+    tags:
+    - ux
+    - pro
+    - max
+    - brand
+    - ckm:brand
+    related_skills:
+    - design
+    - guidance
 ---
 
 # Brand
+
+## Overview
+
 
 Brand identity, voice, messaging, asset management, and consistency frameworks.
 
@@ -95,3 +111,16 @@ node scripts/inject-brand-context.cjs --json | head -20
 1. Parse subcommand from `$ARGUMENTS` (first word)
 2. Load corresponding `references/{subcommand}.md`
 3. Execute with remaining arguments
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

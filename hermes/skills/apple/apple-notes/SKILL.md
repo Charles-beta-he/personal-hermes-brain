@@ -1,22 +1,30 @@
 ---
 name: apple-notes
-description: Manage Apple Notes via the memo CLI on macOS (create, view, search, edit).
+description: Use when you need to manage Apple Notes via the memo CLI on macOS (create, view, search, edit).
 version: 1.0.0
 author: Hermes Agent
 license: MIT
-platforms: [macos]
+platforms:
+- macos
+prerequisites:
+  commands:
+  - memo
 metadata:
   hermes:
-    tags: [Notes, Apple, macOS, note-taking]
-    related_skills: [obsidian]
-prerequisites:
-  commands: [memo]
+    tags:
+    - Notes
+    - Apple
+    - macOS
+    - note-taking
+    related_skills:
+    - obsidian
 ---
 
 # Apple Notes
 
-Use `memo` to manage Apple Notes directly from the terminal. Notes sync across all Apple devices via iCloud.
+## Overview
 
+Use `memo` to manage Apple Notes directly from the terminal. Notes sync across all Apple devices via iCloud. In practice, load it when you need to manage Apple Notes via the memo CLI on macOS (create, view, search, edit). It defines the expected execution lane, scope boundaries, and verification shape for this class of work.
 ## Prerequisites
 
 - **macOS** with Notes.app
@@ -29,7 +37,7 @@ Use `memo` to manage Apple Notes directly from the terminal. Notes sync across a
 - Saving information to Notes.app for cross-device access
 - Organizing notes into folders
 - Exporting notes to Markdown/HTML
-
+- Don't use for: requests that do not need you need to manage Apple Notes via the memo CLI on macOS (create, view, search, edit); choose a more specific child skill or a broader routing skill that actually matches the task.
 ## When NOT to Use
 
 - Obsidian vault management → use the `obsidian` skill
@@ -88,3 +96,16 @@ memo notes -ex                    # Export to HTML/Markdown
 1. Prefer Apple Notes when user wants cross-device sync (iPhone/iPad/Mac)
 2. Use the `memory` tool for agent-internal notes that don't need to sync
 3. Use the `obsidian` skill for Markdown-native knowledge management
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

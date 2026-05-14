@@ -1,14 +1,32 @@
 ---
 name: cognitive-load-agent
-description: "认知负荷理论 × Agent Context 管理 — 基于 Sweller 认知负荷理论，将 Agent context window 建模为工作记忆。通过 Chunk 化分解、外在负荷最小化、相关负荷最大化来优化推理质量。Use when task is complex, context is long, or reasoning quality degrades. Triggers: 'context管理', 'chunk化', '任务分解', '认知负荷', '工作记忆', 'context溢出', '任务太大'."
+description: 'Use when task is complex, context is long, or reasoning quality degrades. Triggers: ''context管理'', ''chunk化'', ''任务分解'', ''认知负荷'', ''工作记忆'', ''context溢出'', ''任务太大''.'
+version: 1.0.0
+author: Hermes Agent
 license: MIT
-tags: [cognitive-load, context-management, chunking, task-decomposition, working-memory]
+metadata:
+  hermes:
+    tags:
+    - cognitive-load
+    - context-management
+    - chunking
+    - task-decomposition
+    - working-memory
+    related_skills:
+    - bayesian-agent
 ---
 
 # Cognitive Load Agent — 认知负荷管理
 
+## Overview
+
+
 > 工作记忆的容量是 7±2 个 chunk — George Miller
 > Agent 的 context window 同理，超限则推理质量必然下降。
+
+## When to Use
+
+- Task is complex, context is long, or reasoning quality degrades. Triggers: 'context管理', 'chunk化', '任务分解', '认知负荷', '工作记忆', 'context溢出', '任务太大'
 
 ## 三类认知负荷
 
@@ -226,3 +244,16 @@ Chunk N 完成后：
 
 - 遵循项目规范
 - 在 context budget 内完成
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

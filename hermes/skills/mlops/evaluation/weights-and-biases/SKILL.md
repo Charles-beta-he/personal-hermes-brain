@@ -1,20 +1,38 @@
 ---
 name: weights-and-biases
-description: Track ML experiments with automatic logging, visualize training in real-time, optimize hyperparameters with sweeps, and manage model registry with W&B - collaborative MLOps platform
+description: Use when you need to track ML experiments with automatic logging, visualize training in real-time, optimize hyperparameters with sweeps, and manage model registry with W&B - collaborative MLOps platform.
 version: 1.0.0
 author: Orchestra Research
 license: MIT
-dependencies: [wandb]
+dependencies:
+- wandb
 metadata:
   hermes:
-    tags: [MLOps, Weights And Biases, WandB, Experiment Tracking, Hyperparameter Tuning, Model Registry, Collaboration, Real-Time Visualization, PyTorch, TensorFlow, HuggingFace]
-
+    tags:
+    - MLOps
+    - Weights And Biases
+    - WandB
+    - Experiment Tracking
+    - Hyperparameter Tuning
+    - Model Registry
+    - Collaboration
+    - Real-Time Visualization
+    - PyTorch
+    - TensorFlow
+    - HuggingFace
+    related_skills:
+    - github
+    - loop
+    - media
 ---
 
 # Weights & Biases: ML Experiment Tracking & MLOps
 
-## When to Use This Skill
+## Overview
 
+Track ML experiments with automatic logging, visualize training in real-time, optimize hyperparameters with sweeps, and manage model registry with W&B - collaborative MLOps platform.
+
+## When to Use
 Use Weights & Biases (W&B) when you need to:
 - **Track ML experiments** with automatic metric logging
 - **Visualize training** in real-time dashboards
@@ -590,4 +608,15 @@ print(f"Share this URL: {run.url}")
 - `references/artifacts.md` - Data and model versioning patterns
 - `references/integrations.md` - Framework-specific examples
 
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
 

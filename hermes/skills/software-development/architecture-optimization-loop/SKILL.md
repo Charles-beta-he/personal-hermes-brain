@@ -1,20 +1,38 @@
 ---
 name: architecture-optimization-loop
-description: "P9/P10/Loop architecture optimization workflow - systematic iterative improvement with management layers"
-triggers: ["架构优化", "architecture", "p10 检查", "迭代优化"]
+description: Use when you need guidance on p9/P10/Loop architecture optimization workflow - systematic iterative improvement with management layers.
+version: 1.0.0
+author: Hermes Agent
+license: MIT
+triggers:
+- 架构优化
+- architecture
+- p10 检查
+- 迭代优化
+metadata:
+  hermes:
+    tags:
+    - software
+    - development
+    - architecture
+    - optimization
+    - loop
+    related_skills:
+    - software-development
 ---
 
 # 架构优化 Loop 工作流
 
-三轮驱动的架构优化模式：P10 战略 → P9 执行 → UI 走查。
+## Overview
 
-## 适用场景
+三轮驱动的架构优化模式：P10 战略 → P9 执行 → UI 走查。. In practice, load it when you need guidance on p9/P10/Loop architecture optimization workflow - systematic iterative improvement with management layers. It defines the expected execution lane, scope boundaries, and verification shape for this class of work.
+## When to Use
 
 - 大规模代码重构
 - 样式系统迁移（如 CSS-in-JS → Tailwind）
 - 组件抽象层建设
 - 性能优化系统性改造
-
+- Don't use for: requests that do not need you need guidance on p9/P10/Loop architecture optimization workflow - systematic iterative improvement with management layers; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## 工作流程
 
 ### 每轮迭代
@@ -107,3 +125,16 @@ UI 走查 (验证)
 2. **小步快跑** - 每轮小改动，快速验证
 3. **自动版本** - semantic-release 自动发布，不手动管理版本
 4. **UI 走查** - 每轮必须验证视觉一致性
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

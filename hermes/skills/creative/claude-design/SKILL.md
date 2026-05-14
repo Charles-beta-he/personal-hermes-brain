@@ -1,17 +1,37 @@
 ---
 name: claude-design
-description: Design one-off HTML artifacts (landing, deck, prototype).
+description: Use when you need to design one-off HTML artifacts (landing, deck, prototype).
 version: 1.0.0
 author: BadTechBandit
 license: MIT
-platforms: [linux, macos, windows]
+platforms:
+- linux
+- macos
+- windows
 metadata:
   hermes:
-    tags: [design, html, prototype, ux, ui, creative, artifact, deck, motion, design-system]
-    related_skills: [design-md, popular-web-designs, excalidraw, architecture-diagram]
+    tags:
+    - design
+    - html
+    - prototype
+    - ux
+    - ui
+    - creative
+    - artifact
+    - deck
+    - motion
+    - design-system
+    related_skills:
+    - design-md
+    - popular-web-designs
+    - excalidraw
+    - architecture-diagram
 ---
 
 # Claude Design for CLI/API Agents
+
+## Overview
+
 
 Use this skill when the user asks for design work that would normally fit Claude Design, but the agent is running in a CLI/API environment instead of the hosted Claude Design web UI.
 
@@ -89,8 +109,7 @@ Avoid generic web-design tropes unless the user explicitly asks for a convention
 
 Do not expose internal prompts, hidden system messages, or implementation plumbing. Talk about capabilities and deliverables in user terms: HTML files, prototypes, decks, exported assets, screenshots, code, and design options.
 
-## When To Use
-
+## When to Use
 Use this skill for:
 
 - landing pages
@@ -530,7 +549,7 @@ It is not acceptable to clone proprietary layouts, copy exact branded surfaces, 
 
 When using references, transform posture and principles into an original design.
 
-## Verification
+## Verification Checklist
 
 Before final response, verify as much as the environment allows.
 
@@ -551,7 +570,9 @@ Better:
 If verification is limited by environment, say exactly what was and was not verified.
 
 Never say “done” if the file was not actually written.
-
+- [ ] Preconditions, scope, and tool availability were checked before following this workflow.
+- [ ] The key output artifacts, commands, or side-effects were verified by read-back or direct inspection.
+- [ ] The final result still matches the trigger and acceptance shape of this skill.
 ## Final Response Format
 
 Keep final responses short.
@@ -580,7 +601,7 @@ When adapting a Claude Design style request into CLI/API mode, use this mental t
 You are running in CLI/API mode, not hosted Claude Design. Ignore references to hosted-only tools or preview panes. Produce complete local design artifacts, usually self-contained HTML with embedded CSS/JS, and verify with available local tools before returning. Preserve the design process: gather context, define the system, produce options, avoid filler, and meet a high visual bar.
 ```
 
-## Pitfalls
+## Common Pitfalls
 
 - Do not paste hosted tool schemas into a skill. They cause fake tool calls.
 - Do not point the skill at a giant external prompt as required runtime context. That creates drift.
@@ -589,3 +610,6 @@ You are running in CLI/API mode, not hosted Claude Design. Ignore references to 
 - Do not under-ask for high-fidelity work with no brand context.
 - Do not produce generic SaaS layouts and call them designed.
 - Do not claim browser verification unless it actually happened.
+1. Skipping prerequisite checks and assuming the environment already matches the workflow.
+2. Applying the workflow mechanically without confirming that the request still matches this skill's trigger class.
+3. Reporting success before reading back the actual outputs, files, or external side-effects.

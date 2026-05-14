@@ -1,8 +1,21 @@
 ---
 name: skill-eval
-description: "Systematically evaluate Hermes agent skills — test trigger accuracy, behavior correctness, and quality regressions. Use when creating new skills, updating existing skills, or running quality audits across the skill library."
+description: Use when creating, updating, or auditing Hermes skills and you need to test trigger accuracy, behavior correctness, and regression risk with explicit eval cases.
+version: 1.0.0
+author: Hermes Agent
 license: MIT
-tags: [skills, evaluation, quality, regression, testing]
+metadata:
+  hermes:
+    tags:
+    - skills
+    - evaluation
+    - quality
+    - regression
+    - testing
+    related_skills:
+    - hermes-agent-skill-authoring
+    - workflow-ecosystem-audit
+    - requesting-code-review
 ---
 
 # Skill Evals — 测试 Agent Skills 的系统方法
@@ -10,6 +23,10 @@ tags: [skills, evaluation, quality, regression, testing]
 > 把 skills 从"感觉好用"变成"可测试、可打分、可回归"。
 
 Based on OpenAI's eval-skills methodology, adapted for Hermes Agent.
+
+## Overview
+
+This skill turns skill quality from intuition into a repeatable evaluation loop: define what good looks like, build prompt cases, run deterministic checks, grade qualitative outputs, and track regressions after each skill change.
 
 ## When to Use
 
@@ -45,6 +62,8 @@ Every skill must have a `## Definition of Done` section with checkboxes for each
 
 ## Step 2: Build Prompt Test Set
 
+Routing quality is the first eval surface, not an afterthought. Before checking output quality, verify that the skill loads **only** when it should and stays dormant for adjacent requests.
+
 Create a CSV file at `{skill-dir}/evals/prompts.csv` with test cases:
 
 ```csv
@@ -69,6 +88,11 @@ test-05,false,"Generic action that overlaps with skill description",False positi
 - 2 negative prompts (adjacent + generic)
 - Total: 5 prompts minimum, 10-20 for mature skills
 
+Priorities:
+- **Precision first**: a false-positive load can damage the whole skill ecosystem by crowding context or stealing routing from a neighboring skill.
+- **Neighbor confusion matters**: include prompts that are close to the boundary of another valid skill.
+- **Description edits are high-risk**: whenever `description` changes, re-run the positive/negative set even if the body did not change.
+
 ## Step 3: Manual Trigger Test
 
 Before automating, manually trigger the skill with each prompt to:
@@ -81,7 +105,7 @@ Record findings in `{skill-dir}/evals/baseline.md`.
 
 ## Step 4: Deterministic Checks
 
-For skills that produce file artifacts or run specific commands, write checks:
+For skills that produce file artifacts or run specific commands, write checks. Also verify progressive disclosure behavior when the skill depends on support files: it is not enough that the skill loads if the agent never reads the crucial `references/`, `FORMATTING.md`, or template file.
 
 ```python
 # Example: verify dogfood skill output
@@ -123,7 +147,7 @@ For style and convention checks that can't be deterministic:
 
 ## Step 6: Regression Tracking
 
-After each skill update, re-run the prompt test set and compare:
+After each skill update, re-run the prompt test set and compare. If the skill is used across multiple orchestrator families, sample more than one model family because routing and file-read behavior can vary materially across models.
 
 1. Trigger accuracy: same prompts still trigger/don't trigger?
 2. Behavior: same commands executed? Same output structure?
@@ -156,6 +180,24 @@ Date: {date}
 
 ## Integration with Existing Skills
 
+### Batch library rehabilitation triage
+
+For a skill-library cleanup pass, run three complementary reviews instead of one blended judgment:
+
+1. **Trigger/frontmatter review** — route clarity, `Use when ...`, peer-shaped metadata, related-skill links
+2. **Mode/structure review** — primary mode clarity, section contract, duplicate headings/tails, missing verification shell
+3. **Ecosystem review** — overlap, umbrella fit, patch-now vs merge-later decisions
+
+Treat these as separate eval dimensions so you do not confuse a good idea with a good contract. In practice, normalize frontmatter and obvious corruption first, then schedule larger body slimming or umbrella consolidation afterward.
+
+### External skill-learning evaluations
+
+When evaluating third-party skill ecosystems, use the Superpowers evidence-slice pattern as the minimum bar: source/license confirmation, complete capability matrix, 2 reproducible experiment designs, adopt/borrow/reject decision, and read-back validation. Example artifact: `/Users/charles/Documents/brain/05-实践与项目/projects/agent-skill-learning/superpowers-composable-evaluation-2026-05-13.md`.
+
+### Skill authoring creation gates
+
+Before creating or materially changing a Hermes skill, apply the skill-authoring creation gates captured in `/Users/charles/Documents/brain/05-实践与项目/projects/agent-skill-learning/skill-authoring-creation-gates-2026-05-13.md`: need/anti-proliferation gate, shape/frontmatter gate, 3 positive + 2 negative trigger prompts, deterministic/read-back verification, skill graph/steward gate, and closeout/commit evidence.
+
 ### For skills with Definition of Done (dogfood, uimax-audit, auto-optimize-loop, requesting-code-review, loop)
 
 The Definition of Done checkboxes map directly to eval checks:
@@ -172,10 +214,21 @@ The Definition of Done checkboxes map directly to eval checks:
 4. Add deterministic checks for outcome
 5. Document in evals/baseline.md
 
-## Pitfalls
+## Common Pitfalls
 
 - **Don't over-engineer**: 5 prompts + 3 deterministic checks > 50 prompts with no checks
 - **Trigger tests depend on model**: Different models may trigger skills differently — test with your primary model
 - **Negative cases matter most**: A skill that triggers too eagerly is worse than one that doesn't trigger enough
 - **Session transcript is your trace**: Hermes doesn't have codex's --json output, but session_search can retrieve execution history
 - **Rubric grading is subjective**: Use it for style checks only, not for outcome/process verification
+1. Skipping prerequisite checks and assuming the environment already matches the workflow.
+2. Applying the workflow mechanically without confirming that the request still matches this skill's trigger class.
+3. Reporting success before reading back the actual outputs, files, or external side-effects.
+## Verification Checklist
+
+- [ ] `description` expresses the trigger class clearly and is tested with at least 3 positive + 2 negative prompts
+- [ ] `Definition of Done` covers outcome, process, style, and efficiency
+- [ ] Prompt cases exist in `evals/prompts.csv` or an equivalent documented test set
+- [ ] Deterministic checks verify the output artifacts or command effects
+- [ ] Any qualitative rubric is written down and can be re-run after a patch
+- [ ] Results are read back and compared against the previous baseline before declaring the skill improved

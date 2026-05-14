@@ -1,12 +1,32 @@
 ---
 name: loop
-description: "PUA Loop — autonomous iterative development with PUA pressure. Keeps running until task is done, no user interaction needed. Combines Ralph Loop iteration mechanism with PUA quality enforcement. Triggers on: '/pua loop', '/pua:loop', '自动循环', 'loop mode', '一直跑', '自动迭代'."
+description: Use when the user explicitly requests autonomous loop execution with no interactive questioning and wants repeated implement→verify→fix iterations until completion or a hard stop condition.
+version: 1.0.0
+author: Hermes Agent
 license: MIT
+metadata:
+  hermes:
+    tags:
+    - loop
+    - autonomous-iteration
+    - no-interaction
+    - pua-loop
+    related_skills:
+    - multi-model-thinking
+    - router
+    - requesting-code-review
 ---
 
 # PUA Loop — 自动迭代 + PUA 质量引擎
 
+## Overview
+
+
 > Ralph Loop 提供"不停地做"，PUA 提供"做得更好"。合在一起 = **自主迭代 + 质量压力 + 零人工干预**。
+
+## When to Use
+
+- The user explicitly requests autonomous loop execution with no interactive questioning and wants repeated implement→verify→fix iterations until completion or a hard stop condition
 
 ## 核心规则
 
@@ -61,6 +81,20 @@ bash "${CLAUDE_PLUGIN_ROOT}/scripts/setup-pua-loop.sh" "$ARGUMENTS" --max-iterat
 5. 如果用户要求“多模型思考把持方向 / 每轮多模型检查 / 直至完整落地”，每轮必须按“deterministic gates → claim/evidence state → T3 四模型 ratification artifact → 修 dissent/amend → scoped commit/closeout”的闭环推进；没有 `discussion_result.json` + `final/certification_manifest.json` 且四模型全票/无 unresolved severity>=3 时，不能输出 LOOP_DONE。若只是已提交代码但未完成当前轮 T3，只能继续 loop 或给出可恢复 handoff。
 6. 如果启动过 dev/mock/watch/server 进程，必须停止后台进程并验证相关端口关闭；如果 terminal/process wrapper 的 kill/cleanup 失败（例如缺 `psutil`）或把 `lsof`/`ps` 清理命令误判为 long-lived server/watch，用 PGID 终止 + Python socket + `ps` 的短脚本验证，不要跳过清理
 
+## Session-Level Authorization for PUA-Loop
+
+When user explicitly says "继续/推进/loop/pua-loop 落地" in current session:
+- Advisory auto-push: allowed (T1/T2 only suggest, no closeout)
+- Certification execution: allowed
+- Closeout auto-pass: only when gate PASS
+- Done write: only when gate PASS + evidence bound
+
+Hermes uses multi-layer double-gating, NOT a single disable switch. See `references/hermes-pua-loop-double-gating.md` for the 4 gate layers and how to diagnose "is it working?".
+
+核心规则：用户授权执行推进，完成判定仍由 gate 控制。
+
+完整触发时机设计、阈值、loop economy 和 governance ratchet 见 `multi-model-thinking` 的 `references/event-driven-trigger-timing-and-loop-economy.md`。
+
 知识库/本地大脑类 loop 还必须满足 evidence gate，而不是口头说“无后续建议”：
 - 结构审计清零：空目录、顶层缺 MOC/index、空心父目录、断链、敏感模式命中均为 0/空数组
 - `sync` / `reindex` / `search` 有实际观测输出
@@ -73,6 +107,31 @@ bash "${CLAUDE_PLUGIN_ROOT}/scripts/setup-pua-loop.sh" "$ARGUMENTS" --max-iterat
 - 如果 loop 是外部任务交付（例如 Lark Task / GitHub issue / dispatch 任务），验证通过后先完成交付闭环：证据摘要 → `git diff --check` → scoped local commit → 用户要求的通知/回报渠道。不要把可选 ledger 扩写、额外审计或下一任务探索排在 commit/report 前面；否则工具/context 预算耗尽时会留下“代码已测但任务未闭环”的半成品。
 
 否则继续迭代。
+
+## Session-Level Authorization for Hermes
+
+When user explicitly says "继续", "推进", "loop", "pua-loop落地", "多模型分析穷尽" in a Hermes CLI session:
+
+### Allowed (session-level)
+- Continue loop iterations
+- Auto-collect evidence
+- Auto-trigger T1/T2 advisory
+- Auto-rerun unresolved issues
+- Auto-writeback round status (including not_certified / continue_loop)
+
+### Conditionally Allowed
+- T3 certification execution: allowed
+- T3 closeout auto-pass: only when gate PASS + evidence bound
+- Auto done: only when gate PASS
+
+### Denied
+- Skip evidence binding
+- Skip 4/4 participant panel
+- Mark LOOP_DONE when unresolved severity>=3
+- Treat advisory as closeout
+- Fabricate certified when provider degraded
+
+Implementation: `maybe_stream_multimodel_intervention(task)` in brain_task_orchestrator.py spawns background worker on claim/transition. Cron is fallback only.
 
 ## 人工介入信号
 
@@ -130,13 +189,84 @@ session_id 清空后，hook 在下一次 Stop 时自动绑定当前会话。
 PUA Loop 借鉴了 Ralph Loop 的核心机制（Stop hook 截获退出 + 将 prompt 喂回），但**完全独立实现**：各自有独立的 Stop hook 和状态文件（PUA 用 `.claude/pua-loop.local.md`，Ralph 用 `.claude/ralph-loop.local.md`）。两者可以同时安装，互不干扰。PUA Loop 在此基础上扩展了 PUA 质量压力、迭代压力升级、`<loop-abort>` 和 `<loop-pause>` 信号。
 
 
+## PUA-Loop Design Convergence with P10 Checkpoints (2026-05-12)
+
+When the user says "pua-loop落地，每轮P10检验，直至X穷尽":
+- Load `p10` skill and run P10 checkpoints each round
+- Each round must produce a concrete incremental deliverable (schema, threshold, change list, priority)
+- Stop when next round would restate prior rounds (diminishing returns)
+- Final output: prioritized P0/P1/P2 implementation plan with script-level change list
+- Do NOT auto-start T3 certification inside the design loop unless explicitly required
+- This is a design/analysis convergence pattern, not a code delivery loop
+
+Typical round progression:
+1. Round 1: P10 direction check + gap identification
+2. Round 2: Concrete schema + thresholds
+3. Round 3: Script-level change list + priorities
+4. Round 4: Final P0/P1/P2 plan → convergence declared
+
+## Hermes Session-Level PUA-Loop Authorization (2026-05-12)
+
+When user explicitly says "继续" / "推进" / "loop" / "pua-loop落地" / "多模型分析穷尽" in a Hermes CLI session, treat as session-level authorization:
+
+**Allowed (session-level):**
+- Continue loop iterations
+- Auto-collect evidence
+- Auto-trigger T1/T2 advisory
+- Auto-rerun unresolved issues
+- Auto-write back not_certified / continue_loop / round status
+
+**Conditionally allowed:**
+- T3 certification execution: allowed
+- T3 closeout auto-PASS: only if gate PASS
+- Auto-done: only if gate PASS + evidence bound
+
+**Denied:**
+- Skip evidence binding
+- Skip 4/4 required participant panel
+- Mark LOOP_DONE with unresolved severity>=3
+- Treat advisory as closeout
+- Fake certified on provider degradation
+
+**Key rule:** User authorizes *execution progress*, not *truth gate bypass*. Done/certification still gate-controlled.
+
+This pattern was implemented in the trigger_timing_policy_v1.md (see `~/.hermes/docs/trigger_timing_policy_v1.md`).
+
+## Streaming Architecture for Taskpool PUA-Loop (2026-05-12)
+
+When PUA-loop operates on a Hermes taskpool (not .claude/pua-loop.local.md), the trigger mechanism must be event-driven, not cron-driven:
+
+1. **Streaming layer**: On `claim` or `transition(running/review)`, immediately check if task needs multimodel intervention. If yes, spawn background worker. 30-minute dedup prevents re-processing.
+2. **Cron layer**: 60-minute sweep catches missed tasks only. Scales workers by queue depth (1/2/3).
+3. **Economy gate**: 3+ failed rounds → throttle to T2 advisory. 5+ failed rounds → pause, require human review.
+4. **Advisory/certification split**: Advisory results cannot authorize done. Only T3 certification with gate PASS can.
+
+Implementation: `maybe_stream_multimodel_intervention(task)` called from `command_claim` and `command_transition`.
+
+Full details: load `multi-model-thinking` skill and read `references/event-driven-trigger-timing-and-loop-economy.md`.
+
+## Hermes Taskpool Closeout Recovery
+
+When the user says “检查任务池进度” or “继续” after a taskpool session, do not rely on remembered state. Reconcile the local brain taskpool, close only via `brain_task_orchestrator` lifecycle commands, and rerun proof/selfcheck/dashboard gates after each batch. Typed evidence matters: frontmatter `evidence:` rows should use `artifact:` / `proof:` prefixes; bare absolute paths can make `proof-check` fail and must be normalized before claiming the taskpool is healthy. Advisory-only multimodel results (`PASS_ADVISORY_ONLY`, `CONTINUE_LOOP`, `multimodel_certification_authority: False`) are provenance, not closeout authority.
+
+For T1/T2 advisory-only taskpool intervention, do not feed the result to the canonical T3/4-model ratification gate. If the plan is `advisory_only: true`, a parseable consult artifact with concrete participants/votes should be consumed by an advisory gate as `PASS_ADVISORY_ONLY` + `continue_loop` + `certification_authority=false`; it should write `multimodel_status: advisory_completed` / `multimodel_round_status: advisory_passed` and suppress repeated weak advisory triggers, but it must not write `multimodel_ratification_artifact` or authorize `LOOP_DONE`. Strong certification triggers still require the full canonical 4-model ratification gate.
+
+Detailed recovery checklist: `references/taskpool-closeout-recovery.md`. It also records the durable advisory-only routing rule (`T1/T2` advisory, no forced `T3 --quorum 4`) and the `unresolved_noop_vs_change` pattern for MiMo concrete-patch minority vs noop majority disagreements.
+
 ## 约束
 
 - 遵循项目规范
 - 在 context budget 内完成
 
+## Common Pitfalls
 
-## 约束
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
 
-- 遵循项目规范
-- 在 context budget 内完成
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

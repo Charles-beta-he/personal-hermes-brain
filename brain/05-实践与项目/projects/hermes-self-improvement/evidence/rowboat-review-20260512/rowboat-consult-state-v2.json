@@ -1,0 +1,305 @@
+{
+  "schema": "multi_model_state_v1",
+  "created_at": "2026-05-12T15:52:10.496876+00:00",
+  "question": "Target-bound ratification: evaluate rowboatlabs/rowboat v2 evidence pack for Hermes-native taskpool/orchestration improvements. Decide whether the recommendation ledger is evidence-grounded and safe to close as review/done: R-P0-1 event queue spike, R-P0-2 objective/triggers/runtime separation audit, R-P1-1 liberal pass-1 routing spike, R-REJECT-1 reject wholesale runtime import.",
+  "context": {
+    "repo": "https://github.com/rowboatlabs/rowboat",
+    "commit": "c756e61d7a958049050dc4955c45c92250be7e8c",
+    "task_id": "2026-05-10-多模型分析-rowboatlabs-rowboat-并完善-hermes-自身",
+    "evidence_pack": "/Users/charles/Documents/brain/05-实践与项目/projects/hermes-self-improvement/evidence/rowboat-review-20260512/rowboat-evidence-pack.json",
+    "advisory_report": "/Users/charles/Documents/brain/05-实践与项目/projects/hermes-self-improvement/evidence/rowboat-review-20260512/rowboat-advisory-report.md",
+    "scope": "Target-bound 4-model ratification over Rowboat v2 evidence pack; no code import; Hermes-native clean-room patterns only.",
+    "decision_under_review": "selective_hermes_native_extraction_only",
+    "recommendation_ids": [
+      "R-P0-1",
+      "R-P0-2",
+      "R-P1-1",
+      "R-REJECT-1"
+    ]
+  },
+  "constraints": [
+    "Evidence-first; model agreement is not evidence. Cite claim IDs and evidence IDs from the pack.",
+    "Do not recommend wholesale Rowboat runtime/Electron/Composio/MCP import.",
+    "Hermes tasks remain Markdown/local-brain canonical; any queue/index/dashboard is derived/rebuildable.",
+    "Certification can approve advisory closeout/spike ledger without approving runtime mutation.",
+    "If any severity>=3 claim is unsupported or contradicted, vote reject/not_certified and request missing evidence."
+  ],
+  "acceptance_criteria": [
+    "All 5 Rowboat claims C-001..C-005 are verified by cited evidence or explicitly marked unsupported.",
+    "Each recommendation R-P0-1/R-P0-2/R-P1-1/R-REJECT-1 is classified adopt-as-spike/adopt-as-pattern/reject with residual risks.",
+    "Final decision distinguishes advisory evidence-pack closeout from implementation/runtime adoption.",
+    "4/4 expected participants are present: claude-opus-4-7, gpt-5.5, deepseek-v4-pro, mimo-v2.5-pro."
+  ],
+  "non_goals": [
+    "Do not write code or import dependencies.",
+    "Do not certify any runtime write-surface change."
+  ],
+  "risk_level": "medium",
+  "budget": {},
+  "claims": [
+    {
+      "id": "C-001",
+      "text": "Rowboat positions itself as a local-first AI coworker whose long-lived working memory is plain Markdown / Obsidian-compatible notes stored on the user's machine.",
+      "severity": 3
+    },
+    {
+      "id": "C-002",
+      "text": "Rowboat exposes typed agent definitions with builtin, MCP, and agent-as-tool attachments, and scheduled agent entries for cron/window/once schedules.",
+      "severity": 3
+    },
+    {
+      "id": "C-003",
+      "text": "Rowboat's run runtime persists JSONL run logs, uses a run lock/abort flow, emits permission and ask-human events, and supports nested agent subflows.",
+      "severity": 3
+    },
+    {
+      "id": "C-004",
+      "text": "Rowboat Live Notes implement a concrete note-agent pattern: one objective in frontmatter, backend-only writes for live metadata, timed scheduler, lastAttempt/lastRun separation, per-note concurrency guard, FIFO pending/done event queue, and liberal Pass-1 routing followed by agent veto.",
+      "severity": 3
+    },
+    {
+      "id": "C-005",
+      "text": "Rowboat includes useful reference patterns but also shell, MCP, OAuth, Composio, and API-key surfaces that Hermes must not wholesale import without sandbox, permission, timeout, redaction, and proof-chain review.",
+      "severity": 3
+    }
+  ],
+  "evidence": [
+    {
+      "id": "E-README-LOCAL",
+      "supports": [
+        "C-001"
+      ],
+      "path": "README.md",
+      "source": "README.md:28-40,84-91,102-110,146-150",
+      "summary": "README claims Rowboat is an open-source AI coworker, local-first, with Obsidian-compatible plain Markdown vault and user-inspectable/editable notes stored locally."
+    },
+    {
+      "id": "E-AGENT-SCHEMA",
+      "supports": [
+        "C-002"
+      ],
+      "path": "apps/x/packages/shared/src/agent.ts",
+      "source": "apps/x/packages/shared/src/agent.ts:3-35",
+      "summary": "ToolAttachment is a discriminated union of builtin, mcp, and agent; Agent includes name/provider/model/description/instructions/tools."
+    },
+    {
+      "id": "E-SCHEDULE-SCHEMA",
+      "supports": [
+        "C-002"
+      ],
+      "path": "apps/x/packages/shared/src/agent-schedule.ts",
+      "source": "apps/x/packages/shared/src/agent-schedule.ts:3-44",
+      "summary": "CronSchedule, WindowSchedule, OnceSchedule, AgentScheduleEntry, and AgentScheduleConfig define scheduled agents."
+    },
+    {
+      "id": "E-RUN-REPO",
+      "supports": [
+        "C-003"
+      ],
+      "path": "apps/x/packages/core/src/runs/repo.ts",
+      "source": "apps/x/packages/core/src/runs/repo.ts:187-254,256-319",
+      "summary": "Runs are stored as JSONL events; fetch/list parse run metadata and logs from disk."
+    },
+    {
+      "id": "E-RUNTIME-LOCK",
+      "supports": [
+        "C-003"
+      ],
+      "path": "apps/x/packages/core/src/agents/runtime.ts; apps/x/packages/core/src/runs/runs.ts; apps/x/packages/core/src/runs/lock.ts",
+      "source": "runtime.ts:143-227; runs.ts:16-44,92-119; lock.ts:1-20",
+      "summary": "AgentRuntime.trigger locks a run, creates an abort signal, loops over event replay/tool execution/LLM steps, and releases lock; stop() aborts or force-closes MCP clients."
+    },
+    {
+      "id": "E-RUNTIME-PERMISSION",
+      "supports": [
+        "C-003"
+      ],
+      "path": "apps/x/packages/core/src/agents/runtime.ts; apps/x/packages/core/src/runs/runs.ts",
+      "source": "runtime.ts:819-856,932-1047; runs.ts:47-89",
+      "summary": "Permission and ask-human events are tracked in AgentState; responses append events and trigger runtime continuation."
+    },
+    {
+      "id": "E-AGENT-AS-TOOL",
+      "supports": [
+        "C-003"
+      ],
+      "path": "apps/x/packages/core/src/agents/runtime.ts",
+      "source": "runtime.ts:237-257,984-1004",
+      "summary": "Agent-type tools are mapped to a message-taking tool and execute by recursively streaming a subflow agent."
+    },
+    {
+      "id": "E-LIVE-DOC",
+      "supports": [
+        "C-004"
+      ],
+      "path": "apps/x/LIVE_NOTE.md",
+      "source": "apps/x/LIVE_NOTE.md:1-5,46-64,87-101,105-126,131-200,217-223",
+      "summary": "Live Note documentation specifies one live: block with objective/triggers/runtime fields, backend-only writes, scheduler/event processor/runner flow, and concurrency/FIFO guarantees. Note: line 223 says lastRunAt set at start, while runner code shows lastAttemptAt at start and lastRunAt on success; code is treated as authoritative."
+    },
+    {
+      "id": "E-LIVE-SCHEDULER",
+      "supports": [
+        "C-004"
+      ],
+      "path": "apps/x/packages/core/src/knowledge/live-note/scheduler.ts",
+      "source": "scheduler.ts:8-96",
+      "summary": "Scheduler polls every 15 seconds, scans knowledge markdown, skips inactive notes, checks dueTimedTrigger/backoffRemainingMs, and fires runLiveNoteAgent asynchronously."
+    },
+    {
+      "id": "E-LIVE-RUNNER",
+      "supports": [
+        "C-004"
+      ],
+      "path": "apps/x/packages/core/src/knowledge/live-note/runner.ts",
+      "source": "runner.ts:103-235",
+      "summary": "runningLiveNotes per-file guard; lastAttemptAt and lastRunId written before execution; waitForRunCompletion throwOnError; lastRunAt/summary only on success; lastRunError on failure; cleanup in finally."
+    },
+    {
+      "id": "E-LIVE-EVENTS",
+      "supports": [
+        "C-004"
+      ],
+      "path": "apps/x/packages/core/src/knowledge/live-note/events.ts",
+      "source": "events.ts:13-35,87-157,160-204",
+      "summary": "Events are JSON files in events/pending and events/done; monotonic IDs make sorted filenames FIFO; malformed events are quarantined to done with error; processed events are enriched with candidates and run IDs."
+    },
+    {
+      "id": "E-LIVE-ROUTING",
+      "supports": [
+        "C-004"
+      ],
+      "path": "apps/x/packages/core/src/knowledge/live-note/routing.ts",
+      "source": "routing.ts:18-33,64-111",
+      "summary": "Routing prompt is liberal and prefers false positives; targetFilePath short-circuits; candidates are batched by 20 and returned as Pass1OutputSchema filePaths."
+    },
+    {
+      "id": "E-FILELOCK",
+      "supports": [
+        "C-004"
+      ],
+      "path": "apps/x/packages/core/src/knowledge/file-lock.ts; apps/x/packages/core/src/knowledge/live-note/fileops.ts",
+      "source": "file-lock.ts:1-18; fileops.ts:65-127",
+      "summary": "withFileLock serializes per-file mutations; set/patch/delete/toggle live note helpers use it for backend-owned live block changes."
+    },
+    {
+      "id": "E-README-TOOLS",
+      "supports": [
+        "C-005"
+      ],
+      "path": "README.md",
+      "source": "README.md:63-75,139-144",
+      "summary": "README documents optional Deepgram, ElevenLabs, Exa, Composio API-key files and MCP external tools."
+    },
+    {
+      "id": "E-COMMAND-EXECUTOR",
+      "supports": [
+        "C-005"
+      ],
+      "path": "apps/x/packages/core/src/application/lib/command-executor.ts",
+      "source": "command-executor.ts:47-63,77-107,139-170",
+      "summary": "Shell commands are checked against allowlists, then executed through shell exec or abortable spawn with process-group killing."
+    },
+    {
+      "id": "E-MCP",
+      "supports": [
+        "C-005"
+      ],
+      "path": "apps/x/packages/core/src/mcp/mcp.ts",
+      "source": "mcp.ts:22-77,120-138",
+      "summary": "MCP client supports stdio command/args/env and remote URL transports; listTools and executeTool call SDK client methods directly."
+    },
+    {
+      "id": "E-EXEC-TOOL",
+      "supports": [
+        "C-005"
+      ],
+      "path": "apps/x/packages/core/src/application/lib/exec-tool.ts",
+      "source": "exec-tool.ts:19-38",
+      "summary": "execTool checks abort before start, but MCP tools are allowed to complete on graceful stop; this is not enough for Hermes' fail-closed timeout expectations without extra wrappers."
+    },
+    {
+      "id": "E-LICENSE",
+      "supports": [
+        "C-005"
+      ],
+      "path": "LICENSE",
+      "source": "LICENSE:1-5",
+      "summary": "Apache License 2.0; reference allowed, but Hermes should still use clean-room pattern extraction rather than code copy."
+    }
+  ],
+  "implementation_target": {
+    "files": [
+      "/Users/charles/Documents/brain/05-实践与项目/projects/hermes-self-improvement/evidence/rowboat-review-20260512/rowboat-evidence-pack.json",
+      "/Users/charles/Documents/brain/05-实践与项目/projects/hermes-self-improvement/evidence/rowboat-review-20260512/rowboat-advisory-report.md",
+      "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-10-多模型分析-rowboatlabs-rowboat-并完善-hermes-自身.md"
+    ],
+    "verify_commands": [
+      "python3 -m json.tool /Users/charles/Documents/brain/05-实践与项目/projects/hermes-self-improvement/evidence/rowboat-review-20260512/rowboat-evidence-pack.json",
+      "python3 /Users/charles/.hermes/scripts/rowboat_taskpool_review_selfcheck.py --pack /Users/charles/Documents/brain/05-实践与项目/projects/hermes-self-improvement/evidence/rowboat-review-20260512/rowboat-evidence-pack.json --repo /tmp/hermes-rowboat-audit/rowboat --json",
+      "python3 /Users/charles/.hermes/scripts/brain_task_orchestrator.py selfcheck --json",
+      "python3 /Users/charles/.hermes/scripts/brain_task_orchestrator.py boundary-check --json"
+    ],
+    "forbidden_changes": [
+      "Rowboat runtime import",
+      "Electron app install",
+      "Composio/MCP layer wholesale import",
+      "secret copying",
+      "production write-surface mutation"
+    ]
+  },
+  "recommendations_under_review": [
+    {
+      "id": "R-P0-1",
+      "decision": "adopt_as_hermes_native_spike",
+      "title": "Taskpool signal event queue with pending/done/error ledger",
+      "evidence": [
+        "E-LIVE-EVENTS"
+      ],
+      "why": "Rowboat's pending/done event ledger maps cleanly to Hermes taskpool signals while keeping Markdown tasks canonical and the queue derived/rebuildable.",
+      "next_slice": "Design a local-brain event artifact schema with source/type/payload/processedAt/error/proof_hash; implement read-only processor first; no task mutation in first slice."
+    },
+    {
+      "id": "R-P0-2",
+      "decision": "adopt_as_pattern_not_code",
+      "title": "Objective/triggers/runtime-field separation for task envelopes",
+      "evidence": [
+        "E-LIVE-DOC",
+        "E-LIVE-RUNNER",
+        "E-FILELOCK"
+      ],
+      "why": "Hermes mission envelopes already carry objective/constraints/proof fields; Rowboat reinforces explicit separation between user-authored intent and runtime-managed fields.",
+      "next_slice": "Add deterministic audit only: detect tasks where runtime fields are missing/inconsistent before writing new validators."
+    },
+    {
+      "id": "R-P1-1",
+      "decision": "spike",
+      "title": "Liberal pass-1 routing plus executor/task verifier veto",
+      "evidence": [
+        "E-LIVE-ROUTING"
+      ],
+      "why": "This can reduce missed taskpool interventions while preserving Hermes fail-closed mutation gates through a second deterministic or model-reviewed veto stage.",
+      "next_slice": "Replay current taskpool trigger logs offline and measure false positives/false negatives; no write surface."
+    },
+    {
+      "id": "R-REJECT-1",
+      "decision": "reject_wholesale_adoption",
+      "title": "Do not import Rowboat runtime, Electron app, Composio integrations, or MCP layer wholesale",
+      "evidence": [
+        "E-README-TOOLS",
+        "E-COMMAND-EXECUTOR",
+        "E-MCP",
+        "E-EXEC-TOOL"
+      ],
+      "why": "Those surfaces overlap Hermes gateway/cron/memory/tooling and would bypass or duplicate Hermes proof-chain, timeout, redaction, and local-brain controls.",
+      "next_slice": "Clean-room documentation and Hermes-native scripts only; no dependency/import/install decision without separate supply-chain certification."
+    }
+  ],
+  "is_candidate_solution": false,
+  "state_owner": "main_orchestrator",
+  "expected_participants": [
+    "claude-opus-4-7",
+    "gpt-5.5",
+    "deepseek-v4-pro",
+    "mimo-v2.5-pro"
+  ]
+}

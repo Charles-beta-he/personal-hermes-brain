@@ -6,11 +6,22 @@ author: Hermes Agent (adapted from obra/superpowers)
 license: MIT
 metadata:
   hermes:
-    tags: [debugging, troubleshooting, problem-solving, root-cause, investigation]
-    related_skills: [writing-plans, test-driven-development]
+    tags:
+    - debugging
+    - troubleshooting
+    - problem-solving
+    - root-cause
+    - investigation
+    related_skills:
+    - writing-plans
+    - test-driven-development
 ---
 
 # Systematic Debugging
+
+## Hermes taskpool/control-plane stalls
+
+When debugging Hermes/local-brain taskpool stalls, first separate active-task blockers from historical governance debt. If Lark tasks need to be removed temporarily, quarantine them with a manifest instead of deleting. If `dispatchable: true` exists but autorun does not claim, check the narrow autorun policy before changing lifecycle state. Historical `done task missing evidence` proof debt may be tolerated at the dispatch tick layer only when selfcheck and boundary checks still pass; keep the debt visible as tolerated errors and keep active-task proof failures fail-closed. See `references/taskpool-flow-tolerance.md`.
 
 ## Overview
 
@@ -49,7 +60,7 @@ Use for ANY technical issue:
 - Issue seems simple (simple bugs have root causes too)
 - You're in a hurry (rushing guarantees rework)
 - Someone wants it fixed NOW (systematic is faster than thrashing)
-
+- Don't use for: requests that do not need encountering any bug, test failure, or unexpected behavior. 4-phase root cause investigation — NO fixes without understanding the problem first; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## The Four Phases
 
 You MUST complete each phase before proceeding to the next.
@@ -341,7 +352,29 @@ Past-tense entries in persistent memory survive context compression and get re-i
 - Keep only architecturally durable facts (project structure, tool conventions, user preferences)
 - Duplicates → merge into single entry
 
-### 10. Multi-Loop Convergence — Iterate Until No Issues Remain
+### 10. Automation Escalation Audit — Run Local Gates Before Spawning Broader Workers
+
+**WHEN debugging multi-stage automation (review auto-close, blocked resolvers, ratification loops, retry daemons, certification workers):**
+
+A common failure mode is to escalate too early. The orchestrator sees a broad signal like `multimodel_required`, `intervention_required`, or `needs_review`, immediately spawns a heavier worker, and accidentally bypasses the task's own deterministic gate. That creates false outcomes such as task-mismatch skips, unnecessary retries, or global workers certifying the wrong task.
+
+**Audit order:**
+1. Compute the task-local evidence first.
+2. Probe the normal gate for the exact transition being attempted.
+3. Only escalate if the local gate still fails **and** the failures are in the escalation domain.
+4. Narrow escalation by lane/domain instead of using a global boolean alone.
+
+**Heuristic:**
+- If the failure is ordinary lane proof debt (`missing build/test/browser/curl/project evidence`), keep it in the normal gate path and return `skip` / `blocked` / `retry` there.
+- If the failure is specifically about ratification or multimodel certification, then spawn the broader worker.
+- For taskpool orchestration, treat `review -> done` as the base path and PUA-loop/certification as the fallback path, not the default.
+
+**Real pattern (Hermes taskpool, May 2026):**
+- Symptom: `auto-close-review` marked a normal work-lane review task as `certification_triggered_skip` with `certification_task_mismatch`.
+- Root cause: the command triggered multimodel certification before checking whether the normal `done` gate was simply failing for missing project evidence.
+- Durable fix: run `lifecycle_gate(..., "done", ...)` first, then trigger certification only when the remaining failures are actually ratification/multimodel-related or the lane is explicitly evolution/advisory/mission-envelope.
+
+### 11. Multi-Loop Convergence — Iterate Until No Issues Remain
 
 **WHEN fixing multiple bugs in a single session:**
 
@@ -628,3 +661,16 @@ From debugging sessions:
 - New bugs introduced: Near zero vs common
 
 **No shortcuts. No guessing. Systematic always wins.**
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

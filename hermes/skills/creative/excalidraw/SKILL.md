@@ -1,20 +1,35 @@
 ---
 name: excalidraw
-description: Create hand-drawn style diagrams using Excalidraw JSON format. Generate .excalidraw files for architecture diagrams, flowcharts, sequence diagrams, concept maps, and more. Files can be opened at excalidraw.com or uploaded for shareable links.
+description: Use when you need to create hand-drawn style diagrams using Excalidraw JSON format.
 version: 1.0.0
 author: Hermes Agent
 license: MIT
 dependencies: []
 metadata:
   hermes:
-    tags: [Excalidraw, Diagrams, Flowcharts, Architecture, Visualization, JSON]
-    related_skills: []
-
+    tags:
+    - Excalidraw
+    - Diagrams
+    - Flowcharts
+    - Architecture
+    - Visualization
+    - JSON
+    related_skills:
+    - diagramming
+    - hermes-agent
+    - maps
 ---
 
 # Excalidraw Diagram Skill
 
+## Overview
+
+
 Create diagrams by writing standard Excalidraw element JSON and saving as `.excalidraw` files. These files can be drag-and-dropped onto [excalidraw.com](https://excalidraw.com) for viewing and editing. No accounts, no API keys, no rendering libraries -- just JSON.
+
+## When to Use
+
+- You need to create hand-drawn style diagrams using Excalidraw JSON format
 
 ## Workflow
 
@@ -191,4 +206,15 @@ See `references/colors.md` for full color tables. Quick reference:
 - For dark mode diagrams, see `references/dark-mode.md`
 - For larger examples, see `references/examples.md`
 
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
 

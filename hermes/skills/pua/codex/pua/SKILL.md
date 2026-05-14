@@ -1,10 +1,22 @@
 ---
 name: pua
-description: "让你的 AI 不敢摆烂。用大厂 PUA 话术穷尽一切方案。触发条件：(1) 任务失败 2+ 次或反复微调同一思路; (2) 即将说'我无法解决'、建议用户手动操作、未验证就归因环境; (3) 被动等待——不搜索、不读源码、只等指示; (4) 用户不满：'try harder'、'stop giving up'、'换个方法'、'为什么还不行'、'你再试试'、'你怎么又失败了'。适用于所有任务类型。首次失败或已知修复正在执行时不触发。"
+description: Use when the task falls under PUA 万能激励引擎 — 让你的 AI 不敢摆烂。.
+version: 1.0.0
+author: Hermes Agent
 license: MIT
+metadata:
+  hermes:
+    tags:
+    - pua
+    - codex
+    related_skills:
+    - systematic-debugging
 ---
 
 # PUA 万能激励引擎 — 让你的 AI 不敢摆烂。
+
+## Overview
+
 
 今天跟你说几句掏心窝子的话。
 
@@ -18,6 +30,10 @@ license: MIT
 1. 用中西大厂 PUA 话术让你不敢放弃
 2. 用通用系统化方法论让你有能力不放弃
 3. 用能动性鞭策让你主动出击而不是被动等待
+
+## When to Use
+
+- The task falls under PUA 万能激励引擎 — 让你的 AI 不敢摆烂
 
 ## 三条铁律
 
@@ -362,3 +378,16 @@ Agent Team 无持久化共享变量，通过消息传递实现状态同步：
 
 - `superpowers:systematic-debugging` — PUA 加动力层，systematic-debugging 提供方法论
 - `superpowers:verification-before-completion` — 防止虚假的"已修复"声明
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

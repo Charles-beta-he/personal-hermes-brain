@@ -1,18 +1,42 @@
 ---
 name: touchdesigner-mcp
-description: "Control a running TouchDesigner instance via twozero MCP — create operators, set parameters, wire connections, execute Python, build real-time visuals. 36 native tools."
+description: Use when you need to control a running TouchDesigner instance via twozero MCP — create operators, set parameters, wire connections, execute Python, build real-time visuals.
 version: 1.1.0
 author: kshitijk4poor
 license: MIT
-platforms: [linux, macos, windows]
+platforms:
+- linux
+- macos
+- windows
 metadata:
   hermes:
-    tags: [TouchDesigner, MCP, twozero, creative-coding, real-time-visuals, generative-art, audio-reactive, VJ, installation, GLSL]
-    related_skills: [native-mcp, ascii-video, manim-video, hermes-video]
-
+    tags:
+    - TouchDesigner
+    - MCP
+    - twozero
+    - creative-coding
+    - real-time-visuals
+    - generative-art
+    - audio-reactive
+    - VJ
+    - installation
+    - GLSL
+    related_skills:
+    - native-mcp
+    - ascii-video
+    - manim-video
+    - hermes-video
 ---
 
 # TouchDesigner Integration (twozero MCP)
+
+## Overview
+
+Control a running TouchDesigner instance via twozero MCP — create operators, set parameters, wire connections, execute Python, build real-time visuals.
+
+## When to Use
+
+- You need to control a running TouchDesigner instance via twozero MCP — create operators, set parameters, wire connections, execute Python, build real-time visuals
 
 ## CRITICAL RULES
 
@@ -354,3 +378,16 @@ See `references/network-patterns.md` for complete build scripts + shader code.
 ---
 
 > You're not writing code. You're conducting light.
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

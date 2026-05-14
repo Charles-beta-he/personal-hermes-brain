@@ -1,15 +1,27 @@
 ---
 name: private-fork-evolution-governance
-description: "Govern private Hermes fork evolution — document external project analysis as valid evolution input, track each evolution event with an artifact+verification checklist, understand that remote push is not required, and survive hermes update with the three-tier Level 0/1/2 model. Use when running a private fork of an open-source agent framework, analyzing external projects for methodology migration, or needing to verify evolution event compliance. Triggers: 'private fork', '私有分支', '自进化规范', 'evolution event', 'evolution manifesto', 'no push', 'ahead behind', 'private evolution'."
+description: Use when governing a private Hermes fork, recording evolution events, analyzing external projects for methodology migration, or verifying that local artifacts survive upstream upgrades.
+version: 1.0.0
 author: Hermes Agent
 license: MIT
 metadata:
   hermes:
-    tags: [private-fork, evolution-governance, upgrade-survival, compliance]
-    related_skills: [post-update-patch-healing, self-improvement-pipeline, framework-audit, save-workflow-as-skill]
+    tags:
+    - private-fork
+    - evolution-governance
+    - upgrade-survival
+    - compliance
+    related_skills:
+    - post-update-patch-healing
+    - self-improvement-pipeline
+    - framework-audit
+    - save-workflow-as-skill
 ---
 
 # Private Fork Evolution Governance
+
+## Overview
+
 
 > Govern a private fork of an open-source agent framework where:
 > - External project analysis is valid evolution input (methodology migration, not code copy)
@@ -17,6 +29,10 @@ metadata:
 > - `git pull` from upstream is a controlled upgrade, not a sync
 > - Every evolution event must leave a traceable, verifiable artifact
 
+## When to Use
+
+- Governing a private Hermes fork, recording evolution events, analyzing external projects for methodology migration, or verifying that local artifacts survive upstream upgrades
+- Don't use for: requests that do not need governing a private Hermes fork, recording evolution events, analyzing external projects for methodology migration, or verifying that local artifacts survive upstream upgrades; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## Core Principles
 
 1. **This is a private fork.** No commits need to reach upstream. No PRs required. `origin/main` is a reference source, not the canonical remote.
@@ -160,7 +176,7 @@ Recommended flow:
 ls -lt ~/.hermes/notes/evolution/*.md 2>/dev/null | head
 python3 ~/.hermes/scripts/verify-evolution-event.py \
   ~/.hermes/notes/evolution/YYYY-MM-DD-slug.md \
-  --repo=~/.hermes/hermes-agent
+  --repo="$HOME/.hermes/hermes-agent"
 
 # 2. Current self-test gate
 python3 ~/.hermes/scripts/self-test.py

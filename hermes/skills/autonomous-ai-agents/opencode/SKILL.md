@@ -1,16 +1,26 @@
 ---
 name: opencode
-description: Delegate coding tasks to OpenCode CLI agent for feature implementation, refactoring, PR review, and long-running autonomous sessions. Requires the opencode CLI installed and authenticated.
+description: Use when you need to delegate coding tasks to OpenCode CLI agent for feature implementation, refactoring, PR review, and long-running autonomous sessions.
 version: 1.2.0
 author: Hermes Agent
 license: MIT
 metadata:
   hermes:
-    tags: [Coding-Agent, OpenCode, Autonomous, Refactoring, Code-Review]
-    related_skills: []
+    tags:
+    - Coding-Agent
+    - OpenCode
+    - Autonomous
+    - Refactoring
+    - Code-Review
+    related_skills:
+    - github
+    - plan
 ---
 
 # OpenCode CLI
+
+## Overview
+
 
 Use [OpenCode](https://opencode.ai) as an autonomous coding worker orchestrated by Hermes terminal/process tools. OpenCode is a provider-agnostic, open-source AI coding agent with a TUI and CLI.
 
@@ -185,7 +195,7 @@ terminal(command="opencode stats")
 terminal(command="opencode stats --days 7 --models anthropic/claude-sonnet-4")
 ```
 
-## Pitfalls
+## Common Pitfalls
 
 - Interactive `opencode` (TUI) sessions require `pty=true`. The `opencode run` command does NOT need pty.
 - `/exit` is NOT a valid command — it opens an agent selector. Use Ctrl+C to exit the TUI.
@@ -194,8 +204,10 @@ terminal(command="opencode stats --days 7 --models anthropic/claude-sonnet-4")
   - `process(action="log", session_id="<id>")`
 - Avoid sharing one working directory across parallel OpenCode sessions.
 - Enter may need to be pressed twice to submit in the TUI (once to finalize text, once to send).
-
-## Verification
+1. Skipping prerequisite checks and assuming the environment already matches the workflow.
+2. Applying the workflow mechanically without confirming that the request still matches this skill's trigger class.
+3. Reporting success before reading back the actual outputs, files, or external side-effects.
+## Verification Checklist
 
 Smoke test:
 
@@ -207,7 +219,9 @@ Success criteria:
 - Output includes `OPENCODE_SMOKE_OK`
 - Command exits without provider/model errors
 - For code tasks: expected files changed and tests pass
-
+- [ ] Preconditions, scope, and tool availability were checked before following this workflow.
+- [ ] The key output artifacts, commands, or side-effects were verified by read-back or direct inspection.
+- [ ] The final result still matches the trigger and acceptance shape of this skill.
 ## Rules
 
 1. Prefer `opencode run` for one-shot automation — it's simpler and doesn't need pty.

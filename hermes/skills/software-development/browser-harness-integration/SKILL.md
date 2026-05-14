@@ -1,14 +1,28 @@
 ---
 name: browser-harness-integration
-description: Integrate comprehensive browser-based verification into automated task pipelines - combines dogfood testing, visual regression, and UIMax audit with project-type detection and viewport-specific testing
+description: Use when you need guidance on integrate comprehensive browser-based verification into automated task pipelines - combines dogfood testing, visual regression, and UIMax audit with project-type detection and viewport-specific testing.
 version: 1.0.0
+author: Hermes Agent
+license: MIT
 metadata:
   hermes:
-    tags: [qa, browser, testing, automation, verification, pipeline]
-    related_skills: [dogfood, visual-regression, uimax-audit]
+    tags:
+    - qa
+    - browser
+    - testing
+    - automation
+    - verification
+    - pipeline
+    related_skills:
+    - dogfood
+    - visual-regression
+    - uimax-audit
 ---
 
 # Browser Harness Integration
+
+## Overview
+
 
 > Integrate comprehensive browser-based verification into automated task pipelines. Combines dogfood testing, visual regression, and UIMax audit with intelligent project detection.
 
@@ -19,7 +33,7 @@ metadata:
 - Want comprehensive testing (functional, visual, quality scoring)
 - Need project-type detection for Vue, React, mobile vs desktop
 - Integrating browser verification into existing automation workflows
-
+- Don't use for: requests that do not need you need guidance on integrate comprehensive browser-based verification into automated task pipelines - combines dogfood testing, visual regression, and UIMax audit with project-type detection and viewport-specific testing; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## Core Workflow
 
 ```
@@ -83,6 +97,16 @@ When closing a frontend/UI-affecting task, distinguish these evidence levels exp
 - Unit/store/service tests prove mapping/logic only.
 - Multi-model review can suggest missing cases, but model agreement is not UI evidence.
 - Playwright/browser-harness evidence is required before saying “UI 回测已通过” or “browser verified”.
+
+### Playwright Script + Screenshot + Log Evidence Chain
+
+When borrowing or evaluating an external “webapp testing” pattern, do not import the external skill until source and license are verified. Map the useful pattern into this harness instead:
+
+1. Use only an existing project dependency (`@playwright/test`/`playwright`) unless installation is explicitly in scope.
+2. Produce a stable evidence bundle outside ephemeral `test-results/`: script path, exact command, URL, viewport, environment/dependency source, screenshot, console/pageerror/requestfailed log, storage assertions when relevant, and machine-readable summary.
+3. Include a dry-run mode that prints planned checks/artifact paths without launching the browser.
+4. Label scope precisely: a script+screenshot guard proves the selected page/interaction, not full product semantics or backend contract closure.
+5. Example project report: `/Users/charles/Documents/brain/05-实践与项目/projects/agent-skill-learning/webapp-testing-playwright-evaluation-2026-05-13.md`.
 
 ### Prototype URL Comparison / Project Memory Capture
 
@@ -329,8 +353,7 @@ Committed mobile-H5 gates should promote browser console errors into blocking is
 
 For repeatable project gates, start from `templates/mobile-h5-issue-ledger.json`: it freezes the mainstream iOS/Android/HarmonyOS matrix, records stable issue IDs, and encodes ratchet/no-regression rules so loops cannot preserve pass rate by changing coverage, thresholds, or harness behavior.
 
-## Pitfalls
-
+## Common Pitfalls
 0. **Real-backend evidence before mock alignment**: For backend-contract or security-state-machine issues, do not prove the claim with `mock-server` first and then treat it as acceptance. First run the deployed/test-env UI or local frontend connected to the real test backend, capture console/network/storage evidence, and classify whether the fix belongs to frontend or backend. Only after the real backend behavior is known should mock-server be updated to mirror the confirmed or recommended contract. If the best fix is backend-owned, record it in a frontend-repo backend-followup document (issue, evidence, recommended API shape) rather than hiding the drift with a frontend/mock shim.
 1. **Dev server startup**: Always verify server is ready before testing. Use health checks.
 1a. **Route reachable is not PRD PASS**: In live-backend product-flow work, a page rendering and a 200 list/detail API only proves PARTIAL. Money/card/security flows require the actual business outcome (write action, state transition, balances/notifications/ledger consistency, or documented safe non-execution). If the live account has no card/holding/payee seed, classify as FAIL/BLOCKED/PARTIAL by evidence instead of letting legacy placeholders or mock-era IDs manufacture a pass.
@@ -359,3 +382,10 @@ For repeatable project gates, start from `templates/mobile-h5-issue-ledger.json`
 - **uimax-audit**: Quality scoring across 6 dimensions
 - **systematic-debugging**: When browser tests fail unexpectedly
 - **requesting-code-review**: Can trigger browser verification as part of code review
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

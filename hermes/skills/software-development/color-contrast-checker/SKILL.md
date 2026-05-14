@@ -1,11 +1,25 @@
 ---
 name: color-contrast-checker
-description: "自动验证 Web 应用所有文字的 WCAG 对比率。扫描 CSS 变量/硬编码颜色，计算前景/背景对比度，输出 A/AA/AAA 合规报告。用于 UIMax 审计的无障碍维度评分。"
+description: Use when the task falls under Color Contrast Checker — WCAG 文字对比度自动验证.
+version: 1.0.0
+author: Hermes Agent
 license: MIT
-tags: [accessibility, wcag, contrast, a11y, uimax]
+metadata:
+  hermes:
+    tags:
+    - accessibility
+    - wcag
+    - contrast
+    - a11y
+    - uimax
+    related_skills:
+    - software-development
 ---
 
 # Color Contrast Checker — WCAG 文字对比度自动验证
+
+## Overview
+
 
 > 扫描项目所有 CSS/JSX 中的颜色组合，计算对比度，输出 WCAG AA/AAA 合规报告。
 
@@ -172,8 +186,7 @@ def find_tinted_fix(bg_hex, orig_hex, target=4.5):
 
 示例：sci-fi 的 `--text-muted: #3a6a8a`（蓝色调）→ `#457ea4`（仍为蓝色，4.5:1）
 
-## Pitfalls
-
+## Common Pitfalls
 1. **CSS var() fallback 色**: `var(--accent-danger, #f87171)` 中 fallback 色可能与实际渲染色不同，需解析实际 CSS 变量
 2. **渐变/透明背景**: `color-mix()` 和 `rgba()` 需要计算最终混合色
 3. **大文字判定**: bold ≥18px 或 normal ≥24px 适用 3:1 标准
@@ -187,3 +200,10 @@ def find_tinted_fix(bg_hex, orig_hex, target=4.5):
        themes[current] = {}
    ```
 6. **⚠️ RGB 空格分隔格式**: CSS 中 `--ink-rgb: 224 244 255` 是空格分隔（非逗号），且用于 `rgb(var(--ink-rgb) / <alpha-value>)`。需额外解析此格式并映射到标准变量名
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

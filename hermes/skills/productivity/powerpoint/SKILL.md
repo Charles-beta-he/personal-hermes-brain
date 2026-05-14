@@ -1,10 +1,29 @@
 ---
 name: powerpoint
-description: "Use this skill any time a .pptx file is involved in any way — as input, output, or both. This includes: creating slide decks, pitch decks, or presentations; reading, parsing, or extracting text from any .pptx file (even if the extracted content will be used elsewhere, like in an email or summary); editing, modifying, or updating existing presentations; combining or splitting slide files; working with templates, layouts, speaker notes, or comments. Trigger whenever the user mentions \"deck,\" \"slides,\" \"presentation,\" or references a .pptx filename, regardless of what they plan to do with the content afterward. If a .pptx file needs to be opened, created, or touched, use this skill."
+description: Use when you need to use this skill any time a .pptx file is involved in any way — as input, output, or both.
+version: 1.0.0
+author: Hermes Agent
 license: Proprietary. LICENSE.txt has complete terms
+metadata:
+  hermes:
+    tags:
+    - productivity
+    - powerpoint
+    related_skills:
+    - email
+    - plan
+    - slides
 ---
 
 # Powerpoint Skill
+
+## Overview
+
+Use this skill any time a .pptx file is involved in any way — as input, output, or both.
+
+## When to Use
+
+- You need to use this skill any time a .pptx file is involved in any way — as input, output, or both
 
 ## Quick Reference
 
@@ -230,3 +249,16 @@ pdftoppm -jpeg -r 150 -f N -l N output.pdf slide-fixed
 - `npm install -g pptxgenjs` - creating from scratch
 - LibreOffice (`soffice`) - PDF conversion (auto-configured for sandboxed environments via `scripts/office/soffice.py`)
 - Poppler (`pdftoppm`) - PDF to images
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

@@ -1,32 +1,44 @@
 ---
 name: inference-sh
-description: "Inference Sh workflow skill. See references/ for detailed guides."
+description: Use when you need the Inference Sh workflow umbrella. See references/
+  for detailed guides.
+version: 1.0.0
+author: Hermes Agent
 license: MIT
 metadata:
   hermes:
-    tags: [inference, workflow]
-    related_skills: [pua, loop]
+    tags:
+    - inference
+    - workflow
+    - umbrella
+    - routing
+    related_skills:
+    - pua
+    - loop
 ---
 
 # Inference Sh
 
-> Inference Sh 相关的工作流 Skill
+## Overview
 
-## 输入
+This umbrella skill is the routing surface for inference sh. Use it to choose the most specific child skill, reference, or workflow instead of treating the category name as a one-size-fits-all procedure.
 
-- 用户请求的具体参数
-- 相关上下文或文件路径
+## When to Use
 
-## 输出
+- You need help somewhere inside inference sh and want the quickest route to the right child skill.
+- You are not yet sure which inference sh sub-workflow best matches the request.
+- You want a compact map of the inference sh skill family before loading a more specific procedure.
+- Don't use for: a request that already clearly matches one specific inference sh child skill; load that child skill directly.
 
-- 执行结果或生成的文件
-- 验证报告（如适用）
+## Routing Guide
 
-## 约束
+- No child skills were discovered automatically; inspect linked references and neighboring skills before acting.
 
-- 遵循项目规范
-- 不泄露敏感信息
-- 在 context budget 内完成
+## Selection Rules
+
+- Prefer the narrowest child skill that matches the user request, platform, and desired artifact.
+- Stay at the umbrella level only for routing, taxonomy, or category-wide orientation.
+- If the request spans multiple subskills, use this umbrella to map the lane first, then hand off to the specific workflow that will do the real work.
 
 ## 边界条件
 
@@ -34,29 +46,15 @@ metadata:
 - 超出 context budget 时，截断输入并告知用户
 - 网络/API 不可用时，记录错误并重试（最多 3 次）
 
-## 检查点
+## Common Pitfalls
 
-- [ ] 输入参数完整
-- [ ] 输出符合预期格式
-- [ ] 验证通过
+1. Using the inference sh umbrella as the full procedure even though a more specific child skill already fits.
+2. Reading the routing map but never loading the referenced child skill or support material that contains the actual execution steps.
+3. Choosing a child skill without checking that its platform, tools, and expected artifacts match the current task.
 
-## 示例
+## Verification Checklist
 
-### 示例 1: 基本用法
+- [ ] The request was mapped to the best-fitting child skill or explicitly kept at umbrella level for routing only.
+- [ ] The selected child skill descriptions, references, and prerequisites were checked before substantive execution.
+- [ ] Any claimed handoff, output, or route decision was read back against the specific child workflow before completion.
 
-```
-Input:  用户请求 inference 相关操作
-Output: 执行结果 + 验证报告
-```
-
-### 示例 2: 参数缺失
-
-```
-Input:  缺少必要参数
-Output: 错误提示，列出必需参数
-```
-
-## 关联 Skill
-
-- `pua`: 核心行为基线
-- `loop`: 迭代管理

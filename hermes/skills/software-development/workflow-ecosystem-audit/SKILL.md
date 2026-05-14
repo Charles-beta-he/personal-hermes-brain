@@ -1,11 +1,27 @@
 ---
 name: workflow-ecosystem-audit
-description: "Audit the skill ecosystem for workflow coverage gaps and broken references. Maps skills to workflow stages, identifies uncovered stages, detects missing linked files, and generates missing protocols/skills to fill gaps. Use when asked to '梳理工作流', 'review workflow', 'skill gaps', '缺省流程', or when setting up a new project workspace."
+description: Use when asked to '梳理工作流', 'review workflow', 'skill gaps', '缺省流程', or when setting up a new project workspace.
+version: 1.0.0
+author: Hermes Agent
 license: MIT
-tags: [workflow, audit, skills, gaps, planning, ecosystem]
+metadata:
+  hermes:
+    tags:
+    - workflow
+    - audit
+    - skills
+    - gaps
+    - planning
+    - ecosystem
+    related_skills:
+    - domain
+    - software-development
 ---
 
 # Workflow Ecosystem Audit — 工作流全景梳理与缺省流程补充
+
+## Overview
+
 
 > 把散落在各 skill 里的流程拼成一张完整的地图，找到没盖住的地方，补上。
 
@@ -139,9 +155,16 @@ When a skill defines a role (P10, P9, P7), the role's behavioral protocol should
 - [ ] **Style**: Report uses Unicode box-drawing characters, includes role hierarchy diagram, trigger word table, deliverable checklist
 - [ ] **Efficiency**: Don't over-engineer — if a stage is intentionally uncovered (e.g., "数据库变更" for a frontend-only project), mark it as N/A rather than creating an unnecessary skill
 
-## Pitfalls
-
+## Common Pitfalls
 1. **Assuming linked_files exist** — Always verify with `ls` or `read_file` before relying on referenced content
 2. **Creating skills for project-specific gaps** — Some gaps (e.g., database migration flow) are project-specific, not generalizable. Only create skills for reusable patterns
 3. **Overwriting existing content** — When fixing broken references, check if the referenced file was intentionally removed. Don't recreate deleted content without understanding why
 4. **Terminal report too long** — Keep the report concise. If it exceeds 200 lines, split into sections and let the user ask for details
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] The Definition of Done items above were explicitly checked, not assumed.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

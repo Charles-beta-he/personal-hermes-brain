@@ -93,6 +93,33 @@ When reporting, distinguish:
 
 `local-brain-taskpool-occasional-report` may show `last_delivery_error: no delivery target resolved for deliver=origin`. This is a delivery binding issue, not a taskpool state issue. Suggest changing the delivery target to an explicit Telegram target only after checking the current cron configuration and user intent.
 
+## Auto-completer / non-work task interpretation
+
+When the user asks whether non-`work` tasks will finish automatically, answer from live taskpool/cron evidence and keep these semantics explicit:
+
+- `local-brain-taskpool-auto-completer` is not a proof-free closer despite its name. Its dynamic runner drives safe ticks and bounded steps; it is not allowed to mark arbitrary Markdown tasks `done`.
+- `brain_task_dispatch_tick.py` is control-plane only: ingest/reconcile/dashboard/proof/evidence-spine/multimodel dry-run/dispatch hint. It never executes task Markdown and never marks a task done.
+- `brain_task_autorun_step.py` runs only static command IDs allowed by policy, never parses task bodies for commands, and stops successful execution at `review` (`review_only`).
+- `multimodel_intervention_dynamic_step.py` can start detached multi-model intervention workers; successful gates persist `multimodel_status` / ratification artifacts, but do not perform lifecycle `review -> done`.
+- Final closeout still requires the lane-specific completion gate: `work` needs project evidence, `evolution` needs ratification/selfcheck/proof evidence, and `advisory` needs deposited advisory/report evidence. `--yolo` authorizes execution, not completion.
+
+## JSON output pitfall
+
+If `python3 ~/.hermes/scripts/brain_task_orchestrator.py list --json` prints rows but `json.loads` fails because a task title/body introduced an unescaped control character or delimiter, do not abandon the canonical source or fall back to stale derived files. Import the script module and call its internal row builder directly:
+
+```python
+import importlib.util, sys
+from pathlib import Path
+script = Path.home() / '.hermes/scripts/brain_task_orchestrator.py'
+spec = importlib.util.spec_from_file_location('bto', script)
+bto = importlib.util.module_from_spec(spec)
+sys.modules['bto'] = bto  # required for dataclasses during dynamic import
+spec.loader.exec_module(bto)
+rows = [t.row() for t in bto.iter_tasks() if t.status not in bto.TERMINAL_STATUSES]
+```
+
+This preserves the same canonical Markdown taskpool semantics as the CLI while bypassing serialization bugs. Use it only for read-only inspection unless the user explicitly requested repair.
+
 ## Do not do during a status check
 
 - Do not mark tasks done, release claims, or delete failed envelopes unless the user asked for repair, not just status.

@@ -98,6 +98,16 @@ Make sure `claims` are in the top-level field expected by the truth gate, not me
 - Do not paste private transcript dumps.
 - If the analysis yields stable user preferences, update memory and/or the user's local-brain profile, but keep the durable memory compact.
 
+## Project profile update workflow from a resumed session
+
+When the user asks to analyze a specific `resume <session-id>` or Claude Code JSONL session and update a project profile:
+
+1. Locate the exact JSONL by session id first; do not assume the normalized project directory. Claude may store a resumed session under a broader directory such as `~/.claude/projects/-Users-charles/<session-id>.jsonl` even when the work spans a specific repo.
+2. Parse, redact, and summarize into a compact evidence artifact. Include counts, cwd distribution, selected direct user quotes, tool-use counts, project-file cross-checks, and git/doc evidence. Keep raw transcript text out of final answers and persistent notes.
+3. Convert candidate updates into explicit top-level claims and claim-linked evidence. Evidence must use exact claim ids in `supports`; otherwise multi-model truth gates can report unsupported/no-claims even when the files were read.
+4. Run multi-model analysis when requested, but distinguish `truth_status=grounded` from full ratification. If `discussion_result.status=not_certified` or the certification manifest fails approval/agreement gates, treat the result as advisory: apply only low-risk durable profile clarifications that are directly evidence-grounded, and record the caveat in profile update history/local-brain notes.
+5. Update both the machine profile (for example `~/.hermes/project-profiles/<project>.json`) and the human Workpad/brain handoff note when the profile is used by future agents. Then run JSON validation, project/workpad self-checks when available, `brainctl sync`, `brainctl reindex`, and search verification for the new anchors.
+
 ## Pitfalls
 
 - Do not treat assistant summaries as equivalent to direct user preferences; direct user prompts outrank assistant descriptions.

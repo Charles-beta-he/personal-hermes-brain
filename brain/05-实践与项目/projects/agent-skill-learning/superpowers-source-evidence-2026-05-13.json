@@ -1,0 +1,273 @@
+{
+  "generated_at": "2026-05-13T15:55:00+08:00",
+  "method": "GitHub API + raw.githubusercontent.com via Python stdlib urllib; no clone/install/import into Hermes skills",
+  "repo": {
+    "full_name": "obra/superpowers",
+    "html_url": "https://github.com/obra/superpowers",
+    "description": "An agentic skills framework & software development methodology that works.",
+    "default_branch": "main",
+    "license": {
+      "key": "mit",
+      "name": "MIT License",
+      "spdx_id": "MIT",
+      "url": "https://api.github.com/licenses/mit",
+      "node_id": "MDc6TGljZW5zZTEz"
+    },
+    "stargazers_count": 188507,
+    "forks_count": 16760,
+    "open_issues_count": 263,
+    "pushed_at": "2026-05-13T00:22:43Z",
+    "updated_at": "2026-05-13T07:50:29Z",
+    "created_at": "2025-10-09T19:45:18Z"
+  },
+  "repo_api_url": "https://api.github.com/repos/obra/superpowers",
+  "license": {
+    "name": "LICENSE",
+    "path": "LICENSE",
+    "html_url": "https://github.com/obra/superpowers/blob/main/LICENSE",
+    "sha": "abf0390320aa14406af7a520b9b0739fdda9bf08",
+    "text_first_line": "MIT License",
+    "copyright_line": "Copyright (c) 2025 Jesse Vincent"
+  },
+  "tree": {
+    "sha": "f2cbfbefebbfef77321e4c9abc9e949826bea9d7",
+    "truncated": false,
+    "total_paths": 193,
+    "skill_count": 14,
+    "skill_dirs": [
+      "brainstorming",
+      "dispatching-parallel-agents",
+      "executing-plans",
+      "finishing-a-development-branch",
+      "receiving-code-review",
+      "requesting-code-review",
+      "subagent-driven-development",
+      "systematic-debugging",
+      "test-driven-development",
+      "using-git-worktrees",
+      "using-superpowers",
+      "verification-before-completion",
+      "writing-plans",
+      "writing-skills"
+    ]
+  },
+  "skills": [
+    {
+      "name": "brainstorming",
+      "path": "skills/brainstorming/SKILL.md",
+      "description": "You MUST use this before any creative work - creating features, building components, adding functionality, or modifying behavior. Explores user intent, requirements and design before implementation.",
+      "chars": 10598,
+      "lines": 165,
+      "has_mit_license": false,
+      "first_heading": "Brainstorming Ideas Into Designs"
+    },
+    {
+      "name": "dispatching-parallel-agents",
+      "path": "skills/dispatching-parallel-agents/SKILL.md",
+      "description": "Use when facing 2+ independent tasks that can be worked on without shared state or sequential dependencies",
+      "chars": 6417,
+      "lines": 183,
+      "has_mit_license": false,
+      "first_heading": "Dispatching Parallel Agents"
+    },
+    {
+      "name": "executing-plans",
+      "path": "skills/executing-plans/SKILL.md",
+      "description": "Use when you have a written implementation plan to execute in a separate session with review checkpoints",
+      "chars": 2469,
+      "lines": 71,
+      "has_mit_license": false,
+      "first_heading": "Executing Plans"
+    },
+    {
+      "name": "finishing-a-development-branch",
+      "path": "skills/finishing-a-development-branch/SKILL.md",
+      "description": "Use when implementation is complete, all tests pass, and you need to decide how to integrate the work - guides completion of development work by presenting structured options for merge, PR, or cleanup",
+      "chars": 7043,
+      "lines": 252,
+      "has_mit_license": false,
+      "first_heading": "Finishing a Development Branch"
+    },
+    {
+      "name": "receiving-code-review",
+      "path": "skills/receiving-code-review/SKILL.md",
+      "description": "Use when receiving code review feedback, before implementing suggestions, especially if feedback seems unclear or technically questionable - requires technical rigor and verification, not performative agreement or blind implementation",
+      "chars": 6276,
+      "lines": 214,
+      "has_mit_license": false,
+      "first_heading": "Code Review Reception"
+    },
+    {
+      "name": "requesting-code-review",
+      "path": "skills/requesting-code-review/SKILL.md",
+      "description": "Use when completing tasks, implementing major features, or before merging to verify work meets requirements",
+      "chars": 2806,
+      "lines": 104,
+      "has_mit_license": false,
+      "first_heading": "Requesting Code Review"
+    },
+    {
+      "name": "subagent-driven-development",
+      "path": "skills/subagent-driven-development/SKILL.md",
+      "description": "Use when executing implementation plans with independent tasks in the current session",
+      "chars": 12526,
+      "lines": 280,
+      "has_mit_license": false,
+      "first_heading": "Subagent-Driven Development"
+    },
+    {
+      "name": "systematic-debugging",
+      "path": "skills/systematic-debugging/SKILL.md",
+      "description": "Use when encountering any bug, test failure, or unexpected behavior, before proposing fixes",
+      "chars": 9860,
+      "lines": 297,
+      "has_mit_license": false,
+      "first_heading": "Systematic Debugging"
+    },
+    {
+      "name": "test-driven-development",
+      "path": "skills/test-driven-development/SKILL.md",
+      "description": "Use when implementing any feature or bugfix, before writing implementation code",
+      "chars": 9857,
+      "lines": 372,
+      "has_mit_license": false,
+      "first_heading": "Test-Driven Development (TDD)"
+    },
+    {
+      "name": "using-git-worktrees",
+      "path": "skills/using-git-worktrees/SKILL.md",
+      "description": "Use when starting feature work that needs isolation from current workspace or before executing implementation plans - ensures an isolated workspace exists via native tools or git worktree fallback",
+      "chars": 7977,
+      "lines": 216,
+      "has_mit_license": false,
+      "first_heading": "Using Git Worktrees"
+    },
+    {
+      "name": "using-superpowers",
+      "path": "skills/using-superpowers/SKILL.md",
+      "description": "Use when starting any conversation - establishes how to find and use skills, requiring Skill tool invocation before ANY response including clarifying questions",
+      "chars": 5405,
+      "lines": 118,
+      "has_mit_license": false,
+      "first_heading": "Using Skills"
+    },
+    {
+      "name": "verification-before-completion",
+      "path": "skills/verification-before-completion/SKILL.md",
+      "description": "Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output before making any success claims; evidence before assertions always",
+      "chars": 4149,
+      "lines": 140,
+      "has_mit_license": false,
+      "first_heading": "Verification Before Completion"
+    },
+    {
+      "name": "writing-plans",
+      "path": "skills/writing-plans/SKILL.md",
+      "description": "Use when you have a spec or requirements for a multi-step task, before touching code",
+      "chars": 6086,
+      "lines": 153,
+      "has_mit_license": false,
+      "first_heading": "Writing Plans"
+    },
+    {
+      "name": "writing-skills",
+      "path": "skills/writing-skills/SKILL.md",
+      "description": "Use when creating new skills, editing existing skills, or verifying skills work before deployment",
+      "chars": 22538,
+      "lines": 656,
+      "has_mit_license": false,
+      "first_heading": "Writing Skills"
+    }
+  ],
+  "snippets": {
+    "brainstorming": [
+      {
+        "needle": "one question",
+        "start_line": 75,
+        "end_line": 83,
+        "text": "75: - For appropriately-scoped projects, ask questions one at a time to refine the idea\n76: - Prefer multiple choice questions when possible, but open-ended is fine too\n77: - Only one question per message - if a topic needs more exploration, break it into multiple questions\n78: - Focus on understanding: purpose, constraints, success criteria\n79: \n80: **Exploring approaches:**\n81: \n82: - Propose 2-3 different approaches with trade-offs\n83: - Present options conversationally with your recommendation and reasoning"
+      },
+      {
+        "needle": "approval",
+        "start_line": 8,
+        "end_line": 16,
+        "text": "8: Help turn ideas into fully formed designs and specs through natural collaborative dialogue.\n9: \n10: Start by understanding the current project context, then ask questions one at a time to refine the idea. Once you understand what you're building, present the design and get user approval.\n11: \n12: <HARD-GATE>\n13: Do NOT invoke any implementation skill, write any code, scaffold any project, or take any implementation action until you have presented a design and the user has approved it. This applies to EVERY project regardless of perceived simplicity.\n14: </HARD-GATE>\n15: \n16: ## Anti-Pattern: \"This Is Too Simple To Need A Design\""
+      },
+      {
+        "needle": "RED",
+        "start_line": 139,
+        "end_line": 147,
+        "text": "139: \n140: - **One question at a time** - Don't overwhelm with multiple questions\n141: - **Multiple choice preferred** - Easier to answer than open-ended when possible\n142: - **YAGNI ruthlessly** - Remove unnecessary features from all designs\n143: - **Explore alternatives** - Always propose 2-3 approaches before settling\n144: - **Incremental validation** - Present design, get approval before moving on\n145: - **Be flexible** - Go back and clarify when something doesn't make sense\n146: \n147: ## Visual Companion"
+      }
+    ],
+    "test-driven-development": [
+      {
+        "needle": "RED",
+        "start_line": 45,
+        "end_line": 53,
+        "text": "45: Implement fresh from tests. Period.\n46: \n47: ## Red-Green-Refactor\n48: \n49: ```dot\n50: digraph tdd_cycle {\n51:     rankdir=LR;\n52:     red [label=\"RED\\nWrite failing test\", shape=box, style=filled, fillcolor=\"#ffcccc\"];\n53:     verify_red [label=\"Verify fails\\ncorrectly\", shape=diamond];"
+      },
+      {
+        "needle": "NO PRODUCTION CODE",
+        "start_line": 32,
+        "end_line": 40,
+        "text": "32: \n33: ```\n34: NO PRODUCTION CODE WITHOUT A FAILING TEST FIRST\n35: ```\n36: \n37: Write code before the test? Delete it. Start over.\n38: \n39: **No exceptions:**\n40: - Don't keep it as \"reference\""
+      },
+      {
+        "needle": "verify",
+        "start_line": 51,
+        "end_line": 59,
+        "text": "51:     rankdir=LR;\n52:     red [label=\"RED\\nWrite failing test\", shape=box, style=filled, fillcolor=\"#ffcccc\"];\n53:     verify_red [label=\"Verify fails\\ncorrectly\", shape=diamond];\n54:     green [label=\"GREEN\\nMinimal code\", shape=box, style=filled, fillcolor=\"#ccffcc\"];\n55:     verify_green [label=\"Verify passes\\nAll green\", shape=diamond];\n56:     refactor [label=\"REFACTOR\\nClean up\", shape=box, style=filled, fillcolor=\"#ccccff\"];\n57:     next [label=\"Next\", shape=ellipse];\n58: \n59:     red -> verify_red;"
+      }
+    ],
+    "writing-plans": [
+      {
+        "needle": "RED",
+        "start_line": 50,
+        "end_line": 58,
+        "text": "50: # [Feature Name] Implementation Plan\n51: \n52: > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.\n53: \n54: **Goal:** [One sentence describing what this builds]\n55: \n56: **Architecture:** [2-3 sentences about approach]\n57: \n58: **Tech Stack:** [Key technologies/libraries]"
+      },
+      {
+        "needle": "verify",
+        "start_line": 79,
+        "end_line": 87,
+        "text": "79: ```\n80: \n81: - [ ] **Step 2: Run test to verify it fails**\n82: \n83: Run: `pytest tests/path/test.py::test_name -v`\n84: Expected: FAIL with \"function not defined\"\n85: \n86: - [ ] **Step 3: Write minimal implementation**\n87: "
+      }
+    ],
+    "verification-before-completion": [
+      {
+        "needle": "RED",
+        "start_line": 46,
+        "end_line": 54,
+        "text": "46: | Build succeeds | Build command: exit 0 | Linter passing, logs look good |\n47: | Bug fixed | Test original symptom: passes | Code changed, assumed fixed |\n48: | Regression test works | Red-green cycle verified | Test passes once |\n49: | Agent completed | VCS diff shows changes | Agent reports \"success\" |\n50: | Requirements met | Line-by-line checklist | Tests passing |\n51: \n52: ## Red Flags - STOP\n53: \n54: - Using \"should\", \"probably\", \"seems to\""
+      },
+      {
+        "needle": "evidence",
+        "start_line": 1,
+        "end_line": 9,
+        "text": "1: ---\n2: name: verification-before-completion\n3: description: Use when about to claim work is complete, fixed, or passing, before committing or creating PRs - requires running verification commands and confirming output before making any success claims; evidence before assertions always\n4: ---\n5: \n6: # Verification Before Completion\n7: \n8: ## Overview\n9: "
+      },
+      {
+        "needle": "verify",
+        "start_line": 30,
+        "end_line": 38,
+        "text": "30: 2. RUN: Execute the FULL command (fresh, complete)\n31: 3. READ: Full output, check exit code, count failures\n32: 4. VERIFY: Does output confirm the claim?\n33:    - If NO: State actual status with evidence\n34:    - If YES: State claim WITH evidence\n35: 5. ONLY THEN: Make the claim\n36: \n37: Skip any step = lying, not verifying\n38: ```"
+      }
+    ],
+    "using-superpowers": [
+      {
+        "needle": "RED",
+        "start_line": 30,
+        "end_line": 38,
+        "text": "30: **In Claude Code:** Use the `Skill` tool. When you invoke a skill, its content is loaded and presented to you—follow it directly. Never use the Read tool on skill files.\n31: \n32: **In Copilot CLI:** Use the `skill` tool. Skills are auto-discovered from installed plugins. The `skill` tool works the same as Claude Code's `Skill` tool.\n33: \n34: **In Gemini CLI:** Skills activate via the `activate_skill` tool. Gemini loads skill metadata at session start and activates the full content on demand.\n35: \n36: **In other environments:** Check your platform's documentation for how skills are loaded.\n37: \n38: ## Platform Adaptation"
+      }
+    ]
+  },
+  "evidence_urls": {
+    "repo": "https://github.com/obra/superpowers",
+    "license": "https://github.com/obra/superpowers/blob/main/LICENSE",
+    "skills_tree": "https://github.com/obra/superpowers/tree/main/skills",
+    "brainstorming": "https://github.com/obra/superpowers/blob/main/skills/brainstorming/SKILL.md",
+    "tdd": "https://github.com/obra/superpowers/blob/main/skills/test-driven-development/SKILL.md"
+  }
+}

@@ -1,22 +1,42 @@
 ---
 name: unsloth
-description: Expert guidance for fast fine-tuning with Unsloth - 2-5x faster training, 50-80% less memory, LoRA/QLoRA optimization
+description: Use when you need guidance on expert guidance for fast fine-tuning with Unsloth - 2-5x faster training, 50-80% less memory, LoRA/QLoRA optimization.
 version: 1.0.0
 author: Orchestra Research
 license: MIT
-dependencies: [unsloth, torch, transformers, trl, datasets, peft]
+dependencies:
+- unsloth
+- torch
+- transformers
+- trl
+- datasets
+- peft
 metadata:
   hermes:
-    tags: [Fine-Tuning, Unsloth, Fast Training, LoRA, QLoRA, Memory-Efficient, Optimization, Llama, Mistral, Gemma, Qwen]
-
+    tags:
+    - Fine-Tuning
+    - Unsloth
+    - Fast Training
+    - LoRA
+    - QLoRA
+    - Memory-Efficient
+    - Optimization
+    - Llama
+    - Mistral
+    - Gemma
+    - Qwen
+    related_skills:
+    - guidance
 ---
 
 # Unsloth Skill
 
+## Overview
+
+
 Comprehensive assistance with unsloth development, generated from official documentation.
 
-## When to Use This Skill
-
+## When to Use
 This skill should be triggered when:
 - Working with unsloth
 - Asking about unsloth features or APIs
@@ -79,5 +99,15 @@ To refresh this skill with updated documentation:
 
 <!-- Trigger re-upload 1763621536 -->
 
+## Common Pitfalls
 
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
 

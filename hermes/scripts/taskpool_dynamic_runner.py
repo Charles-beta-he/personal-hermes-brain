@@ -128,6 +128,8 @@ def signature(summary: dict[str, Any]) -> str:
         "ingested": summary.get("ingested_count"),
         "mm": (summary.get("multimodel_intervention") or {}).get("task_id"),
         "mmq": (summary.get("multimodel_intervention") or {}).get("queued_count"),
+        "auto_close_closed": (summary.get("auto_close_review") or {}).get("closed_count"),
+        "auto_close_errors": (summary.get("auto_close_review") or {}).get("error_count"),
     }
     return hashlib.sha256(json.dumps(payload, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
 
@@ -151,12 +153,13 @@ def main() -> int:
             return 2
         event["summary"] = {k: summary.get(k) for k in ["status", "next_task_id", "dispatchable", "error_count", "reconcile_action_count", "ingested_count"]}
         event["autorun"] = summary.get("autorun", {}) if isinstance(summary.get("autorun"), dict) else {}
+        event["auto_close_review"] = summary.get("auto_close_review", {}) if isinstance(summary.get("auto_close_review"), dict) else {}
         sig = signature(summary)
         prev = load_state()
         changed = sig != prev.get("signature")
         event["changed"] = changed
         event["signature"] = sig
-        should_print = changed or tick.get("returncode") not in (0, "0") or bool((summary.get("error_count") or 0)) or bool(event["autorun"].get("advanced"))
+        should_print = changed or tick.get("returncode") not in (0, "0") or bool((summary.get("error_count") or 0)) or bool(event["autorun"].get("advanced")) or bool(event["auto_close_review"].get("closed_count")) or bool(event["auto_close_review"].get("error_count"))
         # Start/advance multimodel worker opportunistically, but never block this tick.
         mm = summary.get("multimodel_intervention") if isinstance(summary.get("multimodel_intervention"), dict) else {}
         if mm.get("intervention_required") and (changed or time.time() - float(prev.get("last_mm_probe_epoch") or 0) > 1800):
@@ -164,7 +167,7 @@ def main() -> int:
             event["multimodel_dynamic"] = compact_result(mm_dynamic)
             should_print = True if mm_dynamic.get("stdout") else should_print
             prev["last_mm_probe_epoch"] = time.time()
-        state = {"updated_at": event["ts"], "signature": sig, "last_mm_probe_epoch": prev.get("last_mm_probe_epoch", 0), "last_summary": event["summary"]}
+        state = {"updated_at": event["ts"], "signature": sig, "last_mm_probe_epoch": prev.get("last_mm_probe_epoch", 0), "last_summary": event["summary"], "last_auto_close_review": event["auto_close_review"]}
         save_state(state); append(event)
         if should_print:
             print(json.dumps(event, ensure_ascii=False, indent=2, sort_keys=True))

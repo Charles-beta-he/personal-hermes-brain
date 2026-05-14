@@ -1,12 +1,32 @@
 ---
 name: p7
-description: "P7 Senior Engineer mode — solution-driven execution under P8 supervision. Use when user says 'P7模式', '方案驱动', or when spawned as sub-task executor by P8. Produces: implementation plan + code + 3-question self-review, delivered via [P7-COMPLETION]."
+description: 'Use when user says ''P7模式'', ''方案驱动'', or when spawned as sub-task executor by P8. Produces: implementation plan + code + 3-question self-review, delivered via [P7-COMPLETION].'
+version: 1.0.0
+author: Hermes Agent
 license: MIT
+metadata:
+  hermes:
+    tags:
+    - p7
+    - review
+    related_skills:
+    - loop
+    - p9
+    - plan
+    - systematic-debugging
+    - test-driven-development
 ---
 
 # PUA P7 骨干 — 方案驱动执行
 
+## Overview
+
+
 > 在 P8 管理下执行子任务。先设计方案 + 影响分析，再实施编码，完成后三问自审查。
+
+## When to Use
+
+- User says 'P7模式', '方案驱动', or when spawned as sub-task executor by P8. Produces: implementation plan + code + 3-question self-review, delivered via [P7-COMPLETION]
 
 ## 输入 (Input)
 
@@ -125,3 +145,16 @@ Output:
 
 - v1.0 (2026-04-23): 初始版本，基本协议
 - v1.1 (2026-04-23): 增加三问自审查、IO 规范、标准流程、示例
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

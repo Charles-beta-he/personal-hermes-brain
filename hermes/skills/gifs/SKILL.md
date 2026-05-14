@@ -1,16 +1,32 @@
 ---
 name: gifs
-description: "GIF workflow router for searching, downloading, selecting, converting, and sending animated reaction/media GIFs. Use when the user asks for GIFs, reaction GIFs, Tenor/Giphy-style search, short animated media, or GIF file handling."
+description: Use when the user asks for GIFs, reaction GIFs, Tenor/Giphy-style search, short animated media, or GIF file handling.
+version: 1.0.0
+author: Hermes Agent
 license: MIT
 metadata:
   hermes:
-    tags: [gifs, media, reaction-gifs, search, download]
-    related_skills: [gif-search, media]
+    tags:
+    - gifs
+    - media
+    - reaction-gifs
+    - search
+    - download
+    related_skills:
+    - gif-search
+    - media
 ---
 
 # Gifs
 
+## Overview
+
+
 GIF 工作流总入口：当用户要“找一个 GIF / 下载 GIF / 发 GIF / 做短动图 / 处理 GIF 文件”时，先用本 skill 判定路线，再按需加载更具体的 `gif-search` 或媒体处理 skill。
+
+## When to Use
+
+- The user asks for GIFs, reaction GIFs, Tenor/Giphy-style search, short animated media, or GIF file handling
 
 ## Input / 输入
 
@@ -90,3 +106,16 @@ Agent: 检查文件大小与 ffmpeg/ImageMagick 可用性 → 通过缩放/降�
 - `gif-search` — Tenor API 搜索与下载 GIF 的具体命令。
 - `media` — 更通用的媒体处理、转码、YouTube/音频/视频工作流。
 - `gifs` 只负责路由与通用边界；具体 API 命令以 `gif-search` 为准。
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

@@ -1,20 +1,46 @@
 ---
 name: api-and-interface-design
-description: Design principles for REST, GraphQL, tRPC, and internal APIs. Covers naming, versioning, error handling, pagination, and anti-patterns.
+description: Use when you need guidance on design principles for REST, GraphQL, tRPC, and internal APIs.
+version: 1.0.0
+author: Hermes Agent
+license: MIT
 triggers:
-  - "design an API"
-  - "create endpoint"
-  - "add route"
-  - "new tRPC router"
-  - "GraphQL schema change"
-  - "before exposing any new interface to consumers"
-model: "strong (DeepSeek/Claude) — API design mistakes are expensive"
+- design an API
+- create endpoint
+- add route
+- new tRPC router
+- GraphQL schema change
+- before exposing any new interface to consumers
+model: strong (DeepSeek/Claude) — API design mistakes are expensive
+metadata:
+  hermes:
+    tags:
+    - api
+    - interface
+    - design
+    related_skills:
+    - domain
+    - email
+    - router
 ---
 
 # api-and-interface-design
 
+## Overview
+
+
 Good APIs are consistent, predictable, and self-documenting. Bad APIs multiply maintenance cost linearly with each consumer.
 
+## When to Use
+
+- You need guidance on design principles for REST, GraphQL, tRPC, and internal APIs
+- design an API
+- create endpoint
+- add route
+- new tRPC router
+- GraphQL schema change
+- before exposing any new interface to consumers
+- Don't use for: requests that do not need you need guidance on design principles for REST, GraphQL, tRPC, and internal APIs; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## Universal Principles (all API types)
 
 ### Naming
@@ -76,7 +102,7 @@ When an endpoint changes persisted state that the client may also cache locally 
 - Stateful mutation returns success without checking affected row count
 - Local fallback/cache masks explicit server source-of-truth values
 
-## Verification
+## Verification Checklist
 - [ ] Naming consistent across all endpoints
 - [ ] All list endpoints have pagination
 - [ ] Error responses follow structured format
@@ -84,3 +110,10 @@ When an endpoint changes persisted state that the client may also cache locally 
 - [ ] Input validation on every endpoint
 - [ ] Stateful mutations validate input, enforce authz/ownership, check affected rows, and return resulting persisted state
 - [ ] Contract tests cover read-after-write and stale-client-cache edge cases
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+

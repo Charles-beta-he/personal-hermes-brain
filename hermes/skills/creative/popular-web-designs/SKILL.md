@@ -1,31 +1,61 @@
 ---
 name: popular-web-designs
-description: >
-  54 production-quality design systems extracted from real websites. Load a template
-  to generate HTML/CSS that matches the visual identity of sites like Stripe, Linear,
-  Vercel, Notion, Airbnb, and more. Each template includes colors, typography, components,
-  layout rules, and ready-to-use CSS values.
+description: Use when you need guidance on 54 production-quality design systems extracted from real websites.
 version: 1.0.0
 author: Hermes Agent + Teknium (design systems sourced from VoltAgent/awesome-design-md)
 license: MIT
-tags: [design, css, html, ui, web-development, design-systems, templates]
 triggers:
-  - build a page that looks like
-  - make it look like stripe
-  - design like linear
-  - vercel style
-  - create a UI
-  - web design
-  - landing page
-  - dashboard design
-  - website styled like
+- build a page that looks like
+- make it look like stripe
+- design like linear
+- vercel style
+- create a UI
+- web design
+- landing page
+- dashboard design
+- website styled like
+metadata:
+  hermes:
+    tags:
+    - design
+    - css
+    - html
+    - ui
+    - web-development
+    - design-systems
+    - templates
+    related_skills:
+    - airtable
+    - apple
+    - design
+    - linear
+    - maps
+    - notion
+    - opencode
+    - spotify
 ---
 
 # Popular Web Designs
 
+## Overview
+
+
 54 real-world design systems ready for use when generating HTML/CSS. Each template captures a
 site's complete visual language: color palette, typography hierarchy, component styles, spacing
 system, shadows, responsive behavior, and practical agent prompts with exact CSS values.
+
+## When to Use
+
+- You need guidance on 54 production-quality design systems extracted from real websites
+- build a page that looks like
+- make it look like stripe
+- design like linear
+- vercel style
+- create a UI
+- web design
+- landing page
+- dashboard design
+- website styled like
 
 ## How to Use
 
@@ -205,3 +235,16 @@ Match the design to the content:
 - **Premium / luxury:** Apple, BMW, Stripe, Superhuman, Revolut
 - **Data-dense / dashboards:** Sentry, Kraken, Cohere, ClickHouse
 - **Monospace / terminal aesthetic:** Ollama, OpenCode, x.ai, VoltAgent
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

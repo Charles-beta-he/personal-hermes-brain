@@ -1,0 +1,33 @@
+{
+  "method": "file-only read after simulated context compaction",
+  "overall_status": "PASS",
+  "pattern_results": {
+    "absolute_plan_path": true,
+    "blocker_status": true,
+    "canonical_task_path": true,
+    "changed_files": true,
+    "completed_steps": true,
+    "current_step_marker": true,
+    "current_step_row": true,
+    "next_atomic_action": true,
+    "resume_instruction": true
+  },
+  "recovered_state": {
+    "blockers": "None",
+    "completed_step_count": 3,
+    "current_step_count": 1,
+    "current_step_id": "4",
+    "next_atomic_action": "run validator and write JSON evidence"
+  },
+  "section_results": {
+    "## Acceptance Criteria": true,
+    "## Current Step Marker": true,
+    "## Decisions Preserved": true,
+    "## Files Changed": true,
+    "## Objective": true,
+    "## Recovery Header": true,
+    "## Resume Protocol": true,
+    "## State Ledger": true
+  },
+  "validated_file": "/Users/charles/Documents/brain/05-实践与项目/projects/agent-skill-learning/planning-with-files-recovery-simulation-2026-05-13.md"
+}

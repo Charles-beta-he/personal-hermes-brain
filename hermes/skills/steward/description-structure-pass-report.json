@@ -1,0 +1,385 @@
+{
+  "timestamp": "2026-05-13T18:38:05",
+  "root": "/Users/charles/.hermes/skills",
+  "changes": {
+    "files_modified": 193,
+    "descriptions_rewritten": 180,
+    "overview_inserted": 183,
+    "when_to_use_inserted": 123,
+    "overview_heading_normalized": 0,
+    "when_heading_normalized_extra": 4,
+    "pitfalls_heading_normalized_extra": 1,
+    "verification_heading_normalized_extra": 6
+  },
+  "description_rewrite_reasons": {
+    "design_principles": 1,
+    "workflow_umbrella": 21,
+    "verb": 39,
+    "complete_guide": 1,
+    "extract_embedded": 37,
+    "chinese_fallback": 21,
+    "generic_fallback": 60
+  },
+  "sample": [
+    {
+      "path": "api-and-interface-design/SKILL.md",
+      "from": "Design principles for REST, GraphQL, tRPC, and internal APIs. Covers naming, versioning, error handling, pagination, and anti-patterns.",
+      "to": "Use when you need guidance on design principles for REST, GraphQL, tRPC, and internal APIs.",
+      "reason": "design_principles"
+    },
+    {
+      "path": "apple/SKILL.md",
+      "from": "Apple workflow skill. See references/ for detailed guides.",
+      "to": "Use when you need the Apple workflow umbrella. See references/ for detailed guides.",
+      "reason": "workflow_umbrella"
+    },
+    {
+      "path": "apple/apple-notes/SKILL.md",
+      "from": "Manage Apple Notes via the memo CLI on macOS (create, view, search, edit).",
+      "to": "Use when you need to manage Apple Notes via the memo CLI on macOS (create, view, search, edit).",
+      "reason": "verb"
+    },
+    {
+      "path": "apple/apple-reminders/SKILL.md",
+      "from": "Manage Apple Reminders via remindctl CLI (list, add, complete, delete).",
+      "to": "Use when you need to manage Apple Reminders via remindctl CLI (list, add, complete, delete).",
+      "reason": "verb"
+    },
+    {
+      "path": "apple/findmy/SKILL.md",
+      "from": "Track Apple devices and AirTags via FindMy.app on macOS using AppleScript and screen capture.",
+      "to": "Use when you need to track Apple devices and AirTags via FindMy.app on macOS using AppleScript and screen capture.",
+      "reason": "verb"
+    },
+    {
+      "path": "apple/imessage/SKILL.md",
+      "from": "Send and receive iMessages/SMS via the imsg CLI on macOS.",
+      "to": "Use when you need to send and receive iMessages/SMS via the imsg CLI on macOS.",
+      "reason": "verb"
+    },
+    {
+      "path": "apple/macos-computer-use/SKILL.md",
+      "from": "Drive the macOS desktop in the background — screenshots, mouse, keyboard,\nscroll, drag — without stealing the user's cursor, keyboard focus, or\nSpace. Works with any tool-capable model. Load this skill whenever the\n`computer_use` tool is available.",
+      "to": "Use when you need to drive the macOS desktop in the background — screenshots, mouse, keyboard, scroll, drag — without stealing the user's cursor, keyboard focus, or Space.",
+      "reason": "verb"
+    },
+    {
+      "path": "autonomous-ai-agents/SKILL.md",
+      "from": "Autonomous Ai Agents workflow skill. See references/ for detailed guides.",
+      "to": "Use when you need the Autonomous Ai Agents workflow umbrella. See references/ for detailed guides.",
+      "reason": "workflow_umbrella"
+    },
+    {
+      "path": "autonomous-ai-agents/claude-code/SKILL.md",
+      "from": "Delegate coding tasks to Claude Code (Anthropic's CLI agent). Use for building features, refactoring, PR reviews, and iterative coding. Requires the claude CLI installed.",
+      "to": "Use when you need to delegate coding tasks to Claude Code (Anthropic's CLI agent).",
+      "reason": "verb"
+    },
+    {
+      "path": "autonomous-ai-agents/codex/SKILL.md",
+      "from": "Delegate coding tasks to OpenAI Codex CLI agent. Use for building features, refactoring, PR reviews, and batch issue fixing. Requires the codex CLI and a git repository.",
+      "to": "Use when you need to delegate coding tasks to OpenAI Codex CLI agent.",
+      "reason": "verb"
+    },
+    {
+      "path": "autonomous-ai-agents/hermes-agent/SKILL.md",
+      "from": "Complete guide to using and extending Hermes Agent — CLI usage, setup, configuration, spawning additional agents, gateway platforms, skills, voice, tools, profiles, and a concise contributor reference. Load this skill when helping users configure Hermes, troubleshoot issues, spawn agent instances, or make code contributions.",
+      "to": "Use when you need guidance on using and extending Hermes Agent — CLI usage, setup, configuration, spawning additional agents, gateway platforms, skills, voice, tools, profiles, and a concise contributor reference.",
+      "reason": "complete_guide"
+    },
+    {
+      "path": "autonomous-ai-agents/hermes-pipeline/SKILL.md",
+      "from": "Build automated task pipelines using hermes chat -q as execution engine. Compose hermes skills (confirmer, executor, validator) into multi-stage workflows with SQLite envelope bus, error isolation, and Lark/webhook integration.",
+      "to": "Use when you need to build automated task pipelines using hermes chat -q as execution engine.",
+      "reason": "verb"
+    },
+    {
+      "path": "autonomous-ai-agents/opencode/SKILL.md",
+      "from": "Delegate coding tasks to OpenCode CLI agent for feature implementation, refactoring, PR review, and long-running autonomous sessions. Requires the opencode CLI installed and authenticated.",
+      "to": "Use when you need to delegate coding tasks to OpenCode CLI agent for feature implementation, refactoring, PR review, and long-running autonomous sessions.",
+      "reason": "verb"
+    },
+    {
+      "path": "bayesian-agent/SKILL.md",
+      "from": "贝叶斯脑 × Agent 置信度管理 — 基于 Friston 自由能原理，将 Agent 判断建模为概率推断。维护 skill/能力的贝叶斯置信度分布，根据用户反馈持续更新。Use when evaluating skill reliability, making uncertain decisions, or calibrating Agent confidence. Triggers: '置信度', '贝叶斯', '概率更新', 'skill评分', '能力评估', '不确定性'.",
+      "to": "Use when evaluating skill reliability, making uncertain decisions, or calibrating Agent confidence. Triggers: '置信度', '贝叶斯', '概率更新', 'skill评分', '能力评估', '不确定性'.",
+      "reason": "extract_embedded"
+    },
+    {
+      "path": "chinese-platforms/SKILL.md",
+      "from": "中文互联网平台路由 — B站/小红书/抖音/微博/V2EX/微信公众号/雪球/小宇宙/Reddit/LinkedIn。路由知识来自 Agent-Reach 选择性借鉴, 全部映射为 Hermes 原生工具。触发词: 小红书, xhs, 抖音, douyin, B站, bilibili, b站, 微博, weibo, V2EX, v2ex, 公众号, 微信文章, 雪球, 股票, xueqiu, 小宇宙, 播客, reddit, linkedin, 领英, 职场",
+      "to": "Use when the task falls under 中文互联网平台路由.",
+      "reason": "chinese_fallback"
+    },
+    {
+      "path": "codebase-intelligence/SKILL.md",
+      "from": "Lightweight code intelligence for Hermes and external projects — import/export graphs, blast radius analysis, dead code detection. Covers Python and TypeScript without external dependencies. Use when analyzing codebase structure, before refactoring, or assessing change impact.",
+      "to": "Use when analyzing codebase structure, before refactoring, or assessing change impact.",
+      "reason": "extract_embedded"
+    },
+    {
+      "path": "cognitive-load-agent/SKILL.md",
+      "from": "认知负荷理论 × Agent Context 管理 — 基于 Sweller 认知负荷理论，将 Agent context window 建模为工作记忆。通过 Chunk 化分解、外在负荷最小化、相关负荷最大化来优化推理质量。Use when task is complex, context is long, or reasoning quality degrades. Triggers: 'context管理', 'chunk化', '任务分解', '认知负荷', '工作记忆', 'context溢出', '任务太大'.",
+      "to": "Use when task is complex, context is long, or reasoning quality degrades. Triggers: 'context管理', 'chunk化', '任务分解', '认知负荷', '工作记忆', 'context溢出', '任务太大'.",
+      "reason": "extract_embedded"
+    },
+    {
+      "path": "creative/SKILL.md",
+      "from": "Creative workflow skill. See references/ for detailed guides.",
+      "to": "Use when you need the Creative workflow umbrella. See references/ for detailed guides.",
+      "reason": "workflow_umbrella"
+    },
+    {
+      "path": "creative/architecture-diagram/SKILL.md",
+      "from": "Generate dark-themed SVG diagrams of software systems and cloud infrastructure as standalone HTML files with inline SVG graphics. Semantic component colors (cyan=frontend, emerald=backend, violet=database, amber=cloud/AWS, rose=security, orange=message bus), JetBrains Mono font, grid background. Best suited for software architecture, cloud/VPC topology, microservice maps, service-mesh diagrams, database + API layer diagrams, security groups, message buses — anything that fits a tech-infra deck with a dark aesthetic. If a more specialized diagramming skill exists for the subject (scientific, educational, hand-drawn, animated, etc.), prefer that — otherwise this skill can also serve as a general-purpose SVG diagram fallback. Based on Cocoon AI's architecture-diagram-generator (MIT).",
+      "to": "Use when you need to generate dark-themed SVG diagrams of software systems and cloud infrastructure as standalone HTML files with inline SVG graphics.",
+      "reason": "verb"
+    },
+    {
+      "path": "creative/ascii-art/SKILL.md",
+      "from": "Generate ASCII art using pyfiglet (571 fonts), cowsay, boxes, toilet, image-to-ascii, remote APIs (asciified, ascii.co.uk), and LLM fallback. No API keys required.",
+      "to": "Use when you need to generate ASCII art using pyfiglet (571 fonts), cowsay, boxes, toilet, image-to-ascii, remote APIs (asciified, ascii.co.uk), and LLM fallback.",
+      "reason": "verb"
+    },
+    {
+      "path": "creative/baoyu-comic/SKILL.md",
+      "from": "Knowledge comic creator supporting multiple art styles and tones. Creates original educational comics with detailed panel layouts and sequential image generation. Use when user asks to create \"知识漫画\", \"教育漫画\", \"biography comic\", \"tutorial comic\", or \"Logicomix-style comic\".",
+      "to": "Use when user asks to create \"知识漫画\", \"教育漫画\", \"biography comic\", \"tutorial comic\", or \"Logicomix-style comic\".",
+      "reason": "extract_embedded"
+    },
+    {
+      "path": "creative/baoyu-infographic/SKILL.md",
+      "from": "Generate professional infographics with 21 layout types and 21 visual styles. Analyzes content, recommends layout×style combinations, and generates publication-ready infographics. Use when user asks to create \"infographic\", \"visual summary\", \"信息图\", \"可视化\", or \"高密度信息大图\".",
+      "to": "Use when user asks to create \"infographic\", \"visual summary\", \"信息图\", \"可视化\", or \"高密度信息大图\".",
+      "reason": "extract_embedded"
+    },
+    {
+      "path": "creative/claude-design/SKILL.md",
+      "from": "Design one-off HTML artifacts (landing, deck, prototype).",
+      "to": "Use when you need to design one-off HTML artifacts (landing, deck, prototype).",
+      "reason": "verb"
+    },
+    {
+      "path": "creative/comfyui/SKILL.md",
+      "from": "Generate images, video, and audio with ComfyUI — install, launch, manage nodes/models, run workflows with parameter injection. Uses the official comfy-cli for lifecycle and direct REST/WebSocket API for execution.",
+      "to": "Use when you need to generate images, video, and audio with ComfyUI — install, launch, manage nodes/models, run workflows with parameter injection.",
+      "reason": "verb"
+    },
+    {
+      "path": "creative/creative-ideation/SKILL.md",
+      "from": "Generate project ideas through creative constraints. Use when the user says 'I want to build something', 'give me a project idea', 'I'm bored', 'what should I make', 'inspire me', or any variant of 'I have tools but no direction'. Works for code, art, hardware, writing, tools, and anything that can be made.",
+      "to": "Use when the user says 'I want to build something', 'give me a project idea', 'I'm bored', 'what should I make', 'inspire me', or any variant of 'I have tools but no direction'. Works for code, art, hardware, writing, tools, and anything that can be made.",
+      "reason": "extract_embedded"
+    },
+    {
+      "path": "creative/design-md/SKILL.md",
+      "from": "Author, validate, diff, and export DESIGN.md files — Google's open-source format spec that gives coding agents a persistent, structured understanding of a design system (tokens + rationale in one file). Use when building a design system, porting style rules between projects, generating UI with consistent brand, or auditing accessibility/contrast.",
+      "to": "Use when building a design system, porting style rules between projects, generating UI with consistent brand, or auditing accessibility/contrast.",
+      "reason": "extract_embedded"
+    },
+    {
+      "path": "creative/excalidraw/SKILL.md",
+      "from": "Create hand-drawn style diagrams using Excalidraw JSON format. Generate .excalidraw files for architecture diagrams, flowcharts, sequence diagrams, concept maps, and more. Files can be opened at excalidraw.com or uploaded for shareable links.",
+      "to": "Use when you need to create hand-drawn style diagrams using Excalidraw JSON format.",
+      "reason": "verb"
+    },
+    {
+      "path": "creative/humanizer/SKILL.md",
+      "from": "Humanize text: strip AI-isms and add real voice.",
+      "to": "Use when you need guidance on humanize text: strip AI-isms and add real voice.",
+      "reason": "generic_fallback"
+    },
+    {
+      "path": "creative/manim-video/SKILL.md",
+      "from": "Production pipeline for mathematical and technical animations using Manim Community Edition. Creates 3Blue1Brown-style explainer videos, algorithm visualizations, equation derivations, architecture diagrams, and data stories. Use when users request: animated explanations, math animations, concept visualizations, algorithm walkthroughs, technical explainers, 3Blue1Brown style videos, or any programmatic animation with geometric/mathematical content.",
+      "to": "Use when users request: animated explanations, math animations, concept visualizations, algorithm walkthroughs, technical explainers, 3Blue1Brown style videos, or any programmatic animation with geometric/mathematical content.",
+      "reason": "extract_embedded"
+    },
+    {
+      "path": "creative/p5js/SKILL.md",
+      "from": "Production pipeline for interactive and generative visual art using p5.js. Creates browser-based sketches, generative art, data visualizations, interactive experiences, 3D scenes, audio-reactive visuals, and motion graphics — exported as HTML, PNG, GIF, MP4, or SVG. Covers: 2D/3D rendering, noise and particle systems, flow fields, shaders (GLSL), pixel manipulation, kinetic typography, WebGL scenes, audio analysis, mouse/keyboard interaction, and headless high-res export. Use when users request: p5.js sketches, creative coding, generative art, interactive visualizations, canvas animations, browser-based visual art, data viz, shader effects, or any p5.js project.",
+      "to": "Use when users request: p5.js sketches, creative coding, generative art, interactive visualizations, canvas animations, browser-based visual art, data viz, shader effects, or any p5.js project.",
+      "reason": "extract_embedded"
+    },
+    {
+      "path": "creative/popular-web-designs/SKILL.md",
+      "from": "54 production-quality design systems extracted from real websites. Load a template to generate HTML/CSS that matches the visual identity of sites like Stripe, Linear, Vercel, Notion, Airbnb, and more. Each template includes colors, typography, components, layout rules, and ready-to-use CSS values.",
+      "to": "Use when you need guidance on 54 production-quality design systems extracted from real websites.",
+      "reason": "generic_fallback"
+    },
+    {
+      "path": "creative/sketch/SKILL.md",
+      "from": "Throwaway HTML mockups: 2-3 design variants to compare.",
+      "to": "Use when you need guidance on throwaway HTML mockups: 2-3 design variants to compare.",
+      "reason": "generic_fallback"
+    },
+    {
+      "path": "creative/songwriting-and-ai-music/SKILL.md",
+      "from": "Songwriting craft, AI music generation prompts (Suno focus), parody/adaptation techniques, phonetic tricks, and lessons learned. These are tools and ideas, not rules. Break any of them when the art calls for it.",
+      "to": "Use when you need guidance on songwriting craft, AI music generation prompts (Suno focus), parody/adaptation techniques, phonetic tricks, and lessons learned.",
+      "reason": "generic_fallback"
+    },
+    {
+      "path": "creative/touchdesigner-mcp/SKILL.md",
+      "from": "Control a running TouchDesigner instance via twozero MCP — create operators, set parameters, wire connections, execute Python, build real-time visuals. 36 native tools.",
+      "to": "Use when you need to control a running TouchDesigner instance via twozero MCP — create operators, set parameters, wire connections, execute Python, build real-time visuals.",
+      "reason": "verb"
+    },
+    {
+      "path": "creative/web-animation-optimization/SKILL.md",
+      "from": "Optimize web application animations by analyzing reference sites, creating reusable animation utilities (easing curves, RAF-driven animations, spring physics, particles), CSS animation systems, and scroll-triggered effects. Use when enhancing UI/UX with smooth, performant animations.",
+      "to": "Use when enhancing UI/UX with smooth, performant animations.",
+      "reason": "extract_embedded"
+    },
+    {
+      "path": "creative/web-animation-patterns/SKILL.md",
+      "from": "Web animation patterns and performance optimization techniques. Reference implementations from award-winning sites (Lusion.co, etc). Covers CSS animations, RAF-driven animations, scroll-triggered effects, spring physics, and GPU acceleration.",
+      "to": "Use when you need guidance on web animation patterns and performance optimization techniques.",
+      "reason": "generic_fallback"
+    },
+    {
+      "path": "darwin-skill/SKILL.md",
+      "from": "Darwin Skill (达尔文.skill): autonomous skill optimizer inspired by Karpathy's autoresearch. Evaluates SKILL.md files using an 8-dimension rubric (structure + effectiveness), runs hill-climbing with git version control, validates improvements through test prompts, and generates visual result cards. Use when user mentions \"优化skill\", \"skill评分\", \"自动优化\", \"auto optimize\", \"skill质量检查\", \"达尔文\", \"darwin\", \"帮我改改skill\", \"skill怎么样\", \"提升skill质量\", \"skill review\", \"skill打分\".",
+      "to": "Use when user mentions \"优化skill\", \"skill评分\", \"自动优化\", \"auto optimize\", \"skill质量检查\", \"达尔文\", \"darwin\", \"帮我改改skill\", \"skill怎么样\", \"提升skill质量\", \"skill review\", \"skill打分\".",
+      "reason": "extract_embedded"
+    },
+    {
+      "path": "data-science/SKILL.md",
+      "from": "Data Science workflow skill. See references/ for detailed guides.",
+      "to": "Use when you need the Data Science workflow umbrella. See references/ for detailed guides.",
+      "reason": "workflow_umbrella"
+    },
+    {
+      "path": "data-science/jupyter-live-kernel/SKILL.md",
+      "from": "Use a live Jupyter kernel for stateful, iterative Python execution via hamelnb. Load this skill when the task involves exploration, iteration, or inspecting intermediate results — data science, ML experimentation, API exploration, or building up complex code step-by-step. Uses terminal to run CLI commands against a live Jupyter kernel. No new tools required.",
+      "to": "Use when you need to use a live Jupyter kernel for stateful, iterative Python execution via hamelnb.",
+      "reason": "verb"
+    },
+    {
+      "path": "devops/SKILL.md",
+      "from": "Devops workflow skill. See references/ for detailed guides.",
+      "to": "Use when you need the Devops workflow umbrella. See references/ for detailed guides.",
+      "reason": "workflow_umbrella"
+    },
+    {
+      "path": "devops/cloudflare-pages-pnpm/SKILL.md",
+      "from": "Deploy pnpm monorepo to Cloudflare Pages via GitHub Actions. Covers the wrangler-action pnpm compatibility issue and the direct npx workaround.",
+      "to": "Use when you need to deploy pnpm monorepo to Cloudflare Pages via GitHub Actions.",
+      "reason": "verb"
+    },
+    {
+      "path": "devops/gateway-telegram-setup/SKILL.md",
+      "from": "Debug and configure Hermes Gateway Telegram integration — config structure pitfalls, env var overrides, verbose verification, stale PID cleanup.",
+      "to": "Use when you need to debug and configure Hermes Gateway Telegram integration — config structure pitfalls, env var overrides, verbose verification, stale PID cleanup.",
+      "reason": "verb"
+    },
+    {
+      "path": "devops/kanban-orchestrator/SKILL.md",
+      "from": "Decomposition playbook + specialist-roster conventions + anti-temptation rules for an orchestrator profile routing work through Kanban. The \"don't do the work yourself\" rule and the basic lifecycle are auto-injected into every kanban worker's system prompt; this skill is the deeper playbook when you're specifically playing the orchestrator role.",
+      "to": "Use when you need guidance on decomposition playbook + specialist-roster conventions + anti-temptation rules for an orchestrator profile routing work through Kanban.",
+      "reason": "generic_fallback"
+    },
+    {
+      "path": "devops/kanban-worker/SKILL.md",
+      "from": "Pitfalls, examples, and edge cases for Hermes Kanban workers. The lifecycle itself is auto-injected into every worker's system prompt as KANBAN_GUIDANCE (from agent/prompt_builder.py); this skill is what you load when you want deeper detail on specific scenarios.",
+      "to": "Use when you need guidance on pitfalls, examples, and edge cases for Hermes Kanban workers.",
+      "reason": "generic_fallback"
+    },
+    {
+      "path": "devops/semantic-release-monorepo/SKILL.md",
+      "from": "Configure semantic-release for pnpm monorepo with GitHub Actions. Handles automated versioning, changelog generation, and GitHub Releases on push to main.",
+      "to": "Use when you need guidance on configure semantic-release for pnpm monorepo with GitHub Actions.",
+      "reason": "generic_fallback"
+    },
+    {
+      "path": "devops/token-saver-rtk/SKILL.md",
+      "from": "全架构 token 优化 17 层: CASI(Prefix-Safe) + Token-Eff + RTK + Caveman + Tool Schema + Task Router + Anatomy + Cerebrum + Result Spiller(var_handle) + Dynamic Thinking + Locale Bookend + Tool Output Pipeline。修复 CASI bug，接入 compress_tool_output，实现符号引用。",
+      "to": "Use when the task falls under Token Saver: 全架构优化 (17层).",
+      "reason": "chinese_fallback"
+    },
+    {
+      "path": "devops/webhook-subscriptions/SKILL.md",
+      "from": "Create and manage webhook subscriptions for event-driven agent activation, or for direct push notifications (zero LLM cost). Use when the user wants external services to trigger agent runs OR push notifications to chats.",
+      "to": "Use when the user wants external services to trigger agent runs OR push notifications to chats.",
+      "reason": "extract_embedded"
+    },
+    {
+      "path": "diagramming/SKILL.md",
+      "from": "Diagramming workflow skill. See references/ for detailed guides.",
+      "to": "Use when you need the Diagramming workflow umbrella. See references/ for detailed guides.",
+      "reason": "workflow_umbrella"
+    },
+    {
+      "path": "dogfood/SKILL.md",
+      "from": "Systematic exploratory QA testing of web applications — find bugs, capture evidence, and generate structured reports",
+      "to": "Use when you need guidance on systematic exploratory QA testing of web applications — find bugs, capture evidence, and generate structured reports.",
+      "reason": "generic_fallback"
+    },
+    {
+      "path": "domain/SKILL.md",
+      "from": "Domain workflow skill. See references/ for detailed guides.",
+      "to": "Use when you need the Domain workflow umbrella. See references/ for detailed guides.",
+      "reason": "workflow_umbrella"
+    },
+    {
+      "path": "email/SKILL.md",
+      "from": "Email workflow skill. See references/ for detailed guides.",
+      "to": "Use when you need the Email workflow umbrella. See references/ for detailed guides.",
+      "reason": "workflow_umbrella"
+    },
+    {
+      "path": "email/himalaya/SKILL.md",
+      "from": "CLI to manage emails via IMAP/SMTP. Use himalaya to list, read, write, reply, forward, search, and organize emails from the terminal. Supports multiple accounts and message composition with MML (MIME Meta Language).",
+      "to": "Use when you need guidance on cLI to manage emails via IMAP/SMTP.",
+      "reason": "generic_fallback"
+    },
+    {
+      "path": "feeds/SKILL.md",
+      "from": "Monitor, validate, and summarize RSS/Atom/JSON feeds and blog update sources.",
+      "to": "Use when you need guidance on monitor, validate, and summarize RSS/Atom/JSON feeds and blog update sources.",
+      "reason": "generic_fallback"
+    },
+    {
+      "path": "gaming/SKILL.md",
+      "from": "Gaming workflow skill. See references/ for detailed guides.",
+      "to": "Use when you need the Gaming workflow umbrella. See references/ for detailed guides.",
+      "reason": "workflow_umbrella"
+    },
+    {
+      "path": "gaming/minecraft-modpack-server/SKILL.md",
+      "from": "Set up a modded Minecraft server from a CurseForge/Modrinth server pack zip. Covers NeoForge/Forge install, Java version, JVM tuning, firewall, LAN config, backups, and launch scripts.",
+      "to": "Use when you need guidance on set up a modded Minecraft server from a CurseForge/Modrinth server pack zip.",
+      "reason": "generic_fallback"
+    },
+    {
+      "path": "gifs/SKILL.md",
+      "from": "GIF workflow router for searching, downloading, selecting, converting, and sending animated reaction/media GIFs. Use when the user asks for GIFs, reaction GIFs, Tenor/Giphy-style search, short animated media, or GIF file handling.",
+      "to": "Use when the user asks for GIFs, reaction GIFs, Tenor/Giphy-style search, short animated media, or GIF file handling.",
+      "reason": "extract_embedded"
+    },
+    {
+      "path": "github/SKILL.md",
+      "from": "Github workflow skill. See references/ for detailed guides.",
+      "to": "Use when you need the Github workflow umbrella. See references/ for detailed guides.",
+      "reason": "workflow_umbrella"
+    },
+    {
+      "path": "github/codebase-inspection/SKILL.md",
+      "from": "Inspect and analyze codebases using pygount for LOC counting, language breakdown, and code-vs-comment ratios. Use when asked to check lines of code, repo size, language composition, or codebase stats.",
+      "to": "Use when asked to check lines of code, repo size, language composition, or codebase stats.",
+      "reason": "extract_embedded"
+    },
+    {
+      "path": "github/github-auth/SKILL.md",
+      "from": "Set up GitHub authentication for the agent using git (universally available) or the gh CLI. Covers HTTPS tokens, SSH keys, credential helpers, and gh auth — with a detection flow to pick the right method automatically.",
+      "to": "Use when you need guidance on set up GitHub authentication for the agent using git (universally available) or the gh CLI.",
+      "reason": "generic_fallback"
+    },
+    {
+      "path": "github/github-code-review/SKILL.md",
+      "from": "Review code changes by analyzing git diffs, leaving inline comments on PRs, and performing thorough pre-push review. Works with gh CLI or falls back to git + GitHub REST API via curl.",
+      "to": "Use when you need to review code changes by analyzing git diffs, leaving inline comments on PRs, and performing thorough pre-push review.",
+      "reason": "verb"
+    }
+  ]
+}

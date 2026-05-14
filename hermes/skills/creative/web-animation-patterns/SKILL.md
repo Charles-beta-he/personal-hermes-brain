@@ -1,12 +1,32 @@
 ---
 name: web-animation-patterns
+description: Use when you need guidance on web animation patterns and performance optimization techniques.
+version: 1.0.0
+author: Hermes Agent
+license: MIT
 category: creative
-description: Web animation patterns and performance optimization techniques. Reference implementations from award-winning sites (Lusion.co, etc). Covers CSS animations, RAF-driven animations, scroll-triggered effects, spring physics, and GPU acceleration.
+metadata:
+  hermes:
+    tags:
+    - creative
+    - web
+    - animation
+    - patterns
+    - optimization
+    related_skills:
+    - design
 ---
 
 # Web Animation Patterns
 
+## Overview
+
+
 High-performance animation techniques for modern web applications.
+
+## When to Use
+
+- You need guidance on web animation patterns and performance optimization techniques
 
 ## Core Technologies
 
@@ -149,10 +169,16 @@ function useIntersectionObserver({ threshold = 0.1, triggerOnce = true }) {
 }
 ```
 
-## Pitfalls
-
+## Common Pitfalls
 1. **Don't animate too many elements simultaneously** - Cap at ~50-100
 2. **Clean up RAF loops** - Memory leaks from forgotten callbacks
 3. **Test on low-end devices** - GPU limitations
 4. **Respect `prefers-reduced-motion`** - Accessibility
 5. **Avoid layout thrashing** - Don't read/write DOM in loops
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

@@ -1,11 +1,26 @@
 ---
 name: visual-regression
-description: "browser_vision 截图 diff 对比 — 自动检测 UI 视觉回归。截图存储 + AI 对比 + 差异报告。用于 UIMax 审计、迭代验证、CI 集成。"
+description: Use when the task falls under Visual Regression — browser_vision 截图 diff 对比.
+version: 1.0.0
+author: Hermes Agent
 license: MIT
-tags: [visual-regression, screenshot, diff, uimax, qa, browser]
+metadata:
+  hermes:
+    tags:
+    - visual-regression
+    - screenshot
+    - diff
+    - uimax
+    - qa
+    - browser
+    related_skills:
+    - design
 ---
 
 # Visual Regression — browser_vision 截图 diff 对比
+
+## Overview
+
 
 > 通过 browser_vision 截图 + AI 分析，自动检测 UI 视觉变化和回归问题。
 
@@ -201,8 +216,7 @@ def compare_with_baseline(current_dir, baseline_dir):
 
 For mobile apps with fixed/floating TabBar or bottom navigation, use `references/mobile-floating-nav-guards.md`. Do not rely on a single full-page screenshot: capture viewport states for initial view, target sections positioned near top, and scroll-bottom; combine deterministic DOM overlap checks with vision review of the target section.
 
-## Pitfalls
-
+## Common Pitfalls
 1. **动画状态**: 截图时动画可能处于不同阶段，需等待动画完成或禁用动画
 2. **动态内容**: 时间戳、随机 ID 等动态内容会导致每次截图不同
 3. **字体渲染**: 不同环境下字体抗锯齿可能不同
@@ -219,3 +233,10 @@ For mobile apps with fixed/floating TabBar or bottom navigation, use `references
 - 截图前加 `browser_console(clear=True)` 确保无弹窗干扰
 - 对比时标注「装饰性差异」vs「功能性回归」
 - 保存每次迭代的截图历史，便于追踪长期变化
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

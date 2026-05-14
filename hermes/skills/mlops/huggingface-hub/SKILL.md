@@ -1,17 +1,34 @@
 ---
 name: huggingface-hub
-description: Hugging Face Hub CLI (hf) — search, download, and upload models and datasets, manage repos, query datasets with SQL, deploy inference endpoints, manage Spaces and buckets.
+description: Use when you need guidance on hugging Face Hub CLI (hf) — search, download, and upload models and datasets, manage repos, query datasets with SQL, deploy inference endpoints, manage Spaces and buckets.
 version: 1.0.0
 author: Hugging Face
 license: MIT
-tags: [huggingface, hf, models, datasets, hub, mlops]
+metadata:
+  hermes:
+    tags:
+    - huggingface
+    - hf
+    - models
+    - datasets
+    - hub
+    - mlops
+    related_skills:
+    - mlops
 ---
 
 # Hugging Face CLI (`hf`) Reference Guide
 
+## Overview
+
+
 The `hf` command is the modern command-line interface for interacting with the Hugging Face Hub, providing tools to manage repositories, models, datasets, and Spaces.
 
 > **IMPORTANT:** The `hf` command replaces the now deprecated `huggingface-cli` command.
+
+## When to Use
+
+- You need guidance on hugging Face Hub CLI (hf) — search, download, and upload models and datasets, manage repos, query datasets with SQL, deploy inference endpoints, manage Spaces and buckets
 
 ## Quick Start
 *   **Installation:** `curl -LsSf https://hf.co/cli/install.sh | bash -s`
@@ -78,3 +95,16 @@ The `hf` command is the modern command-line interface for interacting with the H
 ### Extensions & Skills
 *   **Extensions:** Extend CLI functionality via GitHub repositories using `hf extensions install REPO_ID`.
 *   **Skills:** Manage AI assistant skills with `hf skills add`.
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

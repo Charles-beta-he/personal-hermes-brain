@@ -1,17 +1,28 @@
 ---
 name: llm-wiki
-description: "Karpathy's LLM Wiki — build and maintain a persistent, interlinked markdown knowledge base. Ingest sources, query compiled knowledge, and lint for consistency."
+description: Use when you need guidance on karpathy's LLM Wiki — build and maintain a persistent, interlinked markdown knowledge base.
 version: 2.1.0
 author: Hermes Agent
 license: MIT
 metadata:
   hermes:
-    tags: [wiki, knowledge-base, research, notes, markdown, rag-alternative]
+    tags:
+    - wiki
+    - knowledge-base
+    - research
+    - notes
+    - markdown
+    - rag-alternative
     category: research
-    related_skills: [obsidian, arxiv]
+    related_skills:
+    - obsidian
+    - arxiv
 ---
 
 # Karpathy's LLM Wiki
+
+## Overview
+
 
 Build and maintain a persistent, compounding knowledge base as interlinked markdown files.
 Based on [Andrej Karpathy's LLM Wiki pattern](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f).
@@ -23,6 +34,10 @@ Contradictions have already been flagged. Synthesis reflects everything ingested
 **Division of labor:** The human curates sources and directs analysis. The agent
 summarizes, cross-references, files, and maintains consistency.
 
+## When to Use
+
+- You need guidance on karpathy's LLM Wiki — build and maintain a persistent, interlinked markdown knowledge base
+- Don't use for: requests that do not need you need guidance on karpathy's LLM Wiki — build and maintain a persistent, interlinked markdown knowledge base; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## When This Skill Activates
 
 Use this skill when the user:
@@ -473,7 +488,7 @@ sudo loginctl enable-linger $USER
 This lets the agent write to `~/wiki` on a server while you browse the same
 vault in Obsidian on your laptop/phone — changes appear within seconds.
 
-## Pitfalls
+## Common Pitfalls
 
 - **Never modify files in `raw/`** — sources are immutable. Corrections go in wiki pages.
 - **Always orient first** — read SCHEMA + index + recent log before any operation in a new session.
@@ -495,7 +510,9 @@ vault in Obsidian on your laptop/phone — changes appear within seconds.
   The agent should check log size during lint.
 - **Handle contradictions explicitly** — don't silently overwrite. Note both claims with dates,
   mark in frontmatter, flag for user review.
-
+1. Skipping prerequisite checks and assuming the environment already matches the workflow.
+2. Applying the workflow mechanically without confirming that the request still matches this skill's trigger class.
+3. Reporting success before reading back the actual outputs, files, or external side-effects.
 ## Related Tools
 
 [llm-wiki-compiler](https://github.com/atomicmemory/llm-wiki-compiler) is a Node.js CLI that
@@ -504,3 +521,10 @@ so users who want a scheduled/CLI-driven compile pipeline can point it at the sa
 skill maintains. Trade-offs: it owns page generation (replaces the agent's judgment on page
 creation) and is tuned for small corpora. Use this skill when you want agent-in-the-loop curation;
 use llmwiki when you want batch compile of a source directory.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

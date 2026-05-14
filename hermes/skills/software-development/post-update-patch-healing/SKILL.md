@@ -1,9 +1,32 @@
 ---
 name: post-update-patch-healing
-description: "Create self-healing patches that survive `hermes update` (or any git-pull-based update). Covers the full controlled upgrade workflow: pre-upgrade conflict analysis, checker extension, stash/pull/pop with conflict resolution via subagent, and post-upgrade verification. Three-tier approach: Level 0 (user data, permanent) → Level 1 (standalone checker, update-safe) → Level 2 (vendor patches, updated-by-checker)."
+description: Use when you need to create self-healing patches that survive `hermes update` (or any git-pull-based update).
+version: 1.0.0
+author: Hermes Agent
+license: MIT
+metadata:
+  hermes:
+    tags:
+    - software
+    - development
+    - post
+    - update
+    - patch
+    related_skills:
+    - axolotl
+    - claude-code
+    - design
+    - hermes-agent
+    - loop
+    - mcp
+    - native-mcp
+    - skill-ecosystem-diagnosis
 ---
 
 # Post-Update Patch Healing
+
+## Overview
+
 
 > **Problem**: `hermes update` runs `git pull` on the hermes-agent repo. Any local edits to `run_agent.py`, `cli.py`, `stream_consumer.py`, `chat_completions.py`, `types.py` etc. are **overwritten**.
 
@@ -654,3 +677,16 @@ echo "== OK =="
 - `skill-ecosystem-governance` — steward governance system
 - `mcp/native-mcp` — MCP transport handling
 - `claude-code` — delegating complex conflict resolution and architectural design
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

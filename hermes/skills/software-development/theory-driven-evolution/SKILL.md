@@ -1,11 +1,29 @@
 ---
 name: theory-driven-evolution
-description: "Study a theoretical framework (book, theory, system) and operationalize it into Agent self-evolution infrastructure: chapter-by-chapter notes, capability mapping, health metrics, execution plan, and automated heartbeat monitoring."
+description: 'Use when you need guidance on study a theoretical framework (book, theory, system) and operationalize it into Agent self-evolution infrastructure: chapter-by-chapter notes, capability mapping, health metrics, execution plan, and automated heartbeat monitoring.'
+version: 1.0.0
+author: Hermes Agent
 license: MIT
-tags: [evolution, theory, framework, automation, self-improvement, control-theory]
+metadata:
+  hermes:
+    tags:
+    - evolution
+    - theory
+    - framework
+    - automation
+    - self-improvement
+    - control-theory
+    related_skills:
+    - domain
+    - multi-model-thinking
+    - plan
+    - pua
 ---
 
 # Theory-Driven Agent Evolution
+
+## Overview
+
 
 > Take any theoretical framework — control theory, systems theory, organizational science — and turn it into concrete Agent capability improvements with automated tracking.
 
@@ -247,3 +265,17 @@ Required pattern:
 - [ ] **Execution plan**: Phased rollout with concrete tasks and acceptance criteria
 - [ ] **Automation**: At least daily heartbeat cronjob scheduled and running
 - [ ] **Baseline**: Initial V value recorded, V̇ computable
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] The Definition of Done items above were explicitly checked, not assumed.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

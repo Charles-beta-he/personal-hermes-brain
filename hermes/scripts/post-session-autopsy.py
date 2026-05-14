@@ -173,6 +173,41 @@ def aggregate_failure_groups(failures, session_ts=""):
     return sorted(groups.values(), key=lambda g: g.get("count", 0), reverse=True)
 
 
+def classify_failure_group(group):
+    sig = str(group.get("error_signature") or "").lower()
+    tool = str(group.get("tool_name") or "").lower()
+    exit_code = group.get("exit_code")
+    if any(k in sig for k in ["timeout", "timed out"]):
+        return "timeout_or_quota"
+    if any(k in sig for k in ["quota", "rate limit", "429"]):
+        return "timeout_or_quota"
+    if any(k in sig for k in ["json", "parse", "schema"]):
+        return "schema_mismatch"
+    if any(k in sig for k in ["permission", "auth", "forbidden", "401", "403"]):
+        return "permission_or_auth"
+    if any(k in sig for k in ["no such file", "not found", "missing", "enoent"]):
+        return "missing_dependency"
+    if tool in {"terminal", "search_files", "read_file", "write_file", "patch"}:
+        return "tool_error"
+    if exit_code not in (None, 0, "0"):
+        return "tool_error"
+    return "unknown"
+
+
+def recommend_autopsy_tier(*, corrections_count, iteration_budget_count, tool_failures_count, repeat_signature_count, failure_class_counts, high_signal_count):
+    if high_signal_count >= 3:
+        return "T2_advisory"
+    if iteration_budget_count >= 2 or tool_failures_count >= 3:
+        return "T2_advisory"
+    if corrections_count >= 3 or repeat_signature_count >= 3:
+        return "T2_advisory"
+    if failure_class_counts.get("timeout_or_quota") or failure_class_counts.get("schema_mismatch"):
+        return "T1_advisory"
+    if high_signal_count >= 1 or tool_failures_count >= 1 or corrections_count >= 1 or iteration_budget_count >= 1:
+        return "T1_advisory"
+    return "T0"
+
+
 def load_recent_sessions(n=5):
     """加载最近的 n 个 session JSON 文件"""
     if not os.path.isdir(SESSIONS_DIR):
@@ -487,6 +522,20 @@ def analyze_session(path, fname):
     failure_penalty = min(len(tool_failures) * 8, 40)
     health_score = max(0, 100 - correction_penalty - budget_penalty - failure_penalty)
 
+    repeat_signature_count = sum(r.get("count", 0) for r in repetitive)
+    failure_class_counts = {}
+    for g in failure_groups:
+        cls = classify_failure_group(g)
+        failure_class_counts[cls] = failure_class_counts.get(cls, 0) + g.get("count", 1)
+    recommended_tier = recommend_autopsy_tier(
+        corrections_count=len(corrections),
+        iteration_budget_count=len(iteration_budget_events),
+        tool_failures_count=len(tool_failures),
+        repeat_signature_count=repeat_signature_count,
+        failure_class_counts=failure_class_counts,
+        high_signal_count=sum(1 for s in signals if s.get("severity") == "high"),
+    )
+
     result = {
         "session_id": session.get("session_id", fname),
         "file": fname,
@@ -500,6 +549,9 @@ def analyze_session(path, fname):
         "iteration_budget_count": len(iteration_budget_events),
         "tool_failures_count": len(tool_failures),
         "health_score": health_score,
+        "repeat_signature_count": repeat_signature_count,
+        "failure_class_counts": failure_class_counts,
+        "recommended_tier": recommended_tier,
         "signals": signals,
         # 详情
         "correction_details": corrections[:3],  # 最多 3 条详情
@@ -520,6 +572,9 @@ def write_signals(result):
         "corrections": result["corrections_count"],
         "iteration_budget_events": result.get("iteration_budget_count", 0),
         "failures": result["tool_failures_count"],
+        "repeat_signature_count": result.get("repeat_signature_count", 0),
+        "failure_class_counts": result.get("failure_class_counts", {}),
+        "recommended_tier": result.get("recommended_tier", "unknown"),
         "signals": result["signals"],
         "model": result["model"],
         "platform": result["platform"],
@@ -552,6 +607,7 @@ def print_report(results):
         print(f"  Task:     {r['task_type']}")
         print(f"  Health:   {r['health_score']}/100")
         print(f"  Correct:  {r['corrections_count']} | Budget: {r.get('iteration_budget_count', 0)} | Failures: {r['tool_failures_count']}")
+        print(f"  Tier:     {r.get('recommended_tier', 'unknown')}")
 
         if r["signals"]:
             for s in r["signals"]:

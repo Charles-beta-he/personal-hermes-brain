@@ -1,21 +1,37 @@
 ---
 name: github-auth
-description: Set up GitHub authentication for the agent using git (universally available) or the gh CLI. Covers HTTPS tokens, SSH keys, credential helpers, and gh auth — with a detection flow to pick the right method automatically.
+description: Use when you need guidance on set up GitHub authentication for the agent using git (universally available) or the gh CLI.
 version: 1.1.0
 author: Hermes Agent
 license: MIT
 metadata:
   hermes:
-    tags: [GitHub, Authentication, Git, gh-cli, SSH, Setup]
-    related_skills: []
+    tags:
+    - GitHub
+    - Authentication
+    - Git
+    - gh-cli
+    - SSH
+    - Setup
+    related_skills:
+    - email
+    - github
+    - hermes-agent
 ---
 
 # GitHub Authentication Setup
+
+## Overview
+
 
 This skill sets up authentication so the agent can work with GitHub repositories, PRs, issues, and CI. It covers two paths:
 
 - **`git` (always available)** — uses HTTPS personal access tokens or SSH keys
 - **`gh` CLI (if installed)** — richer GitHub API access with a simpler auth flow
+
+## When to Use
+
+- You need guidance on set up GitHub authentication for the agent using git (universally available) or the gh CLI
 
 ## Detection Flow
 
@@ -244,3 +260,16 @@ fi
 | Credentials not persisting | Check `git config --global credential.helper` — must be `store` or `cache` |
 | Multiple GitHub accounts | Use SSH with different keys per host alias in `~/.ssh/config`, or per-repo credential URLs |
 | `gh: command not found` + no sudo | Use git-only Method 1 above — no installation needed |
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

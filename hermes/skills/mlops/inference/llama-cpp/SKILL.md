@@ -1,21 +1,40 @@
 ---
 name: llama-cpp
-description: llama.cpp local GGUF inference + HF Hub model discovery.
+description: Use when you need guidance on llama.cpp local GGUF inference + HF Hub model discovery.
 version: 2.1.2
 author: Orchestra Research
 license: MIT
-dependencies: [llama-cpp-python>=0.2.0]
+dependencies:
+- llama-cpp-python>=0.2.0
 metadata:
   hermes:
-    tags: [llama.cpp, GGUF, Quantization, Hugging Face Hub, CPU Inference, Apple Silicon, Edge Deployment, AMD GPUs, Intel GPUs, NVIDIA, URL-first]
+    tags:
+    - llama.cpp
+    - GGUF
+    - Quantization
+    - Hugging Face Hub
+    - CPU Inference
+    - Apple Silicon
+    - Edge Deployment
+    - AMD GPUs
+    - Intel GPUs
+    - NVIDIA
+    - URL-first
+    related_skills:
+    - gguf
+    - github
+    - guidance
+    - unsloth
 ---
 
 # llama.cpp + GGUF
 
+## Overview
+
+
 Use this skill for local GGUF inference, quant selection, or Hugging Face repo discovery for llama.cpp.
 
-## When to use
-
+## When to Use
 - Run local models on CPU, Apple Silicon, CUDA, ROCm, or Intel GPUs
 - Find the right GGUF for a specific Hugging Face repo
 - Build a `llama-server` or `llama-cli` command from the Hub
@@ -246,3 +265,16 @@ Source URLs:
 - **Example tree API**: https://huggingface.co/api/models/unsloth/Qwen3.6-35B-A3B-GGUF/tree/main?recursive=true
 - **Example llama.cpp search**: https://huggingface.co/models?num_parameters=min:0,max:24B&apps=llama.cpp&sort=trending
 - **License**: MIT
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

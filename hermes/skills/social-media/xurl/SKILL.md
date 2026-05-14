@@ -1,20 +1,36 @@
 ---
 name: xurl
-description: Interact with X/Twitter via xurl, the official X API CLI. Use for posting, replying, quoting, searching, timelines, mentions, likes, reposts, bookmarks, follows, DMs, media upload, and raw v2 endpoint access.
+description: Use when you need guidance on interact with X/Twitter via xurl, the official X API CLI.
 version: 1.1.1
 author: xdevplatform + openclaw + Hermes Agent
 license: MIT
-platforms: [linux, macos]
+platforms:
+- linux
+- macos
 prerequisites:
-  commands: [xurl]
+  commands:
+  - xurl
 metadata:
   hermes:
-    tags: [twitter, x, social-media, xurl, official-api]
+    tags:
+    - twitter
+    - x
+    - social-media
+    - xurl
+    - official-api
     homepage: https://github.com/xdevplatform/xurl
     upstream_skill: https://github.com/openclaw/openclaw/blob/main/skills/xurl/SKILL.md
+    related_skills:
+    - github
+    - media
+    - plan
+    - xitter
 ---
 
 # xurl — X (Twitter) API via the Official CLI
+
+## Overview
+
 
 `xurl` is the X developer platform's official CLI for the X API. It supports shortcut commands for common actions AND raw curl-style access to any v2 endpoint. All commands return JSON to stdout.
 
@@ -32,6 +48,10 @@ This skill replaces the older `xitter` skill (which wrapped a third-party Python
 
 ---
 
+## When to Use
+
+- You need guidance on interact with X/Twitter via xurl, the official X API CLI
+- Don't use for: requests that do not need you need guidance on interact with X/Twitter via xurl, the official X API CLI; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## Secret Safety (MANDATORY)
 
 Critical rules when operating inside an agent/LLM session:
@@ -412,3 +432,16 @@ xurl --app staging /2/users/me             # one-off against staging
 - Upstream CLI: https://github.com/xdevplatform/xurl (X developer platform team, Chris Park et al.)
 - Upstream agent skill: https://github.com/openclaw/openclaw/blob/main/skills/xurl/SKILL.md
 - Hermes adaptation: reformatted for Hermes skill conventions; safety guardrails preserved verbatim.
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

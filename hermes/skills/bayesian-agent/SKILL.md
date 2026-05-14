@@ -1,15 +1,31 @@
 ---
 name: bayesian-agent
-description: "贝叶斯脑 × Agent 置信度管理 — 基于 Friston 自由能原理，将 Agent 判断建模为概率推断。维护 skill/能力的贝叶斯置信度分布，根据用户反馈持续更新。Use when evaluating skill reliability, making uncertain decisions, or calibrating Agent confidence. Triggers: '置信度', '贝叶斯', '概率更新', 'skill评分', '能力评估', '不确定性'."
+description: 'Use when evaluating skill reliability, making uncertain decisions, or calibrating Agent confidence. Triggers: ''置信度'', ''贝叶斯'', ''概率更新'', ''skill评分'', ''能力评估'', ''不确定性''.'
+version: 1.0.0
+author: Hermes Agent
 license: MIT
-tags: [bayesian, confidence, skill-evaluation, uncertainty, probabilistic-reasoning]
+metadata:
+  hermes:
+    tags:
+    - bayesian
+    - confidence
+    - skill-evaluation
+    - uncertainty
+    - probabilistic-reasoning
+    related_skills:
+    - darwin-skill
+    - requesting-code-review
 ---
 
 # Bayesian Agent — 贝叶斯置信度管理
 
-> 大脑是贝叶斯推断机器 — Karl Friston
-> Agent 的每个判断都应该是概率性的，不是二元的对/错。
+## Overview
 
+大脑是贝叶斯推断机器 — Karl Friston > Agent 的每个判断都应该是概率性的，不是二元的对/错。. In practice, load it when evaluating skill reliability, making uncertain decisions, or calibrating Agent confidence. Triggers: '置信度', '贝叶斯', '概率更新', 'skill评分', '能力评估', '不确定性'. It defines the expected execution lane, scope boundaries, and verification shape for this class of work.
+## When to Use
+
+- Evaluating skill reliability, making uncertain decisions, or calibrating Agent confidence. Triggers: '置信度', '贝叶斯', '概率更新', 'skill评分', '能力评估', '不确定性'
+- Don't use for: requests that do not need evaluating skill reliability, making uncertain decisions, or calibrating Agent confidence. Triggers: '置信度', '贝叶斯', '概率更新', 'skill评分', '能力评估', '不确定性'; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## 核心原理
 
 ### 贝叶斯更新公式
@@ -202,3 +218,16 @@ def select_skill(task_features, available_skills):
 
 - 遵循项目规范
 - 在 context budget 内完成
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

@@ -1,21 +1,31 @@
 ---
 name: apple-reminders
-description: Manage Apple Reminders via remindctl CLI (list, add, complete, delete).
+description: Use when you need to manage Apple Reminders via remindctl CLI (list, add, complete, delete).
 version: 1.0.0
 author: Hermes Agent
 license: MIT
-platforms: [macos]
+platforms:
+- macos
+prerequisites:
+  commands:
+  - remindctl
 metadata:
   hermes:
-    tags: [Reminders, tasks, todo, macOS, Apple]
-prerequisites:
-  commands: [remindctl]
+    tags:
+    - Reminders
+    - tasks
+    - todo
+    - macOS
+    - Apple
+    related_skills:
+    - apple
 ---
 
 # Apple Reminders
 
-Use `remindctl` to manage Apple Reminders directly from the terminal. Tasks sync across all Apple devices via iCloud.
+## Overview
 
+Use `remindctl` to manage Apple Reminders directly from the terminal. Tasks sync across all Apple devices via iCloud. In practice, load it when you need to manage Apple Reminders via remindctl CLI (list, add, complete, delete). It defines the expected execution lane, scope boundaries, and verification shape for this class of work.
 ## Prerequisites
 
 - **macOS** with Reminders.app
@@ -29,7 +39,7 @@ Use `remindctl` to manage Apple Reminders directly from the terminal. Tasks sync
 - Creating personal to-dos with due dates that sync to iOS
 - Managing Apple Reminders lists
 - User wants tasks to appear on their iPhone/iPad
-
+- Don't use for: requests that do not need you need to manage Apple Reminders via remindctl CLI (list, add, complete, delete); choose a more specific child skill or a broader routing skill that actually matches the task.
 ## When NOT to Use
 
 - Scheduling agent alerts → use the cronjob tool instead
@@ -96,3 +106,16 @@ Accepted by `--due` and date filters:
 1. When user says "remind me", clarify: Apple Reminders (syncs to phone) vs agent cronjob alert
 2. Always confirm reminder content and due date before creating
 3. Use `--json` for programmatic parsing
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

@@ -1,17 +1,33 @@
 ---
 name: incremental-implementation
-description: Build one verifiable slice at a time — each independently shippable. Counterpoint to "waterfall everything then test."
-triggers:
-  - "build this", "implement X", "start coding"
-  - after spec/plan is ready, before writing code
-  - when a task feels too large to complete in one session
-model: default (MiMo) for slices, strong (DeepSeek) for slice planning
+description: Use when implementing a task in small verifiable slices instead of a single large change.
+version: 1.0.0
+author: Hermes Agent
+license: MIT
+metadata:
+  hermes:
+    tags:
+    - implementation
+    - slicing
+    - testing
+    - delivery
+    related_skills:
+    - test-driven-development
+    - source-driven-development
+    - writing-plans
 ---
 
 # incremental-implementation
 
+## Overview
+
+
 One slice at a time. Each slice: build → test → ship (or stash as done). Never build the whole thing before testing anything.
 
+## When to Use
+
+- Implementing a task in small verifiable slices instead of a single large change
+- Don't use for: requests that do not need implementing a task in small verifiable slices instead of a single large change; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## Slice Rules
 
 1. Each slice is independently verifiable (has its own test)
@@ -50,8 +66,15 @@ FOR each slice:
 2. Don't touch other slices
 3. Diagnose root cause before retrying
 
-## Verification
+## Verification Checklist
 - [ ] Each slice has its own commit
 - [ ] git log shows incremental progression (not one mega-commit)
 - [ ] All tests pass after every slice
 - [ ] No slice touches more than one concern
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+

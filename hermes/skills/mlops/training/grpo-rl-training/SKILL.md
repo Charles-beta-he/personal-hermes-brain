@@ -1,22 +1,44 @@
 ---
 name: grpo-rl-training
-description: Expert guidance for GRPO/RL fine-tuning with TRL for reasoning and task-specific model training
+description: Use when you need guidance on expert guidance for GRPO/RL fine-tuning with TRL for reasoning and task-specific model training.
 version: 1.0.0
 author: Orchestra Research
 license: MIT
-dependencies: [transformers>=4.47.0, trl>=0.14.0, datasets>=3.2.0, peft>=0.14.0, torch]
+dependencies:
+- transformers>=4.47.0
+- trl>=0.14.0
+- datasets>=3.2.0
+- peft>=0.14.0
+- torch
 metadata:
   hermes:
-    tags: [Post-Training, Reinforcement Learning, GRPO, TRL, RLHF, Reward Modeling, Reasoning, DPO, PPO, Structured Output]
-
+    tags:
+    - Post-Training
+    - Reinforcement Learning
+    - GRPO
+    - TRL
+    - RLHF
+    - Reward Modeling
+    - Reasoning
+    - DPO
+    - PPO
+    - Structured Output
+    related_skills:
+    - arxiv
+    - github
+    - guidance
+    - peft
+    - unsloth
 ---
 
 # GRPO/RL Training with TRL
 
+## Overview
+
+
 Expert-level guidance for implementing Group Relative Policy Optimization (GRPO) using the Transformer Reinforcement Learning (TRL) library. This skill provides battle-tested patterns, critical insights, and production-ready workflows for fine-tuning language models with custom reward functions.
 
-## When to Use This Skill
-
+## When to Use
 Use GRPO training when you need to:
 - **Enforce specific output formats** (e.g., XML tags, JSON, structured reasoning)
 - **Teach verifiable tasks** with objective correctness metrics (math, coding, fact-checking)
@@ -571,5 +593,15 @@ When this skill is loaded:
 
 This skill is designed for **expert-level implementation**. Beginners should start with supervised fine-tuning before attempting GRPO.
 
+## Common Pitfalls
 
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
 

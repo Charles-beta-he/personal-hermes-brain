@@ -98,6 +98,15 @@ python3 ~/.hermes/scripts/brainctl.py --json reindex
 python3 ~/.hermes/scripts/brainctl.py --json search 'iteration-budget bounded-tick pua-loop' --limit 10
 ```
 
+## Double-loop learning trigger
+
+When the user explicitly asks whether a problem they caught triggered error classification, retrospection, double-loop learning, or self-correction, treat that as a first-class audit of the learning system itself:
+
+1. Run or inspect the post-session/autopsy path, not just the original task tests.
+2. Confirm the user correction is represented as a correction signal and that budget/tool-cap messages are classified as `iteration_budget_saturation` / `control_system_saturation`.
+3. If the sensor missed the signal, patch the classifier and add a small regression fixture before claiming the learning loop is closed.
+4. Update the governing skill/reference in the same session; do not leave the learning only in raw memory or a one-off final summary.
+
 ## Pitfalls
 
 - Do not scan `.env`, `auth.json`, or session logs and then echo surrounding snippets. Path + counters are enough.
@@ -105,3 +114,4 @@ python3 ~/.hermes/scripts/brainctl.py --json search 'iteration-budget bounded-ti
 - Context compression solves token pressure, not iteration-loop saturation.
 - Cron `last_status=ok` does not prove a long LLM loop was bounded; check whether the job is script-first/no-agent.
 - A budget tick is a preparer, not an autonomous executor; merge into idle-runner only after claim/retry/proof gates are implemented.
+- Do not treat a final response after hitting the tool-call cap as completion; it is a handoff boundary unless proof gates and commits/syncs have already passed.

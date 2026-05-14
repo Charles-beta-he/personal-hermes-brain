@@ -1,16 +1,28 @@
 ---
 name: multi-agent-code-review
-description: "Multi-Agent 并行 Code Review 与置信度过滤 — 将代码审查分解为正交关注域（安全/风格/逻辑/性能/架构），各 Agent 独立并行审查同一份代码，聚合时用跨 Agent 一致性 + 自报置信度计算复合分数，按 severity 分级阈值过滤噪声。触发词: multi-agent review, parallel code review, 并行审查, confidence filtering, 置信度过滤, code review aggregation, 多 agent 审查"
+description: Use when the task falls under Multi-Agent Parallel Code Review with Confidence Filtering.
 version: 1.0.0
 author: Hermes Agent
 license: MIT
 metadata:
   hermes:
-    tags: [code-review, multi-agent, parallel, confidence, aggregation, quality]
-    related_skills: [github-code-review, agent-team-parallel, delegate_task]
+    tags:
+    - code-review
+    - multi-agent
+    - parallel
+    - confidence
+    - aggregation
+    - quality
+    related_skills:
+    - github-code-review
+    - agent-team-parallel
+    - delegate_task
 ---
 
 # Multi-Agent Parallel Code Review with Confidence Filtering
+
+## Overview
+
 
 将代码审查分解为正交关注域，各 Agent 独立并行审查同一份代码，聚合时用跨 Agent 一致性 + 自报置信度计算复合分数，按 severity 分级阈值过滤噪声。
 
@@ -282,8 +294,42 @@ For moderate PRs, 2 agents suffice:
 
 Agreement = both agents flagging same issue = very high confidence.
 
-## Pitfalls
+## Definition of Done
 
+- [ ] **Outcome**: Findings JSON produced for each agent, aggregated and filtered results presented
+- [ ] **Process**: 5-step flow followed (diff → parallel dispatch → aggregate → filter → present)
+- [ ] **Style**: Output grouped by severity tier (Critical/High/Medium/Low), confidence and agent count shown
+- [ ] **Efficiency**: Aggregation done with rule-based script (no LLM call for scoring); no redundant re-reviews
+
+## Historical Precision Weighting
+
+When a feedback loop exists (human accept/reject tracked), use the enhanced formula instead of the default:
+
+```
+final_conf = (self_conf × 0.3) + (agreement × 0.3) + (historical_precision × 0.4)
+```
+
+Where `historical_precision` = agent's accepted findings / total findings across past reviews.
+
+Initialize with Beta(2, 2) prior (uniform with mild regularization). Update after each review:
+- Finding accepted → alpha += 1
+- Finding rejected → beta += 1
+- historical_precision = alpha / (alpha + beta)
+
+Without historical data, fall back to the default formula: `final_score = (agreement × 0.6) + (avg_conf × 0.4)`
+
+## Model-Specific Confidence Notes
+
+Different LLMs have different confidence calibration profiles:
+- **Claude**: tends toward 0.75–0.95 range; moderate overconfidence
+- **GPT-4/5**: wider spread 0.6–0.95; better at expressing uncertainty
+- **DeepSeek/Mimo**: may cluster around 0.8–0.9; less calibrated for code tasks
+
+When mixing models across agents, the cross-agreement term (weighted 0.6) compensates for model-specific bias. For highest reliability, use the same model across all review agents and let the orthogonal prompts create diversity.
+
+## Common Pitfalls
+
+- **Confidence filtering is not the truth gate** — agreement scoring reduces noise, but it can suppress real medium-severity security/correctness bugs. If a single-agent finding includes deterministic reproduction, an exact file-state proof, or a new failing test, promote it as `accepted_by_deterministic_override` even when agreement score is below the default threshold. See `references/historical-diff-replay-2026-05-13.md`.
 - **Autonomous task-pool reviews need runtime wiring checks, not just static code reading** — when reviewing controllers/schedulers/envelope buses for auto-execution safety, inspect the cron/job configuration and scheduler semantics that invoke them. A common high-priority bug is a job field like `script: "controller.py cycle"` being treated as a literal path instead of `script + args`; recommend structured argv or a wrapper, never `shell=True`.
 - **Proof gates must be enforced below the controller** — if a controller claims "proof required for DONE", verify the state-transition layer rejects `DONE` without proof/hash evidence. Flag paths like `done_no_proof` entering model verification as P0: model judgment can supplement but must not replace deterministic proof/artifact validation.
 - **Review type boundaries around verifier glue** — task automation often passes proof dicts, strings, and profile names through the same path. Reproduce minimal calls for suspected `str`/`dict`/`None` mismatches before finalizing findings; these are often higher priority than syntax issues because they crash after a task is claimed.
@@ -301,9 +347,19 @@ Agreement = both agents flagging same issue = very high confidence.
 - **Don't review generated code** — auto-generated files (protobuf, lock files) should be excluded from review scope.
 - **Concurrency limit** — delegate_task default is 3 concurrent. For 5 agents, 2 will queue. Adjust via `delegation.max_concurrent_children`.
 - **Aggregator can be rule-based** — no need for another LLM call. The Python aggregation script above is deterministic and fast.
-
+1. Skipping prerequisite checks and assuming the environment already matches the workflow.
+2. Applying the workflow mechanically without confirming that the request still matches this skill's trigger class.
+3. Reporting success before reading back the actual outputs, files, or external side-effects.
 ## References
 
 - `references/multi-agent-review-architecture.md` — Architecture patterns, agent decomposition, scoring methods
 - `references/confidence-calibration.md` — Calibration techniques, Bayesian reputation, feedback loops
 - `references/hermes-implementation-pattern.md` — Hermes-specific delegate_task patterns, aggregation script
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] The Definition of Done items above were explicitly checked, not assumed.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

@@ -1,0 +1,14 @@
+[
+  {
+    "type": "console",
+    "level": "info",
+    "text": "fixture-loaded:playwright-evidence-chain",
+    "timestamp": "2026-05-13T07:52:33.712Z"
+  },
+  {
+    "type": "console",
+    "level": "info",
+    "text": "fixture-click-count:1",
+    "timestamp": "2026-05-13T07:52:34.260Z"
+  }
+]

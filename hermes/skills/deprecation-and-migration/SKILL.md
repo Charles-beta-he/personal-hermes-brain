@@ -1,16 +1,32 @@
 ---
 name: deprecation-and-migration
-description: Standardized process for deprecating old APIs, scripts, configs, or patterns and migrating consumers to the replacement.
-triggers:
-  - "deprecate X", "remove old Y", "migrate from A to B"
-  - when old code exists alongside new equivalent
-  - when a feature flag has been on 100% for >30 days
-model: default for migration execution, strong for breaking-change impact analysis
+description: Use when deprecating old APIs, scripts, configs, or patterns and migrating consumers to a replacement safely.
+version: 1.0.0
+author: Hermes Agent
+license: MIT
+metadata:
+  hermes:
+    tags:
+    - deprecation
+    - migration
+    - breaking-change
+    - rollout
+    related_skills:
+    - documentation-and-adrs
+    - source-driven-development
+    - incremental-implementation
 ---
 
 # deprecation-and-migration
 
+## Overview
+
+
 Don't just delete. Announce → wait → migrate → verify → remove.
+
+## When to Use
+
+- Deprecating old APIs, scripts, configs, or patterns and migrating consumers to a replacement safely
 
 ## The 5-Phase Process
 
@@ -57,9 +73,16 @@ Don't just delete. Announce → wait → migrate → verify → remove.
 - "Deprecate without migration path" → leaves users stranded
 - Removing without announcement → production incident
 
-## Verification
+## Verification Checklist
 - [ ] @deprecated tag + warning log added
 - [ ] All consumers listed (code-intel blast-radius)
 - [ ] Migration path documented
 - [ ] Zero usage confirmed (staging logs, 7 days)
 - [ ] Changelog entry for removal
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+

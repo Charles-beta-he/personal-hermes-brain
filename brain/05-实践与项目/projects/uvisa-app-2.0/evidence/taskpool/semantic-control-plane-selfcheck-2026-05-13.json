@@ -1,0 +1,57 @@
+{
+  "status": "PASS",
+  "task_count": 81,
+  "failures": [],
+  "warnings": [
+    "semantic control-plane warning: hermes-skill-learning:profile_control_plane_missing:backend_contract_policy",
+    "semantic control-plane warning: hermes-skill-learning:profile_control_plane_missing:lark_evidence_policy.closeout_required_labels",
+    "semantic control-plane warning: hermes-skill-learning:profile_control_plane_missing:lark_task_execution_policy",
+    "semantic control-plane warning: hermes-skill-learning:profile_control_plane_missing:regression_coverage_policy"
+  ],
+  "boundary": {
+    "status": "PASS",
+    "schema": "local_brain_task_boundary_v1",
+    "generated_at": "2026-05-13T16:34:19+08:00",
+    "task_count": 81,
+    "dispatchable_count": 4,
+    "dispatchable_by_lane": {
+      "work": 1,
+      "evolution": 3,
+      "advisory": 0
+    },
+    "gates": {
+      "work_lane_available": true,
+      "autorun_enabled": true,
+      "kill_switch_env_set": false,
+      "kill_switch_file_present": false,
+      "priority_mode": "evolution-first",
+      "priority_mode_file": "/Users/charles/.hermes/state/taskpool_priority_mode.json",
+      "evolution_preempted_by_work": false,
+      "work_preempted_by_evolution": true
+    },
+    "invalid_count": 0,
+    "invalid": [],
+    "warnings": [],
+    "safety": "fail-closed invariants for taskpool boundaries and parallel dry-run selection"
+  },
+  "semantic_control_plane": {
+    "status": "WARN",
+    "schema": "semantic_control_plane_selfcheck_v1",
+    "read_only": true,
+    "project_count": 16,
+    "contracts_checked": 16,
+    "warnings": [
+      "hermes-skill-learning:profile_control_plane_missing:backend_contract_policy",
+      "hermes-skill-learning:profile_control_plane_missing:lark_evidence_policy.closeout_required_labels",
+      "hermes-skill-learning:profile_control_plane_missing:lark_task_execution_policy",
+      "hermes-skill-learning:profile_control_plane_missing:regression_coverage_policy"
+    ],
+    "policy": "WARN-only soft gate; missing semantic linkage must not fail closed without fresh ratification and rollout"
+  },
+  "paths": {
+    "dashboard": "/Users/charles/Documents/brain/07-仪表盘/待完成任务运行态.md",
+    "control_center": "/Users/charles/Documents/brain/07-仪表盘/待完成任务控制台.md",
+    "sorted_pool": "/Users/charles/Documents/brain/05-实践与项目/tasks/任务池-排序.md",
+    "inbox": "/Users/charles/Documents/brain/05-实践与项目/tasks/任务收件箱.md"
+  }
+}

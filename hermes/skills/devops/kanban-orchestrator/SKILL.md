@@ -1,18 +1,35 @@
 ---
 name: kanban-orchestrator
-description: Decomposition playbook + specialist-roster conventions + anti-temptation rules for an orchestrator profile routing work through Kanban. The "don't do the work yourself" rule and the basic lifecycle are auto-injected into every kanban worker's system prompt; this skill is the deeper playbook when you're specifically playing the orchestrator role.
+description: Use when you need guidance on decomposition playbook + specialist-roster conventions + anti-temptation rules for an orchestrator profile routing work through Kanban.
 version: 2.0.0
-platforms: [linux, macos, windows]
+author: Hermes Agent
+license: MIT
+platforms:
+- linux
+- macos
+- windows
 metadata:
   hermes:
-    tags: [kanban, multi-agent, orchestration, routing]
-    related_skills: [kanban-worker]
+    tags:
+    - kanban
+    - multi-agent
+    - orchestration
+    - routing
+    related_skills:
+    - kanban-worker
 ---
 
 # Kanban Orchestrator — Decomposition Playbook
 
+## Overview
+
+
 > The **core worker lifecycle** (including the `kanban_create` fan-out pattern and the "decompose, don't execute" rule) is auto-injected into every kanban process via the `KANBAN_GUIDANCE` system-prompt block. This skill is the deeper playbook when you're an orchestrator profile whose whole job is routing.
 
+## When to Use
+
+- You need guidance on decomposition playbook + specialist-roster conventions + anti-temptation rules for an orchestrator profile routing work through Kanban
+- Don't use for: requests that do not need you need guidance on decomposition playbook + specialist-roster conventions + anti-temptation rules for an orchestrator profile routing work through Kanban; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## When to use the board (vs. just doing the work)
 
 Create Kanban tasks when any of these are true:
@@ -150,9 +167,11 @@ Tell them what you created in plain prose:
 
 **Local-brain taskpool permission taxonomy:** When checking progress or comparing Lark/product tasks with Hermes self-evolution tasks, use `references/local-taskpool-permission-taxonomy.md`. Explicitly separate lane semantics from stuck-state diagnosis, and enforce the invariant that `--yolo` / `yolo-execution` is the highest command-approval tier but not a task completion proof. Completion still requires lifecycle/evidence/review gates.
 
+**Local-brain auto-completer semantics:** When the user asks whether non-`work` tasks complete automatically, distinguish automatic *progression* from automatic *closure*. `local-brain-taskpool-auto-completer` / `taskpool_dynamic_runner.py` can scan, reconcile, dashboard, dispatch-hint, run bounded allowlisted steps, and opportunistically start multi-model intervention. `brain_task_autorun_step.py` is review-only: successful bounded execution stops at `review`, never `done`. Multi-model intervention writes `multimodel_status` / ratification artifact fields, but does not perform lifecycle `review -> done`. Final closeout still requires the lane-specific proof gate (`project-evidence-review-done`, `ratification-or-selfcheck-review-done`, or `advisory-evidence-review-done`) and a legal lifecycle transition from `review` to `done`.
+
 **4-model certified (2026-05-10):** Kanban Watch was ratified as observability-only by all 4 models (Claude + GPT-5.5 + DeepSeek + MiMo). Decision: one-way bridge from brain_task_orchestrator with kill switch. No auto-done from watch. Full ratification artifact: `~/.hermes/memory/docs/adr/kanban-watch-mm-ratification-v1.json`.
 
-## Pitfalls
+## Common Pitfalls
 
 **`hermes kanban watch` is observability, not orchestration.** Watch live-streams `task_events` for humans and supports filters such as `--assignee`, `--tenant`, `--kinds`, and `--interval`, but it does not claim, dispatch, complete, or mutate tasks. In the current CLI it is a human-readable stream, not a structured `--json` automation API. For automation, use the kanban tools/DB/notify/dashboard surfaces explicitly, and keep source-of-truth transitions proof-gated.
 
@@ -165,7 +184,9 @@ Tell them what you created in plain prose:
 **Don't pre-create the whole graph if the shape depends on intermediate findings.** If T3's structure depends on what T1 and T2 find, let T3 exist as a "synthesize findings" task whose own first step is to read parent handoffs and plan the rest. Orchestrators can spawn orchestrators.
 
 **Tenant inheritance.** If `HERMES_TENANT` is set in your env, pass `tenant=os.environ.get("HERMES_TENANT")` on every `kanban_create` call so child tasks stay in the same namespace.
-
+1. Skipping prerequisite checks and assuming the environment already matches the workflow.
+2. Applying the workflow mechanically without confirming that the request still matches this skill's trigger class.
+3. Reporting success before reading back the actual outputs, files, or external side-effects.
 ## Recovering stuck workers
 
 When a worker profile keeps crashing, hallucinating, or getting blocked by its own mistakes (usually: wrong model, missing skill, broken credential), the kanban dashboard flags the task with a ⚠ badge and opens a **Recovery** section in the drawer. Three primary actions:
@@ -175,3 +196,10 @@ When a worker profile keeps crashing, hallucinating, or getting blocked by its o
 3. **Change profile model** — the dashboard prints a copy-paste hint for `hermes -p <profile> model` since profile config lives on disk; edit it in a terminal, then Reclaim to retry with the new model.
 
 Hallucination warnings appear on tasks where a worker's `kanban_complete(created_cards=[...])` claim included card ids that don't exist or weren't created by the worker's profile (the gate blocks the completion), or where the free-form summary references `t_<hex>` ids that don't resolve (advisory prose scan, non-blocking). Both produce audit events that persist even after recovery actions — the trail stays for debugging.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

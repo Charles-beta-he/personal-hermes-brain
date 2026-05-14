@@ -1,11 +1,39 @@
 ---
 name: cloudflare-pages-pnpm
-description: "Deploy pnpm monorepo to Cloudflare Pages via GitHub Actions. Covers the wrangler-action pnpm compatibility issue and the direct npx workaround."
-triggers: ["cloudflare pages", "wrangler deploy", "pages deploy", "pnpm deploy"]
+description: Use when you need to deploy pnpm monorepo to Cloudflare Pages via GitHub Actions.
+version: 1.0.0
+author: Hermes Agent
+license: MIT
+triggers:
+- cloudflare pages
+- wrangler deploy
+- pages deploy
+- pnpm deploy
+metadata:
+  hermes:
+    tags:
+    - devops
+    - cloudflare
+    - pages
+    - pnpm
+    - github
+    related_skills:
+    - github
 ---
 
 # Cloudflare Pages + pnpm Monorepo 部署
 
+## Overview
+
+Deploy pnpm monorepo to Cloudflare Pages via GitHub Actions. In practice, load it when you need to deploy pnpm monorepo to Cloudflare Pages via GitHub Actions. It defines the expected execution lane, scope boundaries, and verification shape for this class of work.
+## When to Use
+
+- You need to deploy pnpm monorepo to Cloudflare Pages via GitHub Actions
+- cloudflare pages
+- wrangler deploy
+- pages deploy
+- pnpm deploy
+- Don't use for: requests that do not need you need to deploy pnpm monorepo to Cloudflare Pages via GitHub Actions; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## 常见坑：wrangler-action + pnpm workspace
 
 `cloudflare/wrangler-action@v3` 在 pnpm workspace 中会失败：
@@ -218,7 +246,7 @@ jobs:
 
 semantic-release 会创建 `chore(release): x.y.z [skip ci]` commit，用 `if: "!contains(...)"` 跳过。
 
-## 验证
+## Verification Checklist
 
 ```bash
 # 查看部署状态
@@ -233,3 +261,12 @@ gh run list --workflow=release.yml --limit 3
 # 查看发布版本
 gh release list
 ```
+- [ ] Preconditions, scope, and tool availability were checked before following this workflow.
+- [ ] The key output artifacts, commands, or side-effects were verified by read-back or direct inspection.
+- [ ] The final result still matches the trigger and acceptance shape of this skill.
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+

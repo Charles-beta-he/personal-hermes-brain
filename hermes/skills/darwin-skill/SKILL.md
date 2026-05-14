@@ -1,15 +1,39 @@
 ---
 name: darwin-skill
-description: "Darwin Skill (达尔文.skill): autonomous skill optimizer inspired by Karpathy's autoresearch. Evaluates SKILL.md files using an 8-dimension rubric (structure + effectiveness), runs hill-climbing with git version control, validates improvements through test prompts, and generates visual result cards. Use when user mentions \"优化skill\", \"skill评分\", \"自动优化\", \"auto optimize\", \"skill质量检查\", \"达尔文\", \"darwin\", \"帮我改改skill\", \"skill怎么样\", \"提升skill质量\", \"skill review\", \"skill打分\"."
+description: Use when user mentions "优化skill", "skill评分", "自动优化", "auto optimize", "skill质量检查", "达尔文", "darwin", "帮我改改skill", "skill怎么样", "提升skill质量", "skill review", "skill打分".
+version: 1.0.0
+author: Hermes Agent
+license: MIT
+metadata:
+  hermes:
+    tags:
+    - darwin
+    - review
+    related_skills:
+    - bayesian-agent
+    - github
+    - loop
+    - p10
+    - p7
+    - p9
+    - pro
+    - pua
 ---
 
 # Darwin Skill
+
+## Overview
+
 
 > 借鉴 Karpathy autoresearch 的自主实验循环，对 skills 进行持续优化。
 > 核心理念：**评估 → 改进 → 实测验证 → 人类确认 → 保留或回滚 → 生成成果卡片**
 > GitHub: https://github.com/alchaincyf/darwin-skill
 
 ---
+
+## When to Use
+
+- User mentions "优化skill", "skill评分", "自动优化", "auto optimize", "skill质量检查", "达尔文", "darwin", "帮我改改skill", "skill怎么样", "提升skill质量", "skill review", "skill打分"
 
 ## 设计哲学
 
@@ -631,3 +655,16 @@ for dirpath, dirnames, filenames in os.walk(skills_dir):
 
 - 顶部：Darwin.skill 品牌标识 + 日期
 - 底部：「Train your Skills like you train your models」+ github.com/alchaincyf/darwin-skill
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

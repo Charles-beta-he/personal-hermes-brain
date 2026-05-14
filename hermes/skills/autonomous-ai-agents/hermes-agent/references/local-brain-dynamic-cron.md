@@ -47,11 +47,24 @@ Prefer deterministic `no_agent` cron scripts and event-gated runners:
 A dynamic taskpool runner should contain:
 
 - `--summary`, `--autorun-step`, and `--no-state` when calling the dispatch tick.
-- A deterministic `signature(summary)` and `changed` gate.
+- A deterministic `signature(summary)` and `changed` gate. Include `auto_close_review.closed_count` and `auto_close_review.error_count` in the signature so proof-gated review closeouts are visible even when `next_task_id` is unchanged.
 - Full `stdout`/`stderr` retained for internal JSON parsing; only log/report fields may be truncated to `stdout_tail` / `stderr_tail`. Never parse a tail slice.
 - Explicit fail-closed parse handling: non-empty successful stdout that cannot be parsed is `*_parse_failed` / exit non-zero, not `no_intervention_needed` or null summary fields.
 - `start_new_session=True`, `os.killpg`, and a structured `subprocess_timeout` record.
 - A short timeout for probing the multi-model worker starter (for example 60s), not for running the full discussion.
+- `auto_close_review` should be part of the emitted event/state, not only the raw tick tail, so cron/no-agent summaries can distinguish `closed`, `skipped`, and `error` closeout outcomes.
+
+## Proof-gated review -> done closeout
+
+When automating local-brain task closeout, do not mark `review` tasks `done` just because a runner or multi-model round finished. Add an explicit closer command (for example `brain_task_orchestrator.py auto-close-review --json`) and invoke it after the bounded `--autorun-step` runner:
+
+1. Select only tasks currently in `review`.
+2. Build base evidence only from task frontmatter evidence plus a certified local multi-model artifact when `task_multimodel_passed(task)` is true.
+3. Probe the normal lane-specific `lifecycle_gate(task, "done", ...)` with base evidence first. If it fails, record a `skip`; do not mint an autorun proof hash and do not force the transition.
+4. Only after the base evidence passes, append an autorun proof-chain event and add `proof:sha256:<hash>` as audit evidence.
+5. Re-run the same `lifecycle_gate` with final evidence and then call the normal lifecycle transition path. This keeps autorun proof from becoming a fake completion proof.
+6. For certified multi-model rounds, land the artifact explicitly as `artifact:ratification multimodel certified <discussion_result.json>` so future audits can see why a review task was closable.
+7. Emit `closed`, `skipped`, `errors`, counts, and a safety string in the summary. Skips caused by invalid evidence shape or unknown completion gates are desired fail-closed behavior, not scheduler failures.
 
 A detached multi-model starter should contain:
 
@@ -60,6 +73,7 @@ A detached multi-model starter should contain:
 - signature + cooldown suppression such as `suppressed_no_change_cooldown`.
 - explicit `HERMES_LOCAL_BRAIN_AUTORUN_MULTIMODEL=1` only inside the worker environment.
 - the original `multimodel-intervention-parallel-step` / T3 discussion path intact.
+- worker logs should include a compact `worker_summary` parsed from the full stdout before any stdout tail compaction. Keeping only `stdout_tail` is fine for log size, but future audits must not need to parse a tail slice as JSON.
 
 ## Provider/model mismatch handling
 

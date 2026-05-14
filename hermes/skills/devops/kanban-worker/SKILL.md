@@ -1,17 +1,34 @@
 ---
 name: kanban-worker
-description: Pitfalls, examples, and edge cases for Hermes Kanban workers. The lifecycle itself is auto-injected into every worker's system prompt as KANBAN_GUIDANCE (from agent/prompt_builder.py); this skill is what you load when you want deeper detail on specific scenarios.
+description: Use when you need guidance on pitfalls, examples, and edge cases for Hermes Kanban workers.
 version: 2.0.0
+author: Hermes Agent
+license: MIT
 metadata:
   hermes:
-    tags: [kanban, multi-agent, collaboration, workflow, pitfalls]
-    related_skills: []
+    tags:
+    - kanban
+    - multi-agent
+    - collaboration
+    - workflow
+    - pitfalls
+    related_skills:
+    - guidance
+    - loop
+    - vllm
 ---
 
 # Kanban Worker — Pitfalls and Examples
 
+## Overview
+
+
 > You're seeing this skill because the Hermes Kanban dispatcher spawned you as a worker with `--skills kanban-worker` — it's loaded automatically for every dispatched worker. The **lifecycle** (6 steps: orient → work → heartbeat → block/complete) also lives in the `KANBAN_GUIDANCE` block that's auto-injected into your system prompt. This skill is the deeper detail: good handoff shapes, retry diagnostics, edge cases.
 
+## When to Use
+
+- You need guidance on pitfalls, examples, and edge cases for Hermes Kanban workers
+- Don't use for: requests that do not need you need guidance on pitfalls, examples, and edge cases for Hermes Kanban workers; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## Workspace handling
 
 Your workspace kind determines how you should behave inside `$HERMES_KANBAN_WORKSPACE`:
@@ -140,14 +157,16 @@ If you open the task and `kanban_show` returns `runs: [...]` with one or more cl
 - Create follow-up tasks assigned to yourself — assign to the right specialist.
 - Complete a task you didn't actually finish. Block it instead.
 
-## Pitfalls
+## Common Pitfalls
 
 **Task state can change between dispatch and your startup.** Between when the dispatcher claimed and when your process actually booted, the task may have been blocked, reassigned, or archived. Always `kanban_show` first. If it reports `blocked` or `archived`, stop — you shouldn't be running.
 
 **Workspace may have stale artifacts.** Especially `dir:` and `worktree` workspaces can have files from previous runs. Read the comment thread — it usually explains why you're running again and what state the workspace is in.
 
 **Don't rely on the CLI when the guidance is available.** The `kanban_*` tools work across all terminal backends (Docker, Modal, SSH). `hermes kanban <verb>` from your terminal tool will fail in containerized backends because the CLI isn't installed there. When in doubt, use the tool.
-
+1. Skipping prerequisite checks and assuming the environment already matches the workflow.
+2. Applying the workflow mechanically without confirming that the request still matches this skill's trigger class.
+3. Reporting success before reading back the actual outputs, files, or external side-effects.
 ## CLI fallback (for scripting)
 
 Every tool has a CLI equivalent for human operators and scripts:
@@ -158,3 +177,10 @@ Every tool has a CLI equivalent for human operators and scripts:
 - etc.
 
 Use the tools from inside an agent; the CLI exists for the human at the terminal.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

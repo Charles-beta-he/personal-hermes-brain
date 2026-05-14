@@ -1,13 +1,31 @@
 ---
 name: stuck-diagnosis
-description: "卡顿时诊断三板斧：/verbose all → 复现 → debug share → gateway 超时检查。标准化排查流程。"
+description: Use when the task falls under 卡顿诊断三板斧.
+version: 1.0.0
+author: Hermes Agent
 license: MIT
-tags: [diagnosis, debug, gateway, troubleshooting]
+metadata:
+  hermes:
+    tags:
+    - diagnosis
+    - debug
+    - gateway
+    - troubleshooting
+    related_skills:
+    - hermes-agent
+    - hermes-workflow-orchestrator
 ---
 
 # 卡顿诊断三板斧
 
+## Overview
+
+
 > 标准化排查流程，避免"卡住了不知道怎么查"
+
+## When to Use
+
+- The task falls under 卡顿诊断三板斧
 
 ## Trigger
 
@@ -86,10 +104,19 @@ compression:
   protect_last_n: 30     # 保留最近 30 条
 ```
 
-## Pitfalls
+## Common Pitfalls
 
 - **不要**在卡顿时发多个请求 — 可能加剧拥堵
 - 日志级别恢复: `/verbose default`
 - debug share 可能包含敏感信息（API key），检查后再分享
 - **"Script not found" 实际是超时**: Cron 报 `Script not found` 但文件存在时，通常是脚本内部阻塞（如 `hermes chat -q` 调用 300-600s timeout），cron runner 在超时后错误报告为"not found"。验证方法：`ls -la /path/to/script` + 单独跑 script 的 status 子命令。参见 `hermes-workflow-orchestrator` skill 的 `references/agent-team-controller-timeout-pattern.md`。
 - **status 子命令 vs cycle 子命令**: 很多 orchestrator 脚本有快速只读命令（status/list/dashboard）和慢速写命令（cycle/dispatch/execute）。Cron 监控应该用 status，执行应该拆分成 fast claim + background execute 两阶段。
+1. Skipping prerequisite checks and assuming the environment already matches the workflow.
+2. Applying the workflow mechanically without confirming that the request still matches this skill's trigger class.
+3. Reporting success before reading back the actual outputs, files, or external side-effects.
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

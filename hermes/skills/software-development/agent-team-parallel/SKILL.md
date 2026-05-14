@@ -1,15 +1,27 @@
 ---
 name: agent-team-parallel
-description: "Agent Team 并行任务执行 — orchestrator pattern with parallel dispatch, envelope bus state, proof-gated merge, human escape, kill switch. 触发词: agent team, parallel dispatch, 并行任务, fan-out, agent team controller, worktree"
+description: Use when the task falls under Agent Team Parallel — 并行任务执行控制器.
 version: 1.0.0
+author: Hermes Agent
 license: MIT
-tags: [parallel, multi-agent, orchestration, envelope-bus, proof-gated, worktree]
+metadata:
+  hermes:
+    tags:
+    - parallel
+    - multi-agent
+    - orchestration
+    - envelope-bus
+    - proof-gated
+    - worktree
+    related_skills:
+    - software-development
 ---
 
 # Agent Team Parallel — 并行任务执行控制器
 
-> 用 brain_task_orchestrator + envelope_bus + delegate_task 实现并行任务执行，proof-gated merge，N=1→N=2→N=3 渐进扩展。
+## Overview
 
+用 brain_task_orchestrator + envelope_bus + delegate_task 实现并行任务执行，proof-gated merge，N=1→N=2→N=3 渐进扩展。. In practice, load it when the task falls under Agent Team Parallel — 并行任务执行控制器. It defines the expected execution lane, scope boundaries, and verification shape for this class of work.
 ## When to Use
 
 - 多个独立 boundary 的任务可并行执行
@@ -18,7 +30,7 @@ tags: [parallel, multi-agent, orchestration, envelope-bus, proof-gated, worktree
 - 需要 human escape 机制防止失控
 - 用户要求同时修改多个不冲突的模块/文件
 - 希望在子任务失败时不影响主工作区
-
+- Don't use for: requests that do not need the task falls under Agent Team Parallel — 并行任务执行控制器; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## Architecture
 
 ```
@@ -136,9 +148,15 @@ update_status(eid, 'DONE', proof_sha='sha256...')
 stats()  # → {total, by_status, timeouts, human_escape_triggered}
 ```
 
-## Pitfalls
+## References
 
-- **CRON TIMEOUT vs WORKER TIMEOUT MISMATCH (critical)** — `run_dynamic_cycle()` delegates workers via `hermes chat -q` with up to 600s timeout (code tasks) or 300s (analysis). With N=3 sequential workers, a full cycle needs 1800s+. But the cron job (`agent_team_controller_cycle.py`) has a 120s timeout. **The cron always times out before even one worker finishes.** Multi-model verification adds another ~360s (4 models × 90s each). Fix: split the cycle into a fast claim+enqueue path for cron (claims tasks, writes to a dispatch queue) and a separate long-running worker execution process that reads from the queue. Alternatively, increase cron timeout to 1200s+ and accept ≤1 task per cron run, or use `delegate_task` for true parallel workers that don't block the cron process.
+- `references/cycle-timeout-diagnostics.md` — How to diagnose and bypass a hung cycle (direct envelope_bus queries, process inspection, recovery actions).
+
+## Common Pitfalls
+
+- **CRON TIMEOUT vs WORKER TIMEOUT MISMATCH (critical)** — `run_dynamic_cycle()` delegates workers via `hermes chat -q` with up to 600s timeout (code tasks) or 300s (analysis). With N=3 sequential workers, a full cycle needs 1800s+. But the cron job (`agent_team_controller_cycle.py`) has a 120s timeout. **The cron always times out before even one worker finishes.** Multi-model verification adds another ~360s (4 models × 90s each). Fix: split the cycle into a fast claim+enqueue path for cron (claims tasks, writes to a dispatch queue) and a separate long-running worker execution process that reads from the queue. Alternatively, increase cron timeout to 1200s+ and accept ≤1 task per cron run, or use `delegate_task` for true parallel workers that don't block the cron process. See `references/cycle-timeout-diagnostics.md` for bypass diagnosis when the cycle is hung.
+- **Diagnosing a hung cycle without waiting** — When `agent_team_controller.py cycle` times out, don't retry with a longer timeout. Instead: (1) `ps aux | grep -E "agent_team_controller|brain_task_orchestrator|claude -p"` to identify blocking processes, (2) query envelope_bus directly via Python: `from envelope_bus import stats, list_by_status` — these return instantly, (3) check `dynamic_n_state.json` for last successful cycle state, (4) test `brain_task_orchestrator.py list --json` independently (returns in <5s even when cycle hangs). The cycle blocks on `delegate_to_worker()` → `hermes chat -q`, but the data layer is always accessible. See `references/cycle-timeout-diagnostics.md` for full commands.
+- **multimodel-intervention-step coexistence** — A `brain_task_orchestrator.py multimodel-intervention-step` process can run alongside the cycle (separate subprocesses), but both may contend on `claim`/`release` operations. The `list --json` command never blocks — if it's slow, the issue is elsewhere.
 - **Worker timeout by task type** — Code tasks (keywords: 修复/fix/实现/implement/代码/uvisa/前端/后端/恢复/集成) get 600s + GPT-5.5 via openai-codex + max_turns=30. Analysis tasks get 300s + MiMo-v2.5-pro via xiaomi + max_turns=15. The routing is in `delegate_to_worker()`.
 - **Multi-model verification bottleneck** — `verify_with_models()` calls 4 models sequentially: Claude (claude -p, 90s), GPT (hermes chat -q, 90s), DeepSeek (API call, 90s), MiMo (API call, 90s + 3 retries with 3s sleep). Total worst-case: ~390s per task verification. This runs inside the same cron process as the worker delegation.
 
@@ -159,3 +177,12 @@ stats()  # → {total, by_status, timeouts, human_escape_triggered}
 - **Two tasks modifying same file → merge conflict** — use boundary-check to prevent.
 - **Each worktree needs its own branch** — `git worktree add` requires a branch argument.
 - **Clean up worktrees after DONE/FAILED** — disk space leak.
+1. Skipping prerequisite checks and assuming the environment already matches the workflow.
+2. Applying the workflow mechanically without confirming that the request still matches this skill's trigger class.
+3. Reporting success before reading back the actual outputs, files, or external side-effects.
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

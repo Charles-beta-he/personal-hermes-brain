@@ -1,11 +1,20 @@
 ---
 name: dogfood
-description: Systematic exploratory QA testing of web applications — find bugs, capture evidence, and generate structured reports
+description: Use when you need guidance on systematic exploratory QA testing of web applications — find bugs, capture evidence, and generate structured reports.
 version: 1.0.0
+author: Hermes Agent
+license: MIT
 metadata:
   hermes:
-    tags: [qa, testing, browser, web, dogfood]
-    related_skills: []
+    tags:
+    - qa
+    - testing
+    - browser
+    - web
+    - dogfood
+    related_skills:
+    - maps
+    - plan
 ---
 
 # Dogfood: Systematic Web Application QA Testing
@@ -13,6 +22,10 @@ metadata:
 ## Overview
 
 This skill guides you through systematic exploratory QA testing of web applications using the browser toolset. You will navigate the application, interact with elements, capture evidence of issues, and produce a structured bug report.
+
+## When to Use
+
+- You need guidance on systematic exploratory QA testing of web applications — find bugs, capture evidence, and generate structured reports
 
 ## Prerequisites
 
@@ -172,3 +185,17 @@ Save the report to `{output_dir}/report.md`.
 
 - 遵循项目规范
 - 在 context budget 内完成
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] The Definition of Done items above were explicitly checked, not assumed.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

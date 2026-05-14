@@ -1,20 +1,35 @@
 ---
 name: notion
-description: Notion API for creating and managing pages, databases, and blocks via curl. Search, create, update, and query Notion workspaces directly from the terminal.
+description: Use when you need guidance on notion API for creating and managing pages, databases, and blocks via curl.
 version: 1.0.0
 author: community
 license: MIT
+prerequisites:
+  env_vars:
+  - NOTION_API_KEY
 metadata:
   hermes:
-    tags: [Notion, Productivity, Notes, Database, API]
+    tags:
+    - Notion
+    - Productivity
+    - Notes
+    - Database
+    - API
     homepage: https://developers.notion.com
-prerequisites:
-  env_vars: [NOTION_API_KEY]
+    related_skills:
+    - email
 ---
 
 # Notion API
 
+## Overview
+
+
 Use the Notion API via curl to create, read, update pages, databases (data sources), and blocks. No extra tools needed — just curl and a Notion API key.
+
+## When to Use
+
+- You need guidance on notion API for creating and managing pages, databases, and blocks via curl
 
 ## Prerequisites
 
@@ -169,3 +184,16 @@ Common property formats for database items:
 - Use `is_inline: true` when creating data sources to embed them in pages
 - Add `-s` flag to curl to suppress progress bars (cleaner output for Hermes)
 - Pipe output through `jq` for readable JSON: `... | jq '.results[0].properties'`
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

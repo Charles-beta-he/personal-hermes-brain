@@ -130,6 +130,10 @@ Report:
 
 A large `ruvnet/ruflo` audit showed high reference value but high direct-adoption risk. The useful takeaways were governance primitives: capability witness, claim/lease/handoff ledger, budget/hop circuit breaker, typed agent messaging, and deterministic guardrails. The rejected parts were wholesale install, huge MCP surface, second brain stack, alpha federation, and `curl|bash`/`npx @latest` supply-chain paths.
 
+## Example: Rowboat / local-first coworker with Live Notes
+
+For repos like `rowboatlabs/rowboat`, do not stop at the README-level "local-first AI coworker" claim. Pin the commit and inspect the actual Live Note implementation: frontmatter objective/triggers/runtime separation, backend-owned runtime writes, scheduler/event processor cadence, per-note concurrency guard, pending/done event ledger, malformed-event quarantine, and two-pass routing where liberal Pass 1 is followed by executor/agent veto. Map useful pieces to Hermes as clean-room taskpool primitives: (1) read-only taskpool signal queue with pending/done/error/proof ledger, (2) task envelope audit for user-authored objective vs runtime-managed fields, (3) offline replay of liberal routing + fail-closed veto. Reject wholesale runtime/Electron/Composio/MCP import unless a separate supply-chain and permission-boundary review certifies it.
+
 ## Example: OpenAI Symphony / tracker-driven coding-agent runner
 
 For repos like `openai/symphony` that are long-running tracker pollers rather than general memory systems, separate **task planning value** from **code-agent execution value**.
@@ -154,3 +158,27 @@ Useful local-brain mapping:
 - Proof of work -> `02-证据与原文`, task validation section, review artifact, and commit/test/build links.
 
 Multi-model caveat: if `consult_models.py --discussion` times out or truth gate reports unsupported claims, report it as fan-out/provenance only. Do not call the adoption decision fully certified; use tool-read repository evidence and local-brain inspection for the final grounded recommendation.
+
+## Example: Rowboat / local-first AI coworker with Live Notes
+
+For repositories like `rowboatlabs/rowboat` that combine local-first Markdown memory, scheduled note agents, MCP/tool surfaces, and desktop runtime, treat the strongest learning as **control-plane pattern extraction**, not app/runtime adoption.
+
+Evidence to inspect:
+- Pin the commit and license first; do not rely on README popularity or prior notes.
+- `README.md` for local-first / Obsidian-compatible vault claims and external integration/API-key surfaces.
+- Shared schema files for typed agents, tool attachments, and schedules (e.g. builtin/MCP/agent-as-tool, cron/window/once).
+- Runtime files for JSONL run logs, run locks, abort registry, permission/ask-human events, and nested agent subflows.
+- Live-note docs and implementation for objective/triggers/runtime separation, backend-owned metadata writes, scheduler cadence, per-file locks, lastAttempt vs lastRun semantics, pending/done event queues, malformed-event quarantine, and two-pass routing.
+- Shell/MCP/exec paths for timeout, permission, redaction, and remote transport risk.
+
+Hermes-native adoption pattern:
+- P0: taskpool signal event queue with `pending/` + `done/` + enriched error/proof ledger; first slice should be read-only and derived from canonical Markdown tasks.
+- P0: objective / triggers / runtime-field separation audit for task envelopes. Start with a deterministic audit before adding validators or runtime writes.
+- P1: liberal pass-1 routing plus executor/task-verifier veto. Replay offline first to measure false positives/false negatives; no task mutation until ratified.
+- Reject wholesale import of Electron runtime, Composio/API-key integration layer, MCP layer, or shell executor. These overlap Hermes gateway/cron/memory/tooling and require a separate supply-chain/security review before any dependency or subprocess adoption.
+
+Verification lesson:
+- Create a compact evidence pack with claim IDs, line-referenced evidence IDs, recommendation IDs, and explicit remaining risks.
+- Add a deterministic selfcheck for the pack itself (schema, pinned commit, claim→evidence links, required reject/spike recommendations, explicit “not a replacement for target-bound ratification” boundary).
+- Run both narrow selfcheck and broad taskpool gates. If `proof-check --include-active` fails due unrelated active tasks, record that as scoped failure and keep the target task in `review` rather than marking it `done`.
+- Do not treat an older discussion_result as target-bound if its evidence bundle certifies generic taskpool gates rather than the current upstream-adoption claims.

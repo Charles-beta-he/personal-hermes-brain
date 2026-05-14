@@ -1,20 +1,36 @@
 ---
 name: mcporter
-description: Use the mcporter CLI to list, configure, auth, and call MCP servers/tools directly (HTTP or stdio), including ad-hoc servers, config edits, and CLI/type generation.
+description: Use when you need to use the mcporter CLI to list, configure, auth, and call MCP servers/tools directly (HTTP or stdio), including ad-hoc servers, config edits, and CLI/type generation.
 version: 1.0.0
 author: community
 license: MIT
+prerequisites:
+  commands:
+  - npx
 metadata:
   hermes:
-    tags: [MCP, Tools, API, Integrations, Interop]
+    tags:
+    - MCP
+    - Tools
+    - API
+    - Integrations
+    - Interop
     homepage: https://mcporter.dev
-prerequisites:
-  commands: [npx]
+    related_skills:
+    - linear
+    - mcp
 ---
 
 # mcporter
 
+## Overview
+
+
 Use `mcporter` to discover, call, and manage [MCP (Model Context Protocol)](https://modelcontextprotocol.io/) servers and tools directly from the terminal.
+
+## When to Use
+
+- You need to use the mcporter CLI to list, configure, auth, and call MCP servers/tools directly (HTTP or stdio), including ad-hoc servers, config edits, and CLI/type generation
 
 ## Prerequisites
 
@@ -120,3 +136,16 @@ mcporter emit-ts <server> --mode types
 - Use `--output json` for structured output that's easier to parse
 - Ad-hoc servers (HTTP URL or `--stdio` command) work without any config — useful for one-off calls
 - OAuth auth may require interactive browser flow — use `terminal(command="mcporter auth <server>", pty=true)` if needed
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

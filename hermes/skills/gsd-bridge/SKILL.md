@@ -1,14 +1,33 @@
 ---
 name: gsd-bridge
-description: "Hermes → GSD Bridge — 在 Hermes Agent 中调用 GSD (get-shit-done) 的 agents 和 workflows。用于项目级开发任务，与现有 skill 生态互补。Triggers: 'gsd', 'get-shit-done', '项目开发', 'phase规划', 'new-project', '代码构建', '/gsd'"
+description: Use when the task falls under GSD Bridge — Hermes ↔ GSD 集成.
+version: 1.0.0
+author: Hermes Agent
 license: MIT
-tags: [gsd, project-development, phase-planning, claude-code, bridge]
+metadata:
+  hermes:
+    tags:
+    - gsd
+    - project-development
+    - phase-planning
+    - claude-code
+    - bridge
+    related_skills:
+    - bayesian-agent
+    - darwin-skill
 ---
 
 # GSD Bridge — Hermes ↔ GSD 集成
 
+## Overview
+
+
 > GSD (get-shit-done) 已全局安装到 ~/.claude/
 > 本 skill 提供 Hermes 调用 GSD 资源的统一入口。
+
+## When to Use
+
+- The task falls under GSD Bridge — Hermes ↔ GSD 集成
 
 ## 架构关系
 
@@ -118,3 +137,16 @@ ls ~/.claude/get-shit-done/sdk/dist/cli.js
 # 检查 agents
 ls ~/.claude/agents/ | grep gsd- | wc -l
 ```
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

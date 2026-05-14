@@ -1,13 +1,26 @@
 ---
 name: fixing-metadata
-description: >
-  Audit and fix HTML metadata including page titles, meta descriptions, canonical URLs, Open Graph
-  tags, Twitter cards, favicons, JSON-LD structured data, and robots directives. Use when adding
-  SEO metadata, fixing social share previews, reviewing Open Graph tags, setting up canonical URLs,
-  or shipping new pages that need correct meta tags.
+description: Use when adding SEO metadata, fixing social share previews, reviewing Open Graph tags, setting up canonical URLs, or shipping new pages that need correct meta tags.
 version: 1.0.1
+author: Hermes Agent
 license: MIT
+metadata:
+  hermes:
+    tags:
+    - fixing
+    - metadata
+    - seo
+    - review
+    related_skills:
+    - guidance
+    - maps
 ---
+
+# fixing-metadata
+
+## Overview
+
+Review and fix page metadata, social preview tags, canonical URLs, and related SEO metadata without refactoring unrelated code.
 
 ## Workflow
 
@@ -16,8 +29,7 @@ license: MIT
 3. Ensure title, description, canonical, and og:url all agree with each other
 4. Verify social cards render correctly on a real URL, not localhost
 5. Keep diffs minimal and scoped to metadata only — do not refactor unrelated code
-## when to apply
-
+## When to Use
 Reference these guidelines when:
 - adding or changing page titles, descriptions, canonical, robots
 - implementing Open Graph or Twitter card metadata
@@ -110,3 +122,16 @@ Reference these guidelines when:
 - verify social cards on a real URL, not localhost
 - prefer stable, boring metadata over clever or dynamic
 - keep diffs minimal and scoped to metadata only
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

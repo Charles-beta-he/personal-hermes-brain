@@ -6,8 +6,16 @@ author: Hermes Agent
 license: MIT
 metadata:
   hermes:
-    tags: [lark, feishu, docx, product-doc, evidence, browser-fallback]
-    related_skills: [multi-model-thinking, hermes-agent]
+    tags:
+    - lark
+    - feishu
+    - docx
+    - product-doc
+    - evidence
+    - browser-fallback
+    related_skills:
+    - multi-model-thinking
+    - hermes-agent
 ---
 
 # Lark Docx Reading

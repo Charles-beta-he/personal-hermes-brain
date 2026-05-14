@@ -1,21 +1,31 @@
 ---
 name: imessage
-description: Send and receive iMessages/SMS via the imsg CLI on macOS.
+description: Use when you need to send and receive iMessages/SMS via the imsg CLI on macOS.
 version: 1.0.0
 author: Hermes Agent
 license: MIT
-platforms: [macos]
+platforms:
+- macos
+prerequisites:
+  commands:
+  - imsg
 metadata:
   hermes:
-    tags: [iMessage, SMS, messaging, macOS, Apple]
-prerequisites:
-  commands: [imsg]
+    tags:
+    - iMessage
+    - SMS
+    - messaging
+    - macOS
+    - Apple
+    related_skills:
+    - apple
 ---
 
 # iMessage
 
-Use `imsg` to read and send iMessage/SMS via macOS Messages.app.
+## Overview
 
+Use `imsg` to read and send iMessage/SMS via macOS Messages.app. In practice, load it when you need to send and receive iMessages/SMS via the imsg CLI on macOS. It defines the expected execution lane, scope boundaries, and verification shape for this class of work.
 ## Prerequisites
 
 - **macOS** with Messages.app signed in
@@ -29,7 +39,7 @@ Use `imsg` to read and send iMessage/SMS via macOS Messages.app.
 - Reading iMessage conversation history
 - Checking recent Messages.app chats
 - Sending to phone numbers or Apple IDs
-
+- Don't use for: requests that do not need you need to send and receive iMessages/SMS via the imsg CLI on macOS; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## When NOT to Use
 
 - Telegram/Discord/Slack/WhatsApp messages → use the appropriate gateway channel
@@ -100,3 +110,16 @@ imsg chats --limit 20 --json | jq '.[] | select(.displayName | contains("Mom"))'
 # 3. Send after confirmation
 imsg send --to "+1555123456" --text "I'll be late"
 ```
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

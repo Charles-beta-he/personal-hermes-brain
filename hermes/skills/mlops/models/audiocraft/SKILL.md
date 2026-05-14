@@ -1,19 +1,38 @@
 ---
 name: audiocraft-audio-generation
-description: PyTorch library for audio generation including text-to-music (MusicGen) and text-to-sound (AudioGen). Use when you need to generate music from text descriptions, create sound effects, or perform melody-conditioned music generation.
+description: Use when you need to generate music from text descriptions, create sound effects, or perform melody-conditioned music generation.
 version: 1.0.0
 author: Orchestra Research
 license: MIT
-dependencies: [audiocraft, torch>=2.0.0, transformers>=4.30.0]
+dependencies:
+- audiocraft
+- torch>=2.0.0
+- transformers>=4.30.0
 metadata:
   hermes:
-    tags: [Multimodal, Audio Generation, Text-to-Music, Text-to-Audio, MusicGen]
-
+    tags:
+    - Multimodal
+    - Audio Generation
+    - Text-to-Music
+    - Text-to-Audio
+    - MusicGen
+    related_skills:
+    - arxiv
+    - design
+    - github
+    - guidance
 ---
 
 # AudioCraft: Audio Generation
 
+## Overview
+
+
 Comprehensive guide to using Meta's AudioCraft for text-to-music and text-to-audio generation with MusicGen, AudioGen, and EnCodec.
+
+## When to Use
+
+- You need to generate music from text descriptions, create sound effects, or perform melody-conditioned music generation
 
 ## When to use AudioCraft
 
@@ -565,3 +584,16 @@ for desc in descriptions:
 - **Paper (AudioGen)**: https://arxiv.org/abs/2209.15352
 - **HuggingFace**: https://huggingface.co/facebook/musicgen-small
 - **Demo**: https://huggingface.co/spaces/facebook/MusicGen
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

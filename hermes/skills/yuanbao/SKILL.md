@@ -1,16 +1,37 @@
 ---
 name: yuanbao
-description: "Yuanbao (元宝) groups: @mention users, query info/members."
+description: Use when the task falls under Yuanbao Group Interaction.
 version: 1.0.0
-platforms: [linux, macos, windows]
+author: Hermes Agent
+license: MIT
+platforms:
+- linux
+- macos
+- windows
 metadata:
   hermes:
-    tags: [yuanbao, mention, at, group, members, 元宝, 派, 艾特]
-    related_skills: []
+    tags:
+    - yuanbao
+    - mention
+    - at
+    - group
+    - members
+    - 元宝
+    - 派
+    - 艾特
+    related_skills:
+    - media
 ---
 
 # Yuanbao Group Interaction
 
+## Overview
+
+Yuanbao (元宝) groups: @mention users, query info/members. In practice, load it when the task falls under Yuanbao Group Interaction. It defines the expected execution lane, scope boundaries, and verification shape for this class of work.
+## When to Use
+
+- The task falls under Yuanbao Group Interaction
+- Don't use for: requests that do not need the task falls under Yuanbao Group Interaction; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## CRITICAL: How Messaging Works
 
 **Your text reply IS the message sent to the group/user.** The gateway automatically delivers your response text to the chat. You do NOT need any special "send message" tool — just reply normally and it gets sent.
@@ -106,3 +127,16 @@ yb_query_group_info({ "group_code": "328306697" })
 - `group_code` comes from chat_id: `group:328306697` → `328306697`
 - Groups are called "派 (Pai)" in the Yuanbao app
 - Member roles: `user`, `yuanbao_ai`, `bot`
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

@@ -1,19 +1,42 @@
 ---
 name: stable-diffusion-image-generation
-description: State-of-the-art text-to-image generation with Stable Diffusion models via HuggingFace Diffusers. Use when generating images from text prompts, performing image-to-image translation, inpainting, or building custom diffusion pipelines.
+description: Use when generating images from text prompts, performing image-to-image translation, inpainting, or building custom diffusion pipelines.
 version: 1.0.0
 author: Orchestra Research
 license: MIT
-dependencies: [diffusers>=0.30.0, transformers>=4.41.0, accelerate>=0.31.0, torch>=2.0.0]
+dependencies:
+- diffusers>=0.30.0
+- transformers>=4.41.0
+- accelerate>=0.31.0
+- torch>=2.0.0
 metadata:
   hermes:
-    tags: [Image Generation, Stable Diffusion, Diffusers, Text-to-Image, Multimodal, Computer Vision]
-
+    tags:
+    - Image Generation
+    - Stable Diffusion
+    - Diffusers
+    - Text-to-Image
+    - Multimodal
+    - Computer Vision
+    related_skills:
+    - creative
+    - design
+    - github
+    - guidance
+    - maps
+    - sketch
 ---
 
 # Stable Diffusion Image Generation
 
+## Overview
+
+
 Comprehensive guide to generating images with Stable Diffusion using the HuggingFace Diffusers library.
+
+## When to Use
+
+- Generating images from text prompts, performing image-to-image translation, inpainting, or building custom diffusion pipelines
 
 ## When to use Stable Diffusion
 
@@ -520,3 +543,16 @@ image = pipe(prompt, num_inference_steps=20).images[0]
 - **Repository**: https://github.com/huggingface/diffusers
 - **Model Hub**: https://huggingface.co/models?library=diffusers
 - **Discord**: https://discord.gg/diffusers
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

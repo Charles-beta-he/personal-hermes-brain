@@ -1,12 +1,33 @@
 ---
 name: router
-description: "多臂老虎机路线选择器 — 基于 route_outcomes 历史数据用 e-greedy 策略选最优执行路线。触发词：路线选择, router, bandit, 选路线, route selection, 路径选择"
+description: Use when selecting an execution route from historical route_outcomes data, task class, and e-greedy exploration/exploitation instead of routing ad hoc.
+version: 1.0.0
+author: Hermes Agent
 license: MIT
+metadata:
+  hermes:
+    tags:
+    - router
+    - bandit
+    - route-selection
+    - task-classification
+    - e-greedy
+    related_skills:
+    - requirement-clarification
+    - writing-plans
+    - self-improvement-pipeline
 ---
 
 # Router — 多臂老虎机路线选择器
 
+## Overview
+
+
 > 基于历史 outcomes 实时选最优路线。e-greedy: 90% exploit, 10% explore。
+
+## When to Use
+
+- Selecting an execution route from historical route_outcomes data, task class, and e-greedy exploration/exploitation instead of routing ad hoc
 
 ## 流程
 
@@ -110,8 +131,17 @@ score = pass_rate - lambda_cost * avg_cost - lambda_time * avg_duration/60
 | config | research > implement > verify | 先调研后实施 |
 | general | plan > implement > verify | 通用三阶段 |
 
-## Pitfalls
+## Common Pitfalls
 
 - 新 task_class 无数据时用默认路线
 - e 不超过 10%
 - 不要在单次任务中多次调用 router
+1. Skipping prerequisite checks and assuming the environment already matches the workflow.
+2. Applying the workflow mechanically without confirming that the request still matches this skill's trigger class.
+3. Reporting success before reading back the actual outputs, files, or external side-effects.
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

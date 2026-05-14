@@ -1,19 +1,30 @@
 ---
 name: plan
-description: Plan mode for Hermes — inspect context, write a markdown plan into the active workspace's `.hermes/plans/` directory, and do not execute the work.
+description: Use when you need to plan mode for Hermes — inspect context, write a markdown plan into the active workspace's `.hermes/plans/` directory, and do not execute the work.
 version: 1.0.0
 author: Hermes Agent
 license: MIT
 metadata:
   hermes:
-    tags: [planning, plan-mode, implementation, workflow]
-    related_skills: [writing-plans, subagent-driven-development]
+    tags:
+    - planning
+    - plan-mode
+    - implementation
+    - workflow
+    related_skills:
+    - writing-plans
+    - subagent-driven-development
 ---
 
 # Plan Mode
 
-Use this skill when the user wants a plan instead of execution.
+## Overview
 
+Use this skill when the user wants a plan instead of execution. In practice, load it when you need to plan mode for Hermes — inspect context, write a markdown plan into the active workspace's `.hermes/plans/` directory, and do not execute the work. It defines the expected execution lane, scope boundaries, and verification shape for this class of work.
+## When to Use
+
+- You need to plan mode for Hermes — inspect context, write a markdown plan into the active workspace's `.hermes/plans/` directory, and do not execute the work
+- Don't use for: requests that do not need you need to plan mode for Hermes — inspect context, write a markdown plan into the active workspace's `.hermes/plans/` directory, and do not execute the work; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## Core behavior
 
 For this turn, you are planning only.
@@ -55,3 +66,16 @@ If not, create a sensible timestamped filename yourself under `.hermes/plans/`.
 - If no explicit instruction accompanies `/plan`, infer the task from the current conversation context.
 - If it is genuinely underspecified, ask a brief clarifying question instead of guessing.
 - After saving the plan, reply briefly with what you planned and the saved path.
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

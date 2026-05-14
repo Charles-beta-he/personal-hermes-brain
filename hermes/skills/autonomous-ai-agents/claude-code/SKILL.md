@@ -1,18 +1,33 @@
 ---
 name: claude-code
-description: Delegate coding tasks to Claude Code (Anthropic's CLI agent). Use for building features, refactoring, PR reviews, and iterative coding. Requires the claude CLI installed.
+description: Use when you need to delegate coding tasks to Claude Code (Anthropic's CLI agent).
 version: 2.2.0
 author: Hermes Agent + Teknium
 license: MIT
 metadata:
   hermes:
-    tags: [Coding-Agent, Claude, Anthropic, Code-Review, Refactoring, PTY, Automation]
-    related_skills: [codex]
+    tags:
+    - Coding-Agent
+    - Claude
+    - Anthropic
+    - Code-Review
+    - Refactoring
+    - PTY
+    - Automation
+    related_skills:
+    - codex
 ---
 
 # Claude Code — Hermes Orchestration Guide
 
+## Overview
+
+
 Delegate coding tasks to [Claude Code](https://code.claude.com/docs/en/cli-reference) (Anthropic's autonomous coding agent CLI) via the Hermes terminal. Claude Code v2.x can read files, write code, run shell commands, spawn subagents, and manage git workflows autonomously.
+
+## When to Use
+
+- You need to delegate coding tasks to Claude Code (Anthropic's CLI agent)
 
 ## Prerequisites
 
@@ -767,8 +782,7 @@ claude auth login --sso       # Enterprise
 claude update
 ```
 
-## Pitfalls & Gotchas
-
+## Common Pitfalls
 1. **Interactive mode REQUIRES tmux** — Claude Code is a full TUI app. Using `pty=true` alone in Hermes terminal works but tmux gives you `capture-pane` for monitoring and `send-keys` for input, which is essential for orchestration.
 2. **`--dangerously-skip-permissions` dialog defaults to "No, exit"** — you must send Down then Enter to accept. Print mode (`-p`) skips this entirely.
 3. **`--max-budget-usd` minimum is ~$0.05** — system prompt cache creation alone costs this much. Setting lower will error immediately.
@@ -794,3 +808,10 @@ claude update
 8. **Report results to user** — after completion, summarize what Claude did and what changed
 9. **Don't kill slow sessions** — Claude may be doing multi-step work; check progress instead
 10. **Use `--allowedTools`** — restrict capabilities to what the task actually needs
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

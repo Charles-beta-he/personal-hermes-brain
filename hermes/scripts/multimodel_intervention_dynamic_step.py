@@ -211,8 +211,13 @@ def main() -> int:
         append(event)
         return 0
 
-    # Keep worker count conservative to avoid provider timeouts and rate-limit cascades.
-    max_workers = 1 if event["queued_count"] < 8 else min(2, args.max_workers or 2)
+    # Scale workers by queue depth: 1 for small queues, up to 3 for large queues.
+    if event["queued_count"] >= 8:
+        max_workers = min(3, args.max_workers or 3)
+    elif event["queued_count"] >= 3:
+        max_workers = min(2, args.max_workers or 2)
+    else:
+        max_workers = 1
     pid = start_worker(max_workers)
     event.update({"status": "OK", "action": "started_worker", "pid": pid, "max_workers": max_workers, "worker_log": str(WORKER_LOG)})
     save_state({"updated_at": event["ts"], "signature": sig, "last_start_epoch": now, "selected_task_id": event["selected_task_id"], "queued_count": event["queued_count"]})

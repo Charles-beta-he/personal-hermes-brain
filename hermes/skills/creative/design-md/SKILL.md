@@ -1,13 +1,25 @@
 ---
 name: design-md
-description: Author, validate, diff, and export DESIGN.md files — Google's open-source format spec that gives coding agents a persistent, structured understanding of a design system (tokens + rationale in one file). Use when building a design system, porting style rules between projects, generating UI with consistent brand, or auditing accessibility/contrast.
+description: Use when building a design system, porting style rules between projects, generating UI with consistent brand, or auditing accessibility/contrast.
 version: 1.0.0
 author: Hermes Agent
 license: MIT
 metadata:
   hermes:
-    tags: [design, design-system, tokens, ui, accessibility, wcag, tailwind, dtcg, google]
-    related_skills: [popular-web-designs, excalidraw, architecture-diagram]
+    tags:
+    - design
+    - design-system
+    - tokens
+    - ui
+    - accessibility
+    - wcag
+    - tailwind
+    - dtcg
+    - google
+    related_skills:
+    - popular-web-designs
+    - excalidraw
+    - architecture-diagram
 ---
 
 # DESIGN.md Skill
@@ -22,8 +34,7 @@ Tokens give exact values. Prose tells agents *why* those values exist and how to
 apply them. The CLI (`npx @google/design.md`) lints structure + WCAG contrast,
 diffs versions for regressions, and exports to Tailwind or W3C DTCG JSON.
 
-## When to use this skill
-
+## When to Use
 - User asks for a DESIGN.md file, design tokens, or a design system spec
 - User wants consistent UI/brand across multiple projects or tools
 - User pastes an existing DESIGN.md and asks to lint, diff, export, or extend it
@@ -173,7 +184,7 @@ structurally.
 When the user cares about accessibility, call this out explicitly in your
 summary — WCAG findings are the most load-bearing reason to use the CLI.
 
-## Pitfalls
+## Common Pitfalls
 
 - **Don't nest component variants.** `button-primary.hover` is wrong;
   `button-primary-hover` as a sibling key is right.
@@ -187,10 +198,19 @@ summary — WCAG findings are the most load-bearing reason to use the CLI.
   is marked alpha — watch for breaking changes.
 - **Token references resolve by dotted path.** `{colors.primary}` works;
   `{primary}` does not.
-
+1. Skipping prerequisite checks and assuming the environment already matches the workflow.
+2. Applying the workflow mechanically without confirming that the request still matches this skill's trigger class.
+3. Reporting success before reading back the actual outputs, files, or external side-effects.
 ## Spec source of truth
 
 - Repo: https://github.com/google-labs-code/design.md (Apache-2.0)
 - CLI: `@google/design.md` on npm
 - License of generated DESIGN.md files: whatever the user's project uses;
   the spec itself is Apache-2.0.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

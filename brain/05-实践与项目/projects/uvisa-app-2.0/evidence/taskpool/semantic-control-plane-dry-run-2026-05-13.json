@@ -1,0 +1,237 @@
+{
+  "status": "OK",
+  "schema": "semantic_control_plane_dry_run_v1",
+  "generated_at": "2026-05-13T16:34:19+08:00",
+  "read_only": true,
+  "project": "uvisa-app-2.0",
+  "contract": {
+    "schema": "profile_policy_contract_v1",
+    "missing": false,
+    "project": "uvisa-app-2.0",
+    "canonical_project": "uvisa-app-2.0",
+    "profile_status": "project",
+    "profile_path": "/Users/charles/.hermes/project-profiles/uvisa-app-2.0.json",
+    "status": "OK",
+    "enforcement": "warn_only",
+    "soft_launch": true,
+    "task_classes": [
+      "fullstack-integrated (default: 前后端同时修改)",
+      "frontend-only (纯 UI 样式/文案/i18n)",
+      "backend-only (纯后端批处理/定时任务/基础设施)",
+      "cross-cutting infrastructure",
+      "regression-proof already-satisfied task",
+      "frontend-only",
+      "backend-owned",
+      "fullstack-integrated",
+      "cross-cutting-infrastructure",
+      "prototype-asset-dependent",
+      "release-sync",
+      "evidence-only/regression-proof-already-satisfied",
+      "admin/out-of-scope"
+    ],
+    "default_task_class": "fullstack-integrated",
+    "required_evidence_labels": [
+      "task_body_checked",
+      "comments_or_screenshots_checked",
+      "prototype_checked_when_referenced",
+      "prd_or_product_doc_checked_when_semantic",
+      "conflict_recorded_or_none"
+    ],
+    "runtime_consumers": [
+      "task_classification",
+      "dispatch_prompt",
+      "worker_handoff",
+      "completion_gate",
+      "proof_gate_warn",
+      "ratification_route",
+      "learning_writeback"
+    ],
+    "ratification_authority": {
+      "advisory_tiers": [
+        "T1",
+        "T2"
+      ],
+      "full_closeout_tier": "T3",
+      "full_closeout_requires": [
+        "discussion_result.json",
+        "4/4 canonical participants",
+        "no unresolved severity>=3"
+      ]
+    },
+    "learning_writeback": {
+      "policy": "record repeated evidence/user corrections before promoting global rules",
+      "target": "project profile / Workpad / umbrella skill, not global memory for stale task state"
+    },
+    "warnings": []
+  },
+  "classifications": [
+    {
+      "schema": "semantic_task_classification_v1",
+      "task_id": "2026-05-12-lark-reopened-uvisa-real-api-57da3f4f-大金额适配真实余额验证",
+      "task_path": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-12-lark-reopened-uvisa-real-api-57da3f4f-大金额适配真实余额验证.md",
+      "project": "uvisa-app-2.0",
+      "lane": "work",
+      "priority": "P0",
+      "task_class": "fullstack-integrated",
+      "risk_tier": "T3",
+      "required_evidence_labels": [
+        "task_body_checked",
+        "comments_or_screenshots_checked",
+        "prototype_checked_when_referenced",
+        "prd_or_product_doc_checked_when_semantic",
+        "conflict_recorded_or_none"
+      ],
+      "runtime_consumers": [
+        "task_classification",
+        "dispatch_prompt",
+        "worker_handoff",
+        "completion_gate",
+        "proof_gate_warn",
+        "ratification_route",
+        "learning_writeback"
+      ],
+      "enforcement": "warn_only",
+      "certification_authority": "requires_target_bound_T3_for_closeout_when_used_as_done_authority",
+      "reasons": [
+        "money_or_security_backend_semantics",
+        "release_or_branch_sync_secondary"
+      ],
+      "warnings": []
+    },
+    {
+      "schema": "semantic_task_classification_v1",
+      "task_id": "2026-05-12-lark-reopened-uvisa-real-api-82f47f18-电子钱包收款账号格式校验-fe-be",
+      "task_path": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-12-lark-reopened-uvisa-real-api-82f47f18-电子钱包收款账号格式校验-fe-be.md",
+      "project": "uvisa-app-2.0",
+      "lane": "work",
+      "priority": "P0",
+      "task_class": "fullstack-integrated",
+      "risk_tier": "T3",
+      "required_evidence_labels": [
+        "task_body_checked",
+        "comments_or_screenshots_checked",
+        "prototype_checked_when_referenced",
+        "prd_or_product_doc_checked_when_semantic",
+        "conflict_recorded_or_none"
+      ],
+      "runtime_consumers": [
+        "task_classification",
+        "dispatch_prompt",
+        "worker_handoff",
+        "completion_gate",
+        "proof_gate_warn",
+        "ratification_route",
+        "learning_writeback"
+      ],
+      "enforcement": "warn_only",
+      "certification_authority": "requires_target_bound_T3_for_closeout_when_used_as_done_authority",
+      "reasons": [
+        "money_or_security_backend_semantics",
+        "release_or_branch_sync_secondary"
+      ],
+      "warnings": []
+    },
+    {
+      "schema": "semantic_task_classification_v1",
+      "task_id": "2026-05-12-lark-reopened-uvisa-real-api-b9d0fcf8-交易记录统一真实接口聚合",
+      "task_path": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-12-lark-reopened-uvisa-real-api-b9d0fcf8-交易记录统一真实接口聚合.md",
+      "project": "uvisa-app-2.0",
+      "lane": "work",
+      "priority": "P0",
+      "task_class": "fullstack-integrated",
+      "risk_tier": "T3",
+      "required_evidence_labels": [
+        "task_body_checked",
+        "comments_or_screenshots_checked",
+        "prototype_checked_when_referenced",
+        "prd_or_product_doc_checked_when_semantic",
+        "conflict_recorded_or_none"
+      ],
+      "runtime_consumers": [
+        "task_classification",
+        "dispatch_prompt",
+        "worker_handoff",
+        "completion_gate",
+        "proof_gate_warn",
+        "ratification_route",
+        "learning_writeback"
+      ],
+      "enforcement": "warn_only",
+      "certification_authority": "requires_target_bound_T3_for_closeout_when_used_as_done_authority",
+      "reasons": [
+        "money_or_security_backend_semantics",
+        "release_or_branch_sync_secondary"
+      ],
+      "warnings": []
+    },
+    {
+      "schema": "semantic_task_classification_v1",
+      "task_id": "2026-05-12-lark-reopened-uvisa-real-api-c1bb88b4-sw更新缓存非强制更新",
+      "task_path": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-12-lark-reopened-uvisa-real-api-c1bb88b4-sw更新缓存非强制更新.md",
+      "project": "uvisa-app-2.0",
+      "lane": "work",
+      "priority": "P0",
+      "task_class": "fullstack-integrated",
+      "risk_tier": "T3",
+      "required_evidence_labels": [
+        "task_body_checked",
+        "comments_or_screenshots_checked",
+        "prototype_checked_when_referenced",
+        "prd_or_product_doc_checked_when_semantic",
+        "conflict_recorded_or_none"
+      ],
+      "runtime_consumers": [
+        "task_classification",
+        "dispatch_prompt",
+        "worker_handoff",
+        "completion_gate",
+        "proof_gate_warn",
+        "ratification_route",
+        "learning_writeback"
+      ],
+      "enforcement": "warn_only",
+      "certification_authority": "requires_target_bound_T3_for_closeout_when_used_as_done_authority",
+      "reasons": [
+        "money_or_security_backend_semantics",
+        "release_or_branch_sync_secondary"
+      ],
+      "warnings": []
+    },
+    {
+      "schema": "semantic_task_classification_v1",
+      "task_id": "2026-05-12-lark-reopened-uvisa-real-api-ce96f98c-cny转入绑定银行真实接口",
+      "task_path": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-12-lark-reopened-uvisa-real-api-ce96f98c-cny转入绑定银行真实接口.md",
+      "project": "uvisa-app-2.0",
+      "lane": "work",
+      "priority": "P0",
+      "task_class": "fullstack-integrated",
+      "risk_tier": "T3",
+      "required_evidence_labels": [
+        "task_body_checked",
+        "comments_or_screenshots_checked",
+        "prototype_checked_when_referenced",
+        "prd_or_product_doc_checked_when_semantic",
+        "conflict_recorded_or_none"
+      ],
+      "runtime_consumers": [
+        "task_classification",
+        "dispatch_prompt",
+        "worker_handoff",
+        "completion_gate",
+        "proof_gate_warn",
+        "ratification_route",
+        "learning_writeback"
+      ],
+      "enforcement": "warn_only",
+      "certification_authority": "requires_target_bound_T3_for_closeout_when_used_as_done_authority",
+      "reasons": [
+        "money_or_security_backend_semantics",
+        "release_or_branch_sync_secondary"
+      ],
+      "warnings": []
+    }
+  ],
+  "classification_count": 5,
+  "warnings": [],
+  "safety": "advisory soft-launch only; does not claim, mutate, complete, or fail-close tasks"
+}

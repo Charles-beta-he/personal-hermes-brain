@@ -1,21 +1,36 @@
 ---
 name: blogwatcher
-description: Monitor blogs and RSS/Atom feeds for updates using the blogwatcher-cli tool. Add blogs, scan for new articles, track read status, and filter by category.
+description: Use when you need to monitor blogs and RSS/Atom feeds for updates using the blogwatcher-cli tool.
 version: 2.0.0
 author: JulienTant (fork of Hyaxia/blogwatcher)
 license: MIT
+prerequisites:
+  commands:
+  - blogwatcher-cli
 metadata:
   hermes:
-    tags: [RSS, Blogs, Feed-Reader, Monitoring]
+    tags:
+    - RSS
+    - Blogs
+    - Feed-Reader
+    - Monitoring
     homepage: https://github.com/JulienTant/blogwatcher-cli
-prerequisites:
-  commands: [blogwatcher-cli]
+    related_skills:
+    - feeds
+    - github
 ---
 
 # Blogwatcher
 
+## Overview
+
+
 Track blog and RSS/Atom feed updates with the `blogwatcher-cli` tool. Supports automatic feed discovery, HTML scraping fallback, OPML import, and read/unread article management.
 
+## When to Use
+
+- You need to monitor blogs and RSS/Atom feeds for updates using the blogwatcher-cli tool
+- Don't use for: requests that do not need you need to monitor blogs and RSS/Atom feeds for updates using the blogwatcher-cli tool; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## Installation
 
 Pick one method:
@@ -134,3 +149,16 @@ Unread articles (2):
 - Import blogs in bulk from OPML files exported by Feedly, Inoreader, NewsBlur, etc.
 - Database stored at `~/.blogwatcher-cli/blogwatcher-cli.db` by default (override with `--db` or `BLOGWATCHER_DB`).
 - Use `blogwatcher-cli <command> --help` to discover all flags and options.
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

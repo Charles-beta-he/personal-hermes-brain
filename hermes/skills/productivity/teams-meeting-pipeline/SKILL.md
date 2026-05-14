@@ -1,29 +1,42 @@
 ---
 name: teams-meeting-pipeline
-description: "Operate the Teams meeting summary pipeline via Hermes CLI — summarize meetings, inspect pipeline status, replay jobs, manage Microsoft Graph subscriptions."
+description: Use when you need guidance on operate the Teams meeting summary pipeline via Hermes CLI — summarize meetings, inspect pipeline status, replay jobs, manage Microsoft Graph subscriptions.
 version: 1.1.0
 author: Hermes Agent + Teknium
 license: MIT
 prerequisites:
-  env_vars: [MSGRAPH_TENANT_ID, MSGRAPH_CLIENT_ID, MSGRAPH_CLIENT_SECRET]
-  commands: [hermes]
+  env_vars:
+  - MSGRAPH_TENANT_ID
+  - MSGRAPH_CLIENT_ID
+  - MSGRAPH_CLIENT_SECRET
+  commands:
+  - hermes
 metadata:
   hermes:
-    tags: [Teams, Microsoft Graph, Meetings, Productivity, Operations]
+    tags:
+    - Teams
+    - Microsoft Graph
+    - Meetings
+    - Productivity
+    - Operations
     related_docs:
-      - /docs/guides/microsoft-graph-app-registration
-      - /docs/user-guide/messaging/teams-meetings
-      - /docs/guides/operate-teams-meeting-pipeline
+    - /docs/guides/microsoft-graph-app-registration
+    - /docs/user-guide/messaging/teams-meetings
+    - /docs/guides/operate-teams-meeting-pipeline
+    related_skills:
+    - productivity
 ---
 
 # Teams Meeting Pipeline
+
+## Overview
+
 
 Use this skill whenever the user asks about Microsoft Teams meeting summaries, transcripts, recordings, action items, Graph subscriptions, or any operational question about the Teams meeting pipeline. Works in any language — the triggers below are examples, not an exhaustive list.
 
 Everything operator-facing is a `hermes teams-pipeline` subcommand run via the terminal tool. There are no new model tools for this pipeline — the CLI is the surface.
 
-## When to use this skill
-
+## When to Use
 The user is asking to:
 - summarize a Teams meeting / extract action items / pull meeting notes
 - check pipeline status, inspect a stored meeting job, or see recent meetings
@@ -114,3 +127,16 @@ Point the user to these when they need more depth than this skill covers:
 - Full pipeline setup: `/docs/user-guide/messaging/teams-meetings`
 - Operator runbook (renewal automation, troubleshooting, go-live checklist): `/docs/guides/operate-teams-meeting-pipeline`
 - Webhook listener setup: `/docs/user-guide/messaging/msgraph-webhook`
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

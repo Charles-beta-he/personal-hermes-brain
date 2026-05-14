@@ -1,22 +1,42 @@
 ---
 name: pytorch-fsdp
-description: Expert guidance for Fully Sharded Data Parallel training with PyTorch FSDP - parameter sharding, mixed precision, CPU offloading, FSDP2
+description: Use when you need guidance on expert guidance for Fully Sharded Data Parallel training with PyTorch FSDP - parameter sharding, mixed precision, CPU offloading, FSDP2.
 version: 1.0.0
 author: Orchestra Research
 license: MIT
-dependencies: [torch>=2.0, transformers]
+dependencies:
+- torch>=2.0
+- transformers
 metadata:
   hermes:
-    tags: [Distributed Training, PyTorch, FSDP, Data Parallel, Sharding, Mixed Precision, CPU Offloading, FSDP2, Large-Scale Training]
-
+    tags:
+    - Distributed Training
+    - PyTorch
+    - FSDP
+    - Data Parallel
+    - Sharding
+    - Mixed Precision
+    - CPU Offloading
+    - FSDP2
+    - Large-Scale Training
+    related_skills:
+    - brand
+    - github
+    - guidance
+    - loop
+    - maps
+    - outlines
+    - plan
 ---
 
 # Pytorch-Fsdp Skill
 
+## Overview
+
+
 Comprehensive assistance with pytorch-fsdp development, generated from official documentation.
 
-## When to Use This Skill
-
+## When to Use
 This skill should be triggered when:
 - Working with pytorch-fsdp
 - Asking about pytorch-fsdp features or APIs
@@ -126,4 +146,15 @@ To refresh this skill with updated documentation:
 1. Re-run the scraper with the same configuration
 2. The skill will be rebuilt with the latest information
 
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
 

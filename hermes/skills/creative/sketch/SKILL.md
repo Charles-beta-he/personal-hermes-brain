@@ -1,20 +1,40 @@
 ---
 name: sketch
-description: "Throwaway HTML mockups: 2-3 design variants to compare."
+description: 'Use when you need guidance on throwaway HTML mockups: 2-3 design variants to compare.'
 version: 1.0.0
 author: Hermes Agent (adapted from gsd-build/get-shit-done)
 license: MIT
 metadata:
   hermes:
-    tags: [sketch, mockup, design, ui, prototype, html, variants, exploration, wireframe, comparison]
-    related_skills: [claude-design, popular-web-designs, excalidraw]
+    tags:
+    - sketch
+    - mockup
+    - design
+    - ui
+    - prototype
+    - html
+    - variants
+    - exploration
+    - wireframe
+    - comparison
+    related_skills:
+    - claude-design
+    - popular-web-designs
+    - excalidraw
 ---
 
 # Sketch
 
+## Overview
+
+
 Use this skill when the user wants to **see a design direction before committing** to one — exploring a UI/UX idea as disposable HTML mockups. The point is to generate 2-3 interactive variants so the user can compare visual directions side-by-side, not to produce shippable code.
 
 Load this when the user says things like "sketch this screen", "show me what X could look like", "compare layout A vs B", "give me 2-3 takes on this UI", "let me see some variants", "mockup this before I build".
+
+## When to Use
+
+- You need guidance on throwaway HTML mockups: 2-3 design variants to compare
 
 ## When NOT to use this
 
@@ -215,3 +235,16 @@ Repeat for each variant, then present the comparison table.
 ## Attribution
 
 Adapted from the GSD (Get Shit Done) project's `/gsd-sketch` workflow — MIT © 2025 Lex Christopherson ([gsd-build/get-shit-done](https://github.com/gsd-build/get-shit-done)). The full GSD system ships persistent sketch state, theme/variant pattern references, and consistency-audit workflows; install with `npx get-shit-done-cc --hermes --global`.
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

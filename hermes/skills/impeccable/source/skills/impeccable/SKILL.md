@@ -1,12 +1,37 @@
 ---
 name: impeccable
-description: "Use when the user wants to design, redesign, shape, critique, audit, polish, clarify, distill, harden, optimize, adapt, animate, colorize, extract, or otherwise improve a frontend interface. Covers websites, landing pages, dashboards, product UI, app shells, components, forms, settings, onboarding, and empty states. Handles UX review, visual hierarchy, information architecture, cognitive load, accessibility, performance, responsive behavior, theming, anti-patterns, typography, fonts, spacing, layout, alignment, color, motion, micro-interactions, UX copy, error states, edge cases, i18n, and reusable design systems or tokens. Also use for bland designs that need to become bolder or more delightful, loud designs that should become quieter, live browser iteration on UI elements, or ambitious visual effects that should feel technically extraordinary. Not for backend-only or non-UI tasks."
-argument-hint: "[{{command_hint}}] [target]"
+description: Use when the user wants to design, redesign, shape, critique, audit, polish, clarify, distill, harden, optimize, adapt, animate, colorize, extract, or otherwise improve a frontend interface. Covers websites, landing pages, dashboards, product UI, app shells, components, forms, settings, onboarding, and empty states. Handles UX review, visual hierarchy, information architecture, cognitive load, accessibility, performance, responsive behavior, theming, anti-patterns, typography, fonts, spacing, layout, alignment, color, motion, micro-interactions, UX copy, error states, edge cases, i18n, and reusable design systems or tokens. Also use for bland designs that need to become bolder or more delightful, loud designs that should become quieter, live browser iteration on UI elements, or ambitious visual effects that should feel technically extraordinary. Not for backend-only or non-UI tasks.
+version: 1.0.0
+author: Hermes Agent
+license: Apache 2.0. Based on Anthropic's frontend-design skill. See NOTICE.md for attribution.
+argument-hint: '[{{command_hint}}] [target]'
 user-invocable: true
 allowed-tools:
-  - Bash(npx impeccable *)
-license: Apache 2.0. Based on Anthropic's frontend-design skill. See NOTICE.md for attribution.
+- Bash(npx impeccable *)
+metadata:
+  hermes:
+    tags:
+    - impeccable
+    - design
+    - frontend
+    - backend
+    - ux
+    related_skills:
+    - brand
+    - design
+    - domain
 ---
+
+# impeccable
+
+## Overview
+
+Design and iterate production-grade frontend interfaces with strong craft, UX judgment, and implementation realism. In practice, load it when the user wants to design, redesign, shape, critique, audit, polish, clarify, distill, harden, optimize, adapt, animate, colorize, extract, or otherwise improve a frontend interface. Covers websites, landing pages, dashboards, product UI, app shells, components, forms, settings, onboarding, and empty states. Handles UX review, visual hierarchy, information architecture, cognitive load, accessibility, performance, responsive behavior, theming, anti-patterns, typography, fonts, spacing, layout, alignment, color, motion, micro-interactions, UX copy, error states, edge cases, i18n, and reusable design systems or tokens. Also use for bland designs that need to become bolder or more delightful, loud designs that should become quieter, live browser iteration on UI elements, or ambitious visual effects that should feel technically extraordinary. Not for backend-only or non-UI tasks. It defines the expected execution lane, scope boundaries, and verification shape for this class of work.
+## When to Use
+
+- The user wants to design, redesign, critique, polish, optimize, or otherwise improve a frontend interface.
+- The task is UI-heavy and needs stronger visual hierarchy, interaction quality, accessibility, responsiveness, or design-system rigor.
+- Do not use for backend-only or non-UI tasks.
 
 Designs and iterates production-grade frontend interfaces. Real working code, committed design choices, exceptional craft.
 
@@ -155,3 +180,16 @@ node {{scripts_path}}/pin.mjs <pin|unpin> <command>
 ```
 
 Valid `<command>` is any command from the table above. Report the script's result concisely — confirm the new shortcut on success, relay stderr verbatim on error.
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

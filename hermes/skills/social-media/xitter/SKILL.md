@@ -1,20 +1,39 @@
 ---
 name: xitter
-description: Interact with X/Twitter via the x-cli terminal client using official X API credentials. Use for posting, reading timelines, searching tweets, liking, retweeting, bookmarks, mentions, and user lookups.
+description: Use when you need guidance on interact with X/Twitter via the x-cli terminal client using official X API credentials.
 version: 1.0.0
 author: Siddharth Balyan + Hermes Agent
 license: MIT
-platforms: [linux, macos]
+platforms:
+- linux
+- macos
 prerequisites:
-  commands: [uv]
-  env_vars: [X_API_KEY, X_API_SECRET, X_BEARER_TOKEN, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET]
+  commands:
+  - uv
+  env_vars:
+  - X_API_KEY
+  - X_API_SECRET
+  - X_BEARER_TOKEN
+  - X_ACCESS_TOKEN
+  - X_ACCESS_TOKEN_SECRET
 metadata:
   hermes:
-    tags: [twitter, x, social-media, x-cli]
+    tags:
+    - twitter
+    - x
+    - social-media
+    - x-cli
     homepage: https://github.com/Infatoshi/x-cli
+    related_skills:
+    - github
+    - plan
+    - 'yes'
 ---
 
 # Xitter — X/Twitter via x-cli
+
+## Overview
+
 
 Use `x-cli` for official X/Twitter API interactions from the terminal.
 
@@ -27,6 +46,10 @@ This skill is for:
 
 This skill intentionally does not vendor a separate CLI implementation into Hermes. Install and use upstream `x-cli` instead.
 
+## When to Use
+
+- You need guidance on interact with X/Twitter via the x-cli terminal client using official X API credentials
+- Don't use for: requests that do not need you need guidance on interact with X/Twitter via the x-cli terminal client using official X API credentials; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## Important Cost / Access Note
 
 X API access is not meaningfully free for most real usage. Expect to need paid or prepaid X developer access. If commands fail with permissions or quota errors, check your X developer plan first.
@@ -113,7 +136,7 @@ EOF
 chmod 600 ~/.config/x-cli/.env
 ```
 
-## Quick Verification
+## Verification Checklist
 
 ```bash
 x-cli user get openai
@@ -122,7 +145,9 @@ x-cli me mentions --max 5
 ```
 
 If reads work but writes fail, regenerate the access token after confirming `Read and write` permissions.
-
+- [ ] Preconditions, scope, and tool availability were checked before following this workflow.
+- [ ] The key output artifacts, commands, or side-effects were verified by read-back or direct inspection.
+- [ ] The final result still matches the trigger and acceptance shape of this skill.
 ## Common Commands
 
 ### Tweets
@@ -186,14 +211,16 @@ Recommended defaults:
 4. Use `-j` when extracting fields for later steps
 5. Only perform write actions after confirming the target tweet/user and the user's intent
 
-## Pitfalls
+## Common Pitfalls
 
 - **Paid API access**: many failures are plan/permission problems, not code problems.
 - **403 oauth1-permissions**: regenerate the access token after enabling `Read and write`.
 - **Reply restrictions**: X restricts many programmatic replies. `tweet quote` is often more reliable than `tweet reply`.
 - **Rate limits**: expect per-endpoint limits and cooldown windows.
 - **Credential drift**: if you rotate tokens in `~/.hermes/.env`, make sure `~/.config/x-cli/.env` still points at the current file.
-
+1. Skipping prerequisite checks and assuming the environment already matches the workflow.
+2. Applying the workflow mechanically without confirming that the request still matches this skill's trigger class.
+3. Reporting success before reading back the actual outputs, files, or external side-effects.
 ## Notes
 
 - Prefer official API workflows over cookie/session scraping.

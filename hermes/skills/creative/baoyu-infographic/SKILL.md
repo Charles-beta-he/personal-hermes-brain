@@ -1,16 +1,27 @@
 ---
 name: baoyu-infographic
-description: Generate professional infographics with 21 layout types and 21 visual styles. Analyzes content, recommends layout×style combinations, and generates publication-ready infographics. Use when user asks to create "infographic", "visual summary", "信息图", "可视化", or "高密度信息大图".
+description: Use when user asks to create "infographic", "visual summary", "信息图", "可视化", or "高密度信息大图".
 version: 1.56.1
 author: 宝玉 (JimLiu)
 license: MIT
 metadata:
   hermes:
-    tags: [infographic, visual-summary, creative, image-generation]
+    tags:
+    - infographic
+    - visual-summary
+    - creative
+    - image-generation
     homepage: https://github.com/JimLiu/baoyu-skills#baoyu-infographic
+    related_skills:
+    - design
+    - github
+    - outlines
 ---
 
 # Infographic Generator
+
+## Overview
+
 
 Adapted from [baoyu-infographic](https://github.com/JimLiu/baoyu-skills) for Hermes Agent's tool ecosystem.
 
@@ -227,10 +238,16 @@ Report: topic, layout, style, aspect, language, output path, files created.
 - `references/layouts/<layout>.md` — 21 layout definitions
 - `references/styles/<style>.md` — 21 style definitions
 
-## Pitfalls
-
+## Common Pitfalls
 1. **Data integrity is paramount** — never summarize, paraphrase, or alter source statistics. "73% increase" must stay "73% increase", not "significant increase".
 2. **Strip secrets** — always scan source content for API keys, tokens, or credentials before including in any output file.
 3. **One message per section** — each infographic section should convey one clear concept. Overloading sections reduces readability.
 4. **Style consistency** — the style definition from the references file must be applied consistently across the entire infographic. Don't mix styles.
 5. **image_generate aspect ratios** — the tool only supports `landscape`, `portrait`, and `square`. Custom ratios like `3:4` should map to the nearest option (portrait in that case).
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

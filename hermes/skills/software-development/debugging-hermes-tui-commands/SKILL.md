@@ -1,14 +1,26 @@
 ---
 name: debugging-hermes-tui-commands
-description: "Debug Hermes TUI slash commands: Python, gateway, Ink UI."
+description: 'Use when you need to debug Hermes TUI slash commands: Python, gateway, Ink UI.'
 version: 1.0.0
 author: Hermes Agent
 license: MIT
-platforms: [linux, macos, windows]
+platforms:
+- linux
+- macos
+- windows
 metadata:
   hermes:
-    tags: [debugging, hermes-agent, tui, slash-commands, typescript, python]
-    related_skills: [python-debugpy, node-inspect-debugger, systematic-debugging]
+    tags:
+    - debugging
+    - hermes-agent
+    - tui
+    - slash-commands
+    - typescript
+    - python
+    related_skills:
+    - python-debugpy
+    - node-inspect-debugger
+    - systematic-debugging
 ---
 
 # Debugging Hermes TUI Slash Commands
@@ -119,7 +131,7 @@ When surface-level inspection doesn't reveal the bug:
 - **Ink side not reacting:** use the `node-inspect-debugger` skill to break in `app.tsx`'s slash dispatch or the local command branch. `sb('dist/app.js', <line>)` after `npm run build`.
 - **Registry mismatch / unclear which side is wrong:** compare the canonical `COMMAND_REGISTRY` entry against the TUI's local command list side-by-side.
 
-## Pitfalls
+## Common Pitfalls
 
 - Don't forget to set the appropriate category for the command in `CommandDef` (e.g., "Session", "Configuration", "Tools & Skills", "Info", "Exit")
 - Make sure any aliases are properly registered in the `aliases` tuple — no other file changes are needed, everything downstream (Telegram menu, Slack mapping, autocomplete, help) derives from it
@@ -127,8 +139,10 @@ When surface-level inspection doesn't reveal the bug:
 - `cli_only=True` commands won't work in gateway/messaging platforms — unless you add a `gateway_config_gate` and the gate is truthy
 - After adding live UI state, search every consumer of the old prop/helper and thread the new state through all render paths, not just the active streaming path. TUI detail rendering has at least two important paths: live `StreamingAssistant`/`ToolTrail` and transcript/pending `MessageLine` rows. A `/clean` pass should explicitly check both.
 - Rebuild the TUI (`npm --prefix ui-tui run build`) before testing — tsx watch mode may lag on first launch
-
-## Verification
+1. Skipping prerequisite checks and assuming the environment already matches the workflow.
+2. Applying the workflow mechanically without confirming that the request still matches this skill's trigger class.
+3. Reporting success before reading back the actual outputs, files, or external side-effects.
+## Verification Checklist
 
 After fixing:
 
@@ -150,3 +164,6 @@ After fixing:
    - Live UI state reflects the change immediately (not just after restart)
 
 5. If the command is also gateway-available, test it from at least one messaging platform (or run the gateway tests: `scripts/run_tests.sh tests/gateway/`).
+- [ ] Preconditions, scope, and tool availability were checked before following this workflow.
+- [ ] The key output artifacts, commands, or side-effects were verified by read-back or direct inspection.
+- [ ] The final result still matches the trigger and acceptance shape of this skill.

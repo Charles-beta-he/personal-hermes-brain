@@ -6,8 +6,14 @@ author: Hermes Agent (adapted from obra/superpowers)
 license: MIT
 metadata:
   hermes:
-    tags: [testing, tdd, development, quality, red-green-refactor]
-    related_skills: [writing-plans]
+    tags:
+    - testing
+    - tdd
+    - development
+    - quality
+    - red-green-refactor
+    related_skills:
+    - writing-plans
 ---
 
 # Test-Driven Development (TDD)
@@ -34,7 +40,7 @@ Write the test first. Watch it fail. Write minimal code to pass.
 - Configuration files
 
 Thinking "skip TDD just this once"? Stop. That's rationalization.
-
+- Don't use for: requests that do not need implementing any feature or bugfix, before writing implementation code. Enforces RED-GREEN-REFACTOR cycle with test-first approach; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## The Iron Law
 
 ```
@@ -347,6 +353,26 @@ Bug found? Write failing test reproducing it. Follow TDD cycle. The test proves 
 
 Never fix bugs without a test.
 
+## Hermes Taskpool / Stateful CLI Transition Work
+
+When changing Hermes taskpool/control-plane scripts or any stateful CLI/orchestrator:
+
+1. Write RED tests around the **state transition**, not just helper functions. Assert frontmatter/body mutations, derived fields, and CLI JSON actions.
+2. Use fixture tasks/artifacts that mimic the real control-plane evidence shape (`discussion_result.json`, blocked/retry status, proof log sections) so the failure proves the workflow, not a toy helper.
+3. Add a second-cycle closure test whenever the feature spans phases, e.g.:
+   - trigger auto-split from blocked/non-convergence
+   - mark generated subtasks done
+   - verify parent reopen/sync on `reconcile` or the primary resolver path
+4. Treat CLI/control-plane JSON output as part of the contract. Add RED assertions for structured action payloads (`action`, `resolved/kept_blocked`, `taxonomy_axes`, `axis_rationale`, counts, reopen reasons) instead of only checking file text. When diagnostics guide later automation, test that they are returned explicitly, not just implied by side effects.
+5. When a control-plane workflow derives follow-up work from failure analysis, add RED coverage that the diagnostic taxonomy survives the whole path: gate/writeback -> task frontmatter/body -> resolver/auto-split JSON result. This prevents "analysis exists but downstream step cannot consume it" regressions.
+6. When you introduce new task metadata fields, treat persistence/display as separate contract surfaces. Add RED assertions that the fields survive all of these layers as needed: in-memory task state, serialized frontmatter (`SAVE_FIELDS`/persisted keys), preferred frontmatter ordering for operator readability, and command JSON. A feature is not done if the diagnostic exists only in memory or only in one output path.
+7. After GREEN on targeted tests, run a **real task dry verification** against the actual taskpool entry to confirm:
+   - idempotent re-run is a no-op
+   - already-done parents are safe no-ops
+   - proof log is appended, not overwritten
+   - structured diagnostics remain present in command output for operators/control-plane consumers
+7. If unrelated legacy tests fail, classify them explicitly as pre-existing/off-scope instead of silently broadening the task.
+
 ## Testing Anti-Patterns
 
 - **Testing mock behavior instead of real behavior** — mocks should verify interactions, not replace the system under test
@@ -362,3 +388,10 @@ Otherwise → not TDD
 ```
 
 No exceptions without the user's explicit permission.
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+

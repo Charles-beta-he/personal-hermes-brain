@@ -1,26 +1,39 @@
 ---
 name: humanizer
-description: "Humanize text: strip AI-isms and add real voice."
+description: 'Use when you need guidance on humanize text: strip AI-isms and add real voice.'
 version: 2.5.1
 author: Siqi Chen (@blader, https://github.com/blader/humanizer), ported by Hermes Agent
 license: MIT
-platforms: [linux, macos, windows]
+platforms:
+- linux
+- macos
+- windows
 metadata:
   hermes:
-    tags: [writing, editing, humanize, anti-ai-slop, voice, prose, text]
+    tags:
+    - writing
+    - editing
+    - humanize
+    - anti-ai-slop
+    - voice
+    - prose
+    - text
     category: creative
     homepage: https://github.com/blader/humanizer
-    related_skills: [songwriting-and-ai-music]
+    related_skills:
+    - songwriting-and-ai-music
 ---
 
 # Humanizer: Remove AI Writing Patterns
+
+## Overview
+
 
 Identify and remove signs of AI-generated text to make writing sound natural and human. Based on Wikipedia's "Signs of AI writing" guide (maintained by WikiProject AI Cleanup), derived from observations of thousands of AI-generated text instances.
 
 **Key insight:** LLMs use statistical algorithms to guess what should come next. The result tends toward the most statistically likely completion, which is how the telltale patterns below get baked in.
 
-## When to use this skill
-
+## When to Use
 Load this skill whenever the user asks to:
 - "humanize", "de-AI", "de-slop", or "un-ChatGPT" a piece of text
 - rewrite something so it doesn't sound like it was written by an LLM
@@ -576,3 +589,16 @@ This skill is ported from [blader/humanizer](https://github.com/blader/humanizer
 Original author: Siqi Chen ([@blader](https://github.com/blader)). Original repo: https://github.com/blader/humanizer (version 2.5.1). Ported to Hermes Agent with Hermes-native tool references (`read_file`, `patch`, `write_file`) and guidance for when to load the skill; the 29 patterns, personality/soul section, and full worked example are preserved verbatim from the source. Original MIT license preserved in the `LICENSE` file alongside this `SKILL.md`.
 
 Key insight from Wikipedia: "LLMs use statistical algorithms to guess what should come next. The result tends toward the most statistically likely result that applies to the widest variety of cases."
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

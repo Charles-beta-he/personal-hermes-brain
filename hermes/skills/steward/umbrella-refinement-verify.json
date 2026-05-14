@@ -1,0 +1,98 @@
+{
+  "total_skills": 209,
+  "yaml_parse_failures": [],
+  "generic_placeholder_roots_remaining": [],
+  "duplicate_heading_skills": [
+    {
+      "path": "/Users/charles/.hermes/skills/software-development/post-update-patch-healing/SKILL.md",
+      "duplicates": [
+        "known patches (as of apr 2026)"
+      ]
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/software-development/planning-with-files/SKILL.md",
+      "duplicates": [
+        "steps",
+        "decisions",
+        "files changed"
+      ]
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/software-development/hermes-agent-skill-authoring/SKILL.md",
+      "duplicates": [
+        "overview",
+        "when to use",
+        "common pitfalls",
+        "verification checklist"
+      ]
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/software-development/lark-task-reading/SKILL.md",
+      "duplicates": [
+        "verification checklist"
+      ]
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/darwin-skill/SKILL.md",
+      "duplicates": [
+        "skill 生态审计（新增）"
+      ]
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/github/github-code-review/SKILL.md",
+      "duplicates": [
+        "code review summary"
+      ]
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/github/github-issues/SKILL.md",
+      "duplicates": [
+        "steps to reproduce",
+        "expected behavior"
+      ]
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/yes/SKILL.md",
+      "duplicates": [
+        "约束"
+      ]
+    }
+  ],
+  "umbrella_missing_dont_use_for": [],
+  "umbrella_missing_routing_tags": [],
+  "umbrella_related_skills_too_generic": [
+    {
+      "path": "/Users/charles/.hermes/skills/leisure/SKILL.md",
+      "related_skills": [
+        "loop",
+        "pua"
+      ]
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/inference-sh/SKILL.md",
+      "related_skills": [
+        "pua",
+        "loop"
+      ]
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/diagramming/SKILL.md",
+      "related_skills": [
+        "loop",
+        "pua"
+      ]
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/red-teaming/SKILL.md",
+      "related_skills": [
+        "pua"
+      ]
+    },
+    {
+      "path": "/Users/charles/.hermes/skills/domain/SKILL.md",
+      "related_skills": [
+        "pua"
+      ]
+    }
+  ]
+}

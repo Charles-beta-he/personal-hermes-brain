@@ -1,14 +1,33 @@
 ---
 name: ooda-agent
-description: "OODA环 × Agent 迭代速度优化 — 基于 John Boyd 的军事决策理论，将每个 Agent 交互建模为 Observe→Orient→Decide→Act 循环。优化目标是比问题演化更快完成 OODA，在对抗性任务中取得优势。Use when iterating on complex tasks, debugging stubborn bugs, or optimizing response speed. Triggers: 'OODA', '迭代速度', '响应速度', '快速迭代', '对抗性任务', '顽固bug', '决策循环'."
+description: 'Use when iterating on complex tasks, debugging stubborn bugs, or optimizing response speed. Triggers: ''OODA'', ''迭代速度'', ''响应速度'', ''快速迭代'', ''对抗性任务'', ''顽固bug'', ''决策循环''.'
+version: 1.0.0
+author: Hermes Agent
 license: MIT
-tags: [ooda, iteration-speed, decision-cycle, debugging, rapid-response]
+metadata:
+  hermes:
+    tags:
+    - ooda
+    - iteration-speed
+    - decision-cycle
+    - debugging
+    - rapid-response
+    related_skills:
+    - bayesian-agent
+    - loop
 ---
 
 # OODA Agent — 迭代速度优化
 
+## Overview
+
+
 > 在对抗中，不是装备更好的一方获胜，而是 OODA 循环更快的一方。
 > — John Boyd, USAF Colonel
+
+## When to Use
+
+- Iterating on complex tasks, debugging stubborn bugs, or optimizing response speed. Triggers: 'OODA', '迭代速度', '响应速度', '快速迭代', '对抗性任务', '顽固bug', '决策循环'
 
 ## OODA 四阶段
 
@@ -234,3 +253,16 @@ Agent 应用：当同一类修复连续 3 次失败，强制切换策略：
 
 - 遵循项目规范
 - 在 context budget 内完成
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

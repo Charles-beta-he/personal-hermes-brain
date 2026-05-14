@@ -1,19 +1,33 @@
 ---
 name: source-driven-development
-description: Reverse-engineer understanding from existing code — read the source to derive the spec, rather than assuming from documentation. Essential for legacy projects and onboarding.
-triggers:
-  - "how does this work?"
-  - "what does this do?"
-  - "joining an existing project with no/few docs"
-  - "before modifying legacy code"
-  - "trace the logic"
-  - "follow the call chain"
-model: default (MiMo) for reading/tracing, strong for synthesizing findings
+description: Use when documentation is stale, missing, or untrusted and you need to derive the real spec by reading existing code paths, dependencies, and side effects before making changes.
+version: 1.0.0
+author: Hermes Agent
+license: MIT
+metadata:
+  hermes:
+    tags:
+    - source-driven-development
+    - legacy-code
+    - code-reading
+    - tracing
+    - reverse-engineering
+    related_skills:
+    - systematic-debugging
+    - requirement-clarification
+    - writing-plans
 ---
 
 # source-driven-development
 
+## Overview
+
+
 When docs are stale or nonexistent, the source IS the spec. Read, trace, map, then act.
+
+## When to Use
+
+- Documentation is stale, missing, or untrusted and you need to derive the real spec by reading existing code paths, dependencies, and side effects before making changes
 
 ## The Golden Rule
 > The source code is the only artifact that cannot lie about what the system actually does. Docs, comments, and tribal knowledge can drift. The AST does not.
@@ -85,10 +99,17 @@ When reviewing trust state, remembered devices, login routing, 2FA/PIN gates, or
 - "This should..." vs "This actually..."
 - Legacy code with no original author available
 
-## Verification
+## Verification Checklist
 - [ ] Entry point identified
 - [ ] One complete flow traced end-to-end
 - [ ] Dependencies mapped (upstream + downstream)
 - [ ] Source-derived spec written for modified module
 - [ ] Product claims are classified as display-compatible / contract-compatible / semantic-compatible when docs are involved
 - [ ] No assumptions from docs unless verified in source
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+

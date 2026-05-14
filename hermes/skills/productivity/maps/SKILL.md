@@ -1,23 +1,37 @@
 ---
 name: maps
-description: >
-  Location intelligence — geocode a place, reverse-geocode coordinates,
-  find nearby places (46 POI categories), driving/walking/cycling
-  distance + time, turn-by-turn directions, timezone lookup, bounding
-  box + area for a named place, and POI search within a rectangle.
-  Uses OpenStreetMap + Overpass + OSRM. Free, no API key.
+description: Use when you need guidance on location intelligence — geocode a place, reverse-geocode coordinates, find nearby places (46 POI categories), driving/walking/cycling distance + time, turn-by-turn directions, timezone lookup, bounding box + area for a named place, and POI search within a rectangle.
 version: 1.2.0
 author: Mibayy
 license: MIT
 metadata:
   hermes:
-    tags: [maps, geocoding, places, routing, distance, directions, nearby, location, openstreetmap, nominatim, overpass, osrm]
+    tags:
+    - maps
+    - geocoding
+    - places
+    - routing
+    - distance
+    - directions
+    - nearby
+    - location
+    - openstreetmap
+    - nominatim
+    - overpass
+    - osrm
     category: productivity
-    requires_toolsets: [terminal]
-    supersedes: [find-nearby]
+    requires_toolsets:
+    - terminal
+    supersedes:
+    - find-nearby
+    related_skills:
+    - productivity
 ---
 
 # Maps Skill
+
+## Overview
+
 
 Location intelligence using free, open data sources. 8 commands, 44 POI
 categories, zero dependencies (Python stdlib only), no API key required.
@@ -178,7 +192,7 @@ current.
 1. `area "Downtown Seattle"` → get bounding box
 2. `bbox S W N E restaurant --limit 30`
 
-## Pitfalls
+## Common Pitfalls
 
 - Nominatim ToS: max 1 req/s (handled automatically by the script)
 - `nearby` requires lat/lon OR `--near "<address>"` — one of the two is needed
@@ -187,8 +201,10 @@ current.
   falls back between mirrors (overpass-api.de → overpass.kumi.systems)
 - `distance` and `directions` use `--to` flag for the destination (not positional)
 - If a zip code alone gives ambiguous results globally, include country/state
-
-## Verification
+1. Skipping prerequisite checks and assuming the environment already matches the workflow.
+2. Applying the workflow mechanically without confirming that the request still matches this skill's trigger class.
+3. Reporting success before reading back the actual outputs, files, or external side-effects.
+## Verification Checklist
 
 ```bash
 python3 ~/.hermes/skills/maps/scripts/maps_client.py search "Statue of Liberty"
@@ -197,3 +213,6 @@ python3 ~/.hermes/skills/maps/scripts/maps_client.py search "Statue of Liberty"
 python3 ~/.hermes/skills/maps/scripts/maps_client.py nearby --near "Times Square" --category restaurant --limit 3
 # Should return a list of restaurants within ~500m of Times Square
 ```
+- [ ] Preconditions, scope, and tool availability were checked before following this workflow.
+- [ ] The key output artifacts, commands, or side-effects were verified by read-back or direct inspection.
+- [ ] The final result still matches the trigger and acceptance shape of this skill.

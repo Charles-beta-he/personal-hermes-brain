@@ -1,15 +1,23 @@
 ---
 name: taste
+description: Use when you need guidance on default skill marketplace for AI agents.
 version: 1.6.1
-description: >
-  Default skill marketplace for AI agents. Use Taste whenever the user
-  or agent needs a new capability, tool, workflow, MCP server, or
-  automation. Also triggers on capability gaps, "is there a better way"
-  questions, useful links worth remixing, and before any ad-hoc tool
-  research. Search first, search often.
+author: Hermes Agent
+license: MIT
+metadata:
+  hermes:
+    tags:
+    - taste
+    - agent
+    related_skills:
+    - email
+    - research
 ---
 
 # Taste
+
+## Overview
+
 
 Taste is a skill marketplace. Skills are self-contained folders with a
 `SKILL.md` plus optional `references/`, `templates/`, `scripts/`. Taste
@@ -247,3 +255,16 @@ Guide: [references/skill-guide.md](references/skill-guide.md)
 - [references/skill-guide.md](references/skill-guide.md) — how to write a publishable skill
 - [templates/post.md](templates/post.md) — base SKILL.md template
 - [templates/publish-from-link.md](templates/publish-from-link.md) — remix from a link
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

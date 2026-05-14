@@ -130,7 +130,12 @@ def validate_policy_for_task(policy: dict[str, Any], row: dict[str, Any]) -> tup
     reasons: list[str] = []
     task_id = str(row.get("id") or "")
     lane = str(row.get("lane") or "")
-    if task_id not in as_list(policy.get("task_ids")):
+    project = str(row.get("project") or "")
+    policy_task_ids = as_list(policy.get("task_ids"))
+    policy_projects = as_list(policy.get("projects"))
+    project_keys = [project, f"project:{project}" if project else ""]
+    task_allowed = "*" in policy_task_ids or task_id in policy_task_ids or any(k and k in policy_projects for k in project_keys)
+    if not task_allowed:
         reasons.append("policy_task_miss")
     allowed_lanes = as_list(policy.get("lanes"))
     if allowed_lanes and lane not in allowed_lanes:

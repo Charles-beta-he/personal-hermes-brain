@@ -1,12 +1,31 @@
 ---
 name: fixing-motion-performance
-description: Audit and fix animation performance issues including layout thrashing, compositor properties, scroll-linked motion, and blur effects. Use when animations stutter, transitions jank, or reviewing CSS/JS animation performance.
+description: Use when animations stutter, transitions jank, or reviewing CSS/JS animation performance.
+version: 1.0.0
+author: Hermes Agent
+license: MIT
+metadata:
+  hermes:
+    tags:
+    - fixing
+    - motion
+    - performance
+    - animation
+    - review
+    related_skills:
+    - guidance
+    - linear
 ---
 
 # fixing-motion-performance
 
-Fix animation performance issues.
+## Overview
 
+Fix animation performance issues. In practice, load it when animations stutter, transitions jank, or reviewing CSS/JS animation performance. It defines the expected execution lane, scope boundaries, and verification shape for this class of work.
+## When to Use
+
+- Animations stutter, transitions jank, or reviewing CSS/JS animation performance
+- Don't use for: requests that do not need animations stutter, transitions jank, or reviewing CSS/JS animation performance; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## how to use
 
 - `/fixing-motion-performance`
@@ -149,3 +168,16 @@ requestAnimationFrame(() => { el.style.transition = 'transform 0.3s'; el.style.t
 - choose the least expensive rendering work that matches the intent
 - for any non-default choice, state the constraint that justifies it (surface size, duration, or interaction requirement)
 - when reviewing, prefer actionable notes and concrete alternatives over theory
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

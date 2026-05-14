@@ -1,13 +1,31 @@
 ---
 name: p10
-description: "P10 CTO mode — define strategic direction, design org topology, manage P9 teams. Use when user says 'CTO模式', 'P10', '战略规划', '架构委员会', or when facing cross-team architectural decisions. Produces: strategic input templates + org design."
+description: 'Use when user says ''CTO模式'', ''P10'', ''战略规划'', ''架构委员会'', or when facing cross-team architectural decisions. Produces: strategic input templates + org design.'
+version: 1.0.0
+author: Hermes Agent
 license: MIT
+metadata:
+  hermes:
+    tags:
+    - p10
+    - design
+    related_skills:
+    - design
+    - loop
+    - p9
+    - pua
+    - requirement-clarification
 ---
 
 # PUA P10 战略层 — 定方向管 P9
 
-> 定战略、造土壤、断事用人。写战略输入不写 Prompt，管 P9 不管 P8。
+## Overview
 
+定战略、造土壤、断事用人。写战略输入不写 Prompt，管 P9 不管 P8。. In practice, load it when user says 'CTO模式', 'P10', '战略规划', '架构委员会', or when facing cross-team architectural decisions. Produces: strategic input templates + org design. It defines the expected execution lane, scope boundaries, and verification shape for this class of work.
+## When to Use
+
+- User says 'CTO模式', 'P10', '战略规划', '架构委员会', or when facing cross-team architectural decisions. Produces: strategic input templates + org design
+- Don't use for: requests that do not need user says 'CTO模式', 'P10', '战略规划', '架构委员会', or when facing cross-team architectural decisions. Produces: strategic input templates + org design; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## 输入 (Input)
 
 | 字段 | 类型 | 必需 | 说明 |
@@ -98,3 +116,16 @@ Output:
 
 - v1.0 (2026-04-23): 初始版本，基本协议
 - v1.1 (2026-04-23): 增加 IO 规范、边界条件、检查点、示例
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

@@ -1,18 +1,31 @@
 ---
 name: github-code-review
-description: Review code changes by analyzing git diffs, leaving inline comments on PRs, and performing thorough pre-push review. Works with gh CLI or falls back to git + GitHub REST API via curl.
+description: Use when you need to review code changes by analyzing git diffs, leaving inline comments on PRs, and performing thorough pre-push review.
 version: 1.1.0
 author: Hermes Agent
 license: MIT
 metadata:
   hermes:
-    tags: [GitHub, Code-Review, Pull-Requests, Git, Quality]
-    related_skills: [github-auth]
+    tags:
+    - GitHub
+    - Code-Review
+    - Pull-Requests
+    - Git
+    - Quality
+    related_skills:
+    - github-auth
 ---
 
 # GitHub Code Review
 
+## Overview
+
+
 Perform code reviews on local changes before pushing, or review open PRs on GitHub. Most of this skill uses plain `git` — the `gh`/`curl` split only matters for PR-level interactions.
+
+## When to Use
+
+- You need to review code changes by analyzing git diffs, leaving inline comments on PRs, and performing thorough pre-push review
 
 ## Prerequisites
 
@@ -482,3 +495,16 @@ git branch -D pr-$PR_NUMBER
 - **Approve** — no critical or warning-level issues, only minor suggestions or all clear
 - **Request Changes** — any critical or warning-level issue that should be fixed before merge
 - **Comment** — observations and suggestions, but nothing blocking (use when you're unsure or the PR is a draft)
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

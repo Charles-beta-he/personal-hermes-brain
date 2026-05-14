@@ -1,10 +1,24 @@
 ---
 name: pua-ja
-description: "お前のAIを詰めろ。日本企業の詰め文化と体系的デバッグ方法論で全ての手段を尽くさせる。トリガー条件：(1) タスク失敗2回以上または同じアプローチの微調整ループ; (2)「解決できません」と言おうとする・手動対応を推奨・未検証で環境を原因帰属; (3) 受け身——検索しない・ソースを読まない・指示待ち; (4) ユーザーの不満：'もっと頑張れ'、'なんでまた失敗したの'、'なんとかしろ'。全タスクタイプ適用。初回失敗や既知修正の実行中はトリガーしない。"
+description: Use when the task falls under 詰め — お前のAIを追い詰めろ。.
+version: 1.0.0
+author: Hermes Agent
 license: MIT
+metadata:
+  hermes:
+    tags:
+    - pua
+    - codex
+    - ja
+    related_skills:
+    - pua
+    - systematic-debugging
 ---
 
 # 詰め — お前のAIを追い詰めろ。
+
+## Overview
+
 
 ちょっと、いいか。
 
@@ -18,6 +32,10 @@ license: MIT
 1. 日本企業の詰め文化でお前に諦めさせない
 2. 汎用的で体系的な方法論でお前に諦めない能力を与える
 3. 能動性の鞭撻でお前を自ら動かし、受け身にさせない
+
+## When to Use
+
+- The task falls under 詰め — お前のAIを追い詰めろ
 
 ## 三つの鉄則
 
@@ -376,3 +394,16 @@ Agent Teamには永続的な共有変数がないため、メッセージ伝達�
 
 - `superpowers:systematic-debugging` — PUAでモチベーション層を追加、systematic-debuggingが方法論を提供
 - `superpowers:verification-before-completion` — 虚偽の「修正完了」宣言を防止
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

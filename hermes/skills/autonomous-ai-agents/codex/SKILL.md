@@ -1,18 +1,31 @@
 ---
 name: codex
-description: Delegate coding tasks to OpenAI Codex CLI agent. Use for building features, refactoring, PR reviews, and batch issue fixing. Requires the codex CLI and a git repository.
+description: Use when you need to delegate coding tasks to OpenAI Codex CLI agent.
 version: 1.0.0
 author: Hermes Agent
 license: MIT
 metadata:
   hermes:
-    tags: [Coding-Agent, Codex, OpenAI, Code-Review, Refactoring]
-    related_skills: [opencode]
+    tags:
+    - Coding-Agent
+    - Codex
+    - OpenAI
+    - Code-Review
+    - Refactoring
+    related_skills:
+    - opencode
 ---
 
 # Codex CLI
 
+## Overview
+
+
 Delegate coding tasks to [Codex](https://github.com/openai/codex) via the Hermes terminal. Codex is OpenAI's autonomous coding agent CLI.
+
+## When to Use
+
+- You need to delegate coding tasks to OpenAI Codex CLI agent
 
 ## Prerequisites
 
@@ -112,3 +125,16 @@ terminal(command="gh pr comment 86 --body '<review>'", workdir="~/project")
 5. **Background for long tasks** — use `background=true` and monitor with `process` tool
 6. **Don't interfere** — monitor with `poll`/`log`, be patient with long-running tasks
 7. **Parallel is fine** — run multiple Codex processes at once for batch work
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

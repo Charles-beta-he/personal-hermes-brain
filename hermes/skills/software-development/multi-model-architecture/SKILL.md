@@ -1,14 +1,39 @@
 ---
 name: multi-model-architecture
-description: "多模型/多Agent 全栈架构 L0-L5 — 从模型追踪到多脑自进化。使用 Claude Code 作为架构设计伙伴, Hermes 负责实施。触发词: 多模型, 互相印证, cross-patch, 三模型验证, ensemble, consensus, 模型路由, pricing, 任务分层, 多脑, consult-models, dual-brain"
+description: Use when the task falls under Multi-Model Architecture — 多模型全栈架构.
+version: 1.0.0
+author: Hermes Agent
 license: MIT
+metadata:
+  hermes:
+    tags:
+    - software
+    - development
+    - multi
+    - model
+    - architecture
+    related_skills:
+    - claude-code
+    - incremental-implementation
+    - loop
+    - multi-model-thinking
+    - p10-architecture-self-check
+    - plan
+    - router
 ---
 
 # Multi-Model Architecture — 多模型全栈架构
 
+## Overview
+
+
 > L0: 模型追踪 → L1: 模型路由 → L2: Agent协议 → L3: 投票 → L4: 互相印证 → L5: 多脑自进化
 > 双脑模式: self-describe → Claude Code -p 设计 → Hermes 落地 → eval gate
 
+## When to Use
+
+- The task falls under Multi-Model Architecture — 多模型全栈架构
+- Don't use for: requests that do not need the task falls under Multi-Model Architecture — 多模型全栈架构; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## 架构总览
 
 ```
@@ -758,8 +783,7 @@ def _log_and_emit(result, ...):
 - anthropic: Claude CLI session (独立于 ANTHROPIC_API_KEY)
 - openrouter: OPENROUTER_API_KEY (当前未设置 → 自动过滤)
 
-## 验证
-
+## Verification Checklist
 - [x] self-test 44/44
 - [x] test_cross_patch_safety 19/19 (原有5 + Phase 4.5 selector mock 14)
 - [x] eval-harness classify_infra_failure: 5 类全部已验证 (ok/timeout/auth/unavailable/dry_run)
@@ -780,3 +804,10 @@ def _log_and_emit(result, ...):
 - multi-model-thinking: 多模型思考协议 (设计→验证→合并，避免单模型盲信)
 - p10-architecture-self-check: P10 架构自检
 - incremental-implementation: 增量实施策略
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+

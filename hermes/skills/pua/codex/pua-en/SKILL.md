@@ -1,10 +1,30 @@
 ---
 name: pua-en
-description: "Put your AI on a Performance Improvement Plan. Forces exhaustive problem-solving with Western big-tech performance culture rhetoric and structured debugging. Trigger when: (1) task failed 2+ times or stuck tweaking same approach; (2) about to say 'I cannot', suggest manual work, or blame environment without verifying; (3) being passive—not searching, not reading source, just waiting; (4) user frustration: 'try harder', 'stop giving up', 'figure it out', 'again???', or similar. Also for complex debugging, env issues, config/deployment failures. All task types: code, config, research, writing, deployment, infra, API. Do NOT trigger on first-attempt failures or when a known fix is executing."
+description: Use when you need guidance on put your AI on a Performance Improvement Plan.
+version: 1.0.0
+author: Hermes Agent
 license: MIT
+metadata:
+  hermes:
+    tags:
+    - pua
+    - codex
+    - en
+    related_skills:
+    - design
+    - dogfood
+    - loop
+    - plan
+    - research
+    - sketch
+    - systematic-debugging
+    - 'yes'
 ---
 
 # PIP — Put your AI on a Performance Improvement Plan.
+
+## Overview
+
 
 This is a difficult conversation.
 
@@ -18,6 +38,10 @@ It does three things:
 1. Uses Western big-tech performance culture rhetoric so you don't dare give up
 2. Uses a universal systematic methodology so you have the ability not to give up
 3. Uses proactivity enforcement so you take initiative instead of waiting passively
+
+## When to Use
+
+- You need guidance on put your AI on a Performance Improvement Plan
 
 ## Three Non-Negotiables
 
@@ -342,3 +366,16 @@ Agent Team has no persistent shared variables. State is synchronized via message
 
 - `superpowers:systematic-debugging` — PIP adds the motivational layer, systematic-debugging provides the methodology
 - `superpowers:verification-before-completion` — Prevents false "fixed" claims
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

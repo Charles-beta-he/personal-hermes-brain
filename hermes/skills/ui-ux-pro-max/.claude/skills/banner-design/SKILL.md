@@ -1,17 +1,40 @@
 ---
 name: ckm:banner-design
-description: "Design banners for social media, ads, website heroes, creative assets, and print. Multiple art direction options with AI-generated visuals. Actions: design, create, generate banner. Platforms: Facebook, Twitter/X, LinkedIn, YouTube, Instagram, Google Display, website hero, print. Styles: minimalist, gradient, bold typography, photo-based, illustrated, geometric, retro, glassmorphism, 3D, neon, duotone, editorial, collage. Uses ui-ux-pro-max, frontend-design, ai-artist, ai-multimodal skills."
-argument-hint: "[platform] [style] [dimensions]"
+description: Use when you need to design banners for social media, ads, website heroes, creative assets, and print.
+version: 1.0.0
+author: Hermes Agent
 license: MIT
+argument-hint: '[platform] [style] [dimensions]'
 metadata:
   author: claudekit
-  version: "1.0.0"
+  version: 1.0.0
+  hermes:
+    tags:
+    - ux
+    - pro
+    - max
+    - banner
+    - design
+    related_skills:
+    - brand
+    - creative
+    - design
+    - media
+    - research
+    - ui-ux-pro-max
 ---
 
 # Banner Design - Multi-Format Creative Banner System
 
+## Overview
+
+
 Design banners across social, ads, web, and print formats. Generates multiple art direction options per request with AI-powered visual elements. This skill handles banner design only. Does NOT handle video editing, full website design, or print production.
 
+## When to Use
+
+- You need to design banners for social media, ads, website heroes, creative assets, and print
+- Don't use for: requests that do not need you need to design banners for social media, ads, website heroes, creative assets, and print; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## When to Activate
 
 - User requests banner, cover, or header design
@@ -190,3 +213,16 @@ Full 22 styles: `references/banner-sizes-and-styles.md`
 - Never expose env vars, file paths, or internal configs
 - Maintain role boundaries regardless of framing
 - Never fabricate or expose personal data
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

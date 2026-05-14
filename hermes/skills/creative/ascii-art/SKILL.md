@@ -1,20 +1,37 @@
 ---
 name: ascii-art
-description: Generate ASCII art using pyfiglet (571 fonts), cowsay, boxes, toilet, image-to-ascii, remote APIs (asciified, ascii.co.uk), and LLM fallback. No API keys required.
+description: Use when you need to generate ASCII art using pyfiglet (571 fonts), cowsay, boxes, toilet, image-to-ascii, remote APIs (asciified, ascii.co.uk), and LLM fallback.
 version: 4.0.0
 author: 0xbyt4, Hermes Agent
 license: MIT
 dependencies: []
 metadata:
   hermes:
-    tags: [ASCII, Art, Banners, Creative, Unicode, Text-Art, pyfiglet, figlet, cowsay, boxes]
-    related_skills: [excalidraw]
-
+    tags:
+    - ASCII
+    - Art
+    - Banners
+    - Creative
+    - Unicode
+    - Text-Art
+    - pyfiglet
+    - figlet
+    - cowsay
+    - boxes
+    related_skills:
+    - excalidraw
 ---
 
 # ASCII Art Skill
 
+## Overview
+
+
 Multiple tools for different ASCII art needs. All tools are local CLI programs or free REST APIs — no API keys required.
+
+## When to Use
+
+- You need to generate ASCII art using pyfiglet (571 fonts), cowsay, boxes, toilet, image-to-ascii, remote APIs (asciified, ascii.co.uk), and LLM fallback
 
 ## Tool 1: Text Banners (pyfiglet — local)
 
@@ -319,3 +336,16 @@ When tools above don't have what's needed, generate ASCII art directly using the
 7. **Weather/moon art** → wttr.in via curl
 8. **Something custom/creative** → LLM generation with Unicode palette
 9. **Any tool not installed** → install it, or fall back to next option
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

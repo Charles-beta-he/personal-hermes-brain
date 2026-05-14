@@ -6,8 +6,19 @@ author: Hermes Agent
 license: MIT
 metadata:
   hermes:
-    tags: [hermes, warnings, p10-health, memory, skills, cron, governance]
-    related_skills: [hermes-agent, systematic-debugging, skill-ecosystem-governance, save-workflow-as-skill]
+    tags:
+    - hermes
+    - warnings
+    - p10-health
+    - memory
+    - skills
+    - cron
+    - governance
+    related_skills:
+    - hermes-agent
+    - systematic-debugging
+    - skill-ecosystem-governance
+    - save-workflow-as-skill
 ---
 
 # Hermes Warning Governance

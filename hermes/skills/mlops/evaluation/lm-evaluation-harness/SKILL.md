@@ -1,17 +1,41 @@
 ---
 name: evaluating-llms-harness
-description: Evaluates LLMs across 60+ academic benchmarks (MMLU, HumanEval, GSM8K, TruthfulQA, HellaSwag). Use when benchmarking model quality, comparing models, reporting academic results, or tracking training progress. Industry standard used by EleutherAI, HuggingFace, and major labs. Supports HuggingFace, vLLM, APIs.
+description: Use when benchmarking model quality, comparing models, reporting academic results, or tracking training progress. Industry standard used by EleutherAI, HuggingFace, and major labs. Supports HuggingFace, vLLM, APIs.
 version: 1.0.0
 author: Orchestra Research
 license: MIT
-dependencies: [lm-eval, transformers, vllm]
+dependencies:
+- lm-eval
+- transformers
+- vllm
 metadata:
   hermes:
-    tags: [Evaluation, LM Evaluation Harness, Benchmarking, MMLU, HumanEval, GSM8K, EleutherAI, Model Quality, Academic Benchmarks, Industry Standard]
-
+    tags:
+    - Evaluation
+    - LM Evaluation Harness
+    - Benchmarking
+    - MMLU
+    - HumanEval
+    - GSM8K
+    - EleutherAI
+    - Model Quality
+    - Academic Benchmarks
+    - Industry Standard
+    related_skills:
+    - github
+    - loop
+    - vllm
 ---
 
 # lm-evaluation-harness - LLM Benchmarking
+
+## Overview
+
+Evaluates LLMs across 60+ academic benchmarks (MMLU, HumanEval, GSM8K, TruthfulQA, HellaSwag).
+
+## When to Use
+
+- Benchmarking model quality, comparing models, reporting academic results, or tracking training progress. Industry standard used by EleutherAI, HuggingFace, and major labs. Supports HuggingFace, vLLM, APIs
 
 ## Quick start
 
@@ -489,5 +513,15 @@ lm_eval --model hf \
 - Task library: 60+ tasks including MMLU, GSM8K, HumanEval, TruthfulQA, HellaSwag, ARC, WinoGrande, etc.
 - Leaderboard: https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard (uses this harness)
 
+## Common Pitfalls
 
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
 

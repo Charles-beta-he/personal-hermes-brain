@@ -107,8 +107,7 @@ def aggregate_findings(agent_results, min_confidence=0.4, min_agreement=0.4):
     for key, group in clusters.items():
         agreement = len(group) / total_agents
         avg_conf = sum(f["confidence"] for f in group) / len(group)
-        max_severity = max(f["severity"] for f in group,
-                          key=lambda s: {"critical":4,"high":3,"medium":2,"low":1}[s])
+        max_severity = max(group, key=lambda f: {"critical":4,"high":3,"medium":2,"low":1}[f["severity"]])["severity"]
         final_score = (agreement * 0.6) + (avg_conf * 0.4)
 
         # Severity-based threshold

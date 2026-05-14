@@ -22,9 +22,11 @@ def load_module():
 
 def test_signature_changes_on_next_task():
     m = load_module()
-    a = {"status": "OK", "next_task_id": "a", "dispatchable": True, "multimodel_intervention": {"task_id": "m", "queued_count": 1}}
-    b = {"status": "OK", "next_task_id": "b", "dispatchable": True, "multimodel_intervention": {"task_id": "m", "queued_count": 1}}
+    a = {"status": "OK", "next_task_id": "a", "dispatchable": True, "multimodel_intervention": {"task_id": "m", "queued_count": 1}, "auto_close_review": {"closed_count": 0, "error_count": 0}}
+    b = {"status": "OK", "next_task_id": "b", "dispatchable": True, "multimodel_intervention": {"task_id": "m", "queued_count": 1}, "auto_close_review": {"closed_count": 0, "error_count": 0}}
+    c = {"status": "OK", "next_task_id": "b", "dispatchable": True, "multimodel_intervention": {"task_id": "m", "queued_count": 1}, "auto_close_review": {"closed_count": 1, "error_count": 0}}
     assert m.signature(a) != m.signature(b)
+    assert m.signature(b) != m.signature(c)
 
 
 def test_parse_json_tail_empty_is_safe():

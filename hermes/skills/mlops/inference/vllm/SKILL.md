@@ -1,17 +1,38 @@
 ---
 name: serving-llms-vllm
-description: Serves LLMs with high throughput using vLLM's PagedAttention and continuous batching. Use when deploying production LLM APIs, optimizing inference latency/throughput, or serving models with limited GPU memory. Supports OpenAI-compatible endpoints, quantization (GPTQ/AWQ/FP8), and tensor parallelism.
+description: Use when deploying production LLM APIs, optimizing inference latency/throughput, or serving models with limited GPU memory. Supports OpenAI-compatible endpoints, quantization (GPTQ/AWQ/FP8), and tensor parallelism.
 version: 1.0.0
 author: Orchestra Research
 license: MIT
-dependencies: [vllm, torch, transformers]
+dependencies:
+- vllm
+- torch
+- transformers
 metadata:
   hermes:
-    tags: [vLLM, Inference Serving, PagedAttention, Continuous Batching, High Throughput, Production, OpenAI API, Quantization, Tensor Parallelism]
-
+    tags:
+    - vLLM
+    - Inference Serving
+    - PagedAttention
+    - Continuous Batching
+    - High Throughput
+    - Production
+    - OpenAI API
+    - Quantization
+    - Tensor Parallelism
+    related_skills:
+    - github
 ---
 
 # vLLM - High-Performance LLM Serving
+
+## Overview
+
+Serves LLMs with high throughput using vLLM's PagedAttention and continuous batching.
+
+## When to Use
+
+- Deploying production LLM APIs, optimizing inference latency/throughput, or serving models with limited GPU memory. Supports OpenAI-compatible endpoints, quantization (GPTQ/AWQ/FP8), and tensor parallelism
 
 ## Quick start
 
@@ -363,5 +384,15 @@ Supported platforms: NVIDIA (primary), AMD ROCm, Intel GPUs, TPUs
 - Paper: "Efficient Memory Management for Large Language Model Serving with PagedAttention" (SOSP 2023)
 - Community: https://discuss.vllm.ai
 
+## Common Pitfalls
 
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
 

@@ -1,13 +1,34 @@
 ---
 name: framework-audit
-description: "第三方 AI 系统/框架评估与引入决策框架 — 系统化分析外部 AI 工具（开发框架、工作流系统、CLI 工具），给出引入建议、选择性借鉴方案和集成步骤。Use when evaluating a GitHub repo, npm package, or AI tool for adoption. Triggers: '评估框架', '引入第三方', '工具选型', '框架分析', '是否引入', '对比分析', '技术选型', 'adoption analysis', 'framework evaluation'."
+description: Use when evaluating whether to adopt, reject, or selectively extract ideas from an external AI framework, GitHub repo, package, or CLI. Produces evidence-first adoption analysis, integration risk assessment, and Hermes-native selective-adoption recommendations.
+version: 1.0.0
+author: Hermes Agent
 license: MIT
-tags: [framework-audit, third-party, evaluation, adoption, integration, decision-framework]
+metadata:
+  hermes:
+    tags:
+    - framework-audit
+    - third-party
+    - evaluation
+    - adoption
+    - integration
+    - decision-framework
+    related_skills:
+    - multi-model-thinking
+    - private-fork-evolution-governance
+    - workflow-ecosystem-audit
 ---
 
 # Framework Audit — 第三方 AI 系统评估与引入决策
 
+## Overview
+
+
 > 不要因为一个工具流行就引入。评估 → 决策 → 选择性借鉴 → 集成。
+
+## When to Use
+
+- Evaluating whether to adopt, reject, or selectively extract ideas from an external AI framework, GitHub repo, package, or CLI. Produces evidence-first adoption analysis, integration risk assessment, and Hermes-native selective-adoption recommendations
 
 ## 核心流程
 
@@ -433,7 +454,22 @@ ls ~/.claude/skills/ | grep "<prefix>" | wc -l
 - 组件提取方案（如选择性借鉴）
 - Hermes 原生 skill（如 Phase 6 触发）
 
+如果本次评估产出了新的 Hermes 原生 artifact（skill / script / spec / workflow），后续治理与留痕应移交给 `private-fork-evolution-governance`：补 evolution note、verification 证据与 upgrade-survival 检查，而不是把评估报告当成完整闭环。
+
 ## 约束
 
 - 遵循项目规范
 - 在 context budget 内完成
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

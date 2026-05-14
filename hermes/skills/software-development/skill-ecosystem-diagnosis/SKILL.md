@@ -1,15 +1,31 @@
 ---
 name: skill-ecosystem-diagnosis
-description: "技能生态系统自诊方法 — 系统化诊断 Hermes skill 生态的系统性健康问题。围绕五大硬伤（技能泛滥无筛选、生态无淘汰机制、功能孤岛、冲突不检测、使用无追踪）进行定量+定性分析，映射跨学科理论框架，生成治理级处方。Use when: 'skill生态审计', '自检', '健康检查', '五大硬伤', '只能涨不能减', '系统熵增', 'ecosystem health', 'skill governance audit'."
+description: 'Use when: ''skill生态审计'', ''自检'', ''健康检查'', ''五大硬伤'', ''只能涨不能减'', ''系统熵增'', ''ecosystem health'', ''skill governance audit''.'
+version: 1.0.0
+author: Hermes Agent
 license: MIT
-tags: [skills, ecosystem, health, audit, governance, entropy]
+metadata:
+  hermes:
+    tags:
+    - skills
+    - ecosystem
+    - health
+    - audit
+    - governance
+    - entropy
+    related_skills:
+    - codex
+    - design
+    - domain
+    - hermes-agent
+    - pua
 ---
 
 # Skill Ecosystem Diagnosis — 技能生态系统自诊
 
-> 你的 skill 库不是知识库，是一个活的生态系统。
-> 不能自我净化的系统终将崩溃。
+## Overview
 
+你的 skill 库不是知识库，是一个活的生态系统。 > 不能自我净化的系统终将崩溃。. In practice, load it when Use when: 'skill生态审计', '自检', '健康检查', '五大硬伤', '只能涨不能减', '系统熵增', 'ecosystem health', 'skill governance audit'. It defines the expected execution lane, scope boundaries, and verification shape for this class of work.
 ## When to Use
 
 - 用户问"好像有记忆幽灵"、"过去的内容突然冒出来"
@@ -19,7 +35,7 @@ tags: [skills, ecosystem, health, audit, governance, entropy]
 - 发现重复/冲突的 skill（同名、同功能不同路径）
 - 用户对系统性能/响应质量下降有感知但找不到原因
 - 引入了一批新 skill 后的生态评估
-
+- Don't use for: requests that do not need Use when: 'skill生态审计', '自检', '健康检查', '五大硬伤', '只能涨不能减', '系统熵增', 'ecosystem health', 'skill governance audit'; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## Core Thesis
 
 **"只管生不管养"是技能生态崩溃的唯一原因。**
@@ -305,8 +321,7 @@ The following 7 theories form the complete "diagnosis + prescription" toolkit fo
 **Application:** 161 skills → ~145 low quality, ~13 do the heavy lifting, and you've exceeded the cognitive limit. The effective skill count must be reduced.
 **When to use:** Justify why reducing skills is necessary, not optional.
 
-## Pitfalls
-
+## Common Pitfalls
 1. **Don't try to fix all 5 axes at once** — Start with Tracking (axis 5) because you can't make data-driven decisions about the other 4 without it. Then Proliferation (axis 1) for the biggest immediate quality impact.
 
 2. **Quantitative data without qualitative context is misleading** — A skill with no CHANGELOG might be old and rock-solid. A skill with a CHANGELOG might be churning without improving. Always verify findings with file inspection.
@@ -330,3 +345,11 @@ The following 7 theories form the complete "diagnosis + prescription" toolkit fo
 - [ ] **Style**: Report uses Unicode box-drawing for tables, includes a "theoretical reference library" section, distinguishes diagnosis (data) from prescription (theory).
 - [ ] **Ghost check**: MEMORY.md and USER.md scanned. Each block classified as durable/ghost. Ghost count and memory budget usage reported. Double-ghost mechanism checked.
 - [ ] **Efficiency**: No redundant file reads. Evidence gathered in bulk filesystem scans, not one-by-one reads. Report < 500 lines; full detail in a separate document if needed.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] The Definition of Done items above were explicitly checked, not assumed.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

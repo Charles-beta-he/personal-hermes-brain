@@ -1,0 +1,38 @@
+{
+  "task_id": "2026-05-14-为-hermes-设计预算耗尽后的自动接力与回退策略",
+  "accuracy": true,
+  "long_term_goal": true,
+  "one_shot_landing": true,
+  "decision": "accept",
+  "verdict": "accept",
+  "summary": "loop_non_convergence 已通过三份收敛子任务与父任务最终方案解决，父任务 acceptance 已被最终方案覆盖。",
+  "issue_ledger": [
+    {
+      "issue": "完整自动化尚未实现",
+      "severity": 2,
+      "status": "accepted_followup",
+      "mitigation": "当前任务只验收策略设计与最小落地路径；实现另建 slice。"
+    },
+    {
+      "issue": "多模型 economy_pause 导致自动 certification 暂停",
+      "severity": 2,
+      "status": "mitigated",
+      "mitigation": "使用 deterministic evidence artifact 与 ratification gate 解除 loop_non_convergence。"
+    }
+  ],
+  "final_design": {
+    "next_slice": "如需继续落地，新增 budget-handoff-check helper，输入 quota_state/confidence/signal/task_id，输出 recommended_band、required_packet_fields、recommended_transition。",
+    "acceptance_evidence": [
+      "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-14-fallback-threshold-policy-brief.md",
+      "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-14-quota-observability-policy-brief.md",
+      "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-14-relay-ordering-policy-brief.md",
+      "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-14-budget-exhaustion-auto-handoff-final-design.md"
+    ],
+    "rollback_boundary": "不启用自动购买 quota、不自动执行高风险副作用、不在 checkpoint 未落盘前 release claim；若实现 helper 失败，只回退到当前手动 proof-log/continuation-packet 流程。"
+  },
+  "discussion_result": {
+    "decision": "accept",
+    "reason": "父任务要求的状态机、触发条件、自动/人工边界、失败回退、观测指标、最小落地方案均已在 final design 中明确。",
+    "required_next_step": "transition to done/review；实现另建 implementation slice。"
+  }
+}

@@ -1,20 +1,40 @@
 ---
 name: spike
-description: "Throwaway experiments to validate an idea before build."
+description: Use when you need guidance on throwaway experiments to validate an idea before build.
 version: 1.0.0
 author: Hermes Agent (adapted from gsd-build/get-shit-done)
 license: MIT
 metadata:
   hermes:
-    tags: [spike, prototype, experiment, feasibility, throwaway, exploration, research, planning, mvp, proof-of-concept]
-    related_skills: [writing-plans, subagent-driven-development, plan]
+    tags:
+    - spike
+    - prototype
+    - experiment
+    - feasibility
+    - throwaway
+    - exploration
+    - research
+    - planning
+    - mvp
+    - proof-of-concept
+    related_skills:
+    - writing-plans
+    - subagent-driven-development
+    - plan
 ---
 
 # Spike
 
+## Overview
+
+
 Use this skill when the user wants to **feel out an idea** before committing to a real build — validating feasibility, comparing approaches, or surfacing unknowns that no amount of research will answer. Spikes are disposable by design. Throw them away once they've paid their debt.
 
 Load this when the user says things like "let me try this", "I want to see if X works", "spike this out", "before I commit to Y", "quick prototype of Z", "is this even possible?", or "compare A vs B".
+
+## When to Use
+
+- You need guidance on throwaway experiments to validate an idea before build
 
 ## When NOT to use this
 
@@ -194,3 +214,16 @@ Propose 2-4 candidates as Given/When/Then. Let the user pick.
 ## Attribution
 
 Adapted from the GSD (Get Shit Done) project's `/gsd-spike` workflow — MIT © 2025 Lex Christopherson ([gsd-build/get-shit-done](https://github.com/gsd-build/get-shit-done)). The full GSD system offers persistent spike state, MANIFEST tracking, and integration with a broader spec-driven development pipeline; install with `npx get-shit-done-cc --hermes --global`.
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

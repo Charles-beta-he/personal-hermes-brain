@@ -1,0 +1,3 @@
+agent harness 9 components: loop engine, context management, tool registry, subagent manager, built-in skills, session persistence, dynamic prompt assembly, lifecycle hooks, permission/safety. Core value: structured constraints buy reliability and controllability; 80-point intelligence with 100% control often beats higher raw intelligence with high variance in production.
+
+Design implication for Hermes: context compression and tool-call budgets are orthogonal controls. Compression manages token pressure; it does not reset iteration/tool budgets. Safe continuation after budget exhaustion needs an explicit continuation handoff packet, not just `/new`.

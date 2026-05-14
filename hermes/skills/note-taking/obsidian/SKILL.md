@@ -1,9 +1,26 @@
 ---
 name: obsidian
-description: Read, search, and create notes in the Obsidian vault.
+description: Use when you need guidance on read, search, and create notes in the Obsidian vault.
+version: 1.0.0
+author: Hermes Agent
+license: MIT
+metadata:
+  hermes:
+    tags:
+    - note
+    - taking
+    - obsidian
+    related_skills:
+    - design
+    - framework-audit
+    - note-taking
+    - theory-driven-evolution
 ---
 
 # Obsidian Vault
+
+## Overview
+
 
 **Current canonical local brain:** `~/Documents/brain/` (override with `HERMES_BRAIN_VAULT` or `OBSIDIAN_VAULT_PATH` when needed).
 
@@ -70,6 +87,10 @@ export OBSIDIAN_VAULT_PATH="$HOME/Documents/brain"
 EOF
 # source ~/.hermes/skills/note-taking/obsidian/env.sh
 ```
+
+## When to Use
+
+- You need guidance on read, search, and create notes in the Obsidian vault
 
 ## Read a note
 
@@ -193,7 +214,7 @@ prompt: "Run python3 ~/.hermes/scripts/brainctl.py --json sync, then python3 ~/.
 
 Obsidian links notes with `[[Note Name]]` syntax. When creating notes, use these to link related content.
 
-## Pitfalls
+## Common Pitfalls
 
 ### System credential files are write-protected
 
@@ -206,3 +227,12 @@ EOF
 chmod +x ~/.hermes/skills/note-taking/obsidian/env.sh
 # source ~/.hermes/skills/note-taking/obsidian/env.sh
 ```
+1. Skipping prerequisite checks and assuming the environment already matches the workflow.
+2. Applying the workflow mechanically without confirming that the request still matches this skill's trigger class.
+3. Reporting success before reading back the actual outputs, files, or external side-effects.
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

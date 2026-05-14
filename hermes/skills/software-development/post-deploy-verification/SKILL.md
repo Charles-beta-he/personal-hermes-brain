@@ -1,20 +1,32 @@
 ---
 name: post-deploy-verification
-description: "部署后验证流程 — 代码上线后的健康检查、功能验证、监控确认。Use after deployment to Cloudflare Pages/Vercel/Netlify or any production environment."
+description: Use when the task falls under Post-Deploy Verification — 部署后验证.
+version: 1.0.0
+author: Hermes Agent
 license: MIT
-tags: [deployment, verification, monitoring, qa, post-deploy]
+metadata:
+  hermes:
+    tags:
+    - deployment
+    - verification
+    - monitoring
+    - qa
+    - post-deploy
+    related_skills:
+    - software-development
 ---
 
 # Post-Deploy Verification — 部署后验证
 
-> 上线不是终点，验证通过才是。
+## Overview
 
-## 何时使用
+上线不是终点，验证通过才是。. In practice, load it when the task falls under Post-Deploy Verification — 部署后验证. It defines the expected execution lane, scope boundaries, and verification shape for this class of work.
+## When to Use
 
 - 代码部署到生产/预发布环境后
 - CI/CD pipeline 的部署阶段完成后
 - 热修复/回滚后
-
+- Don't use for: requests that do not need the task falls under Post-Deploy Verification — 部署后验证; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## 验证清单
 
 ### 1. 构建验证
@@ -100,3 +112,16 @@ npx wrangler pages deployment list --project-name <project>
 semantic-release 发布新版本后自动触发：
 - GitHub Actions 中添加上线验证步骤
 - 验证失败时阻止发布完成标记
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

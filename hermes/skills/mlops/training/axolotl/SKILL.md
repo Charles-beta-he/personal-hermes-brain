@@ -1,22 +1,46 @@
 ---
 name: axolotl
-description: Expert guidance for fine-tuning LLMs with Axolotl - YAML configs, 100+ models, LoRA/QLoRA, DPO/KTO/ORPO/GRPO, multimodal support
+description: Use when you need guidance on expert guidance for fine-tuning LLMs with Axolotl - YAML configs, 100+ models, LoRA/QLoRA, DPO/KTO/ORPO/GRPO, multimodal support.
 version: 1.0.0
 author: Orchestra Research
 license: MIT
-dependencies: [axolotl, torch, transformers, datasets, peft, accelerate, deepspeed]
+dependencies:
+- axolotl
+- torch
+- transformers
+- datasets
+- peft
+- accelerate
+- deepspeed
 metadata:
   hermes:
-    tags: [Fine-Tuning, Axolotl, LLM, LoRA, QLoRA, DPO, KTO, ORPO, GRPO, YAML, HuggingFace, DeepSpeed, Multimodal]
-
+    tags:
+    - Fine-Tuning
+    - Axolotl
+    - LLM
+    - LoRA
+    - QLoRA
+    - DPO
+    - KTO
+    - ORPO
+    - GRPO
+    - YAML
+    - HuggingFace
+    - DeepSpeed
+    - Multimodal
+    related_skills:
+    - github
+    - guidance
 ---
 
 # Axolotl Skill
 
+## Overview
+
+
 Comprehensive assistance with axolotl development, generated from official documentation.
 
-## When to Use This Skill
-
+## When to Use
 This skill should be triggered when:
 - Working with axolotl
 - Asking about axolotl features or APIs
@@ -158,4 +182,15 @@ To refresh this skill with updated documentation:
 1. Re-run the scraper with the same configuration
 2. The skill will be rebuilt with the latest information
 
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
 

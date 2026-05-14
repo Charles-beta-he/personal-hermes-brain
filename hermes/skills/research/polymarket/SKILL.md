@@ -1,12 +1,24 @@
 ---
 name: polymarket
-description: Query Polymarket prediction market data — search markets, get prices, orderbooks, and price history. Read-only via public REST APIs, no API key needed.
+description: Use when you need guidance on query Polymarket prediction market data — search markets, get prices, orderbooks, and price history.
 version: 1.0.0
 author: Hermes Agent + Teknium
-tags: [polymarket, prediction-markets, market-data, trading]
+license: MIT
+metadata:
+  hermes:
+    tags:
+    - polymarket
+    - prediction-markets
+    - market-data
+    - trading
+    related_skills:
+    - research
 ---
 
 # Polymarket — Prediction Market Data
+
+## Overview
+
 
 Query prediction market data from Polymarket using their public REST APIs.
 All endpoints are read-only and require zero authentication.
@@ -20,7 +32,7 @@ See `references/api-endpoints.md` for the full endpoint reference with curl exam
 - User asks about Polymarket specifically
 - User wants market prices, orderbook data, or price history
 - User asks to monitor or track prediction market movements
-
+- Don't use for: requests that do not need you need guidance on query Polymarket prediction market data — search markets, get prices, orderbooks, and price history; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## Key Concepts
 
 - **Events** contain one or more **Markets** (1:many relationship)
@@ -74,3 +86,16 @@ Generous — unlikely to hit for normal usage:
 - Trading requires wallet-based crypto authentication (EIP-712 signatures)
 - Some new markets may have empty price history
 - Geographic restrictions apply to trading but read-only data is globally accessible
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

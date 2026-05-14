@@ -1,20 +1,35 @@
 ---
 name: himalaya
-description: CLI to manage emails via IMAP/SMTP. Use himalaya to list, read, write, reply, forward, search, and organize emails from the terminal. Supports multiple accounts and message composition with MML (MIME Meta Language).
+description: Use when you need guidance on cLI to manage emails via IMAP/SMTP.
 version: 1.0.0
 author: community
 license: MIT
+prerequisites:
+  commands:
+  - himalaya
 metadata:
   hermes:
-    tags: [Email, IMAP, SMTP, CLI, Communication]
+    tags:
+    - Email
+    - IMAP
+    - SMTP
+    - CLI
+    - Communication
     homepage: https://github.com/pimalaya/himalaya
-prerequisites:
-  commands: [himalaya]
+    related_skills:
+    - email
 ---
 
 # Himalaya Email CLI
 
+## Overview
+
+
 Himalaya is a CLI email client that lets you manage emails from the terminal using IMAP, SMTP, Notmuch, or Sendmail backends.
+
+## When to Use
+
+- You need guidance on cLI to manage emails via IMAP/SMTP
 
 ## References
 
@@ -276,3 +291,16 @@ RUST_LOG=trace RUST_BACKTRACE=1 himalaya envelope list
 - Message IDs are relative to the current folder; re-list after folder changes.
 - For composing rich emails with attachments, use MML syntax (see `references/message-composition.md`).
 - Store passwords securely using `pass`, system keyring, or a command that outputs the password.
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

@@ -1,16 +1,28 @@
 ---
 name: findmy
-description: Track Apple devices and AirTags via FindMy.app on macOS using AppleScript and screen capture.
+description: Use when you need to track Apple devices and AirTags via FindMy.app on macOS using AppleScript and screen capture.
 version: 1.0.0
 author: Hermes Agent
 license: MIT
-platforms: [macos]
+platforms:
+- macos
 metadata:
   hermes:
-    tags: [FindMy, AirTag, location, tracking, macOS, Apple]
+    tags:
+    - FindMy
+    - AirTag
+    - location
+    - tracking
+    - macOS
+    - Apple
+    related_skills:
+    - apple
 ---
 
 # Find My (Apple)
+
+## Overview
+
 
 Track Apple devices and AirTags via the FindMy.app on macOS. Since Apple doesn't
 provide a CLI for FindMy, this skill uses AppleScript to open the app and
@@ -30,7 +42,7 @@ screen capture to read device locations.
 - Tracking AirTag locations
 - Checking device locations (iPhone, iPad, Mac, AirPods)
 - Monitoring pet or item movement over time (AirTag patrol routes)
-
+- Don't use for: requests that do not need you need to track Apple devices and AirTags via FindMy.app on macOS using AppleScript and screen capture; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## Method 1: AppleScript + Screenshot (Basic)
 
 ### Open FindMy and Navigate
@@ -129,3 +141,16 @@ Analyze each screenshot with vision to extract coordinates, then compile a route
 2. Use `vision_analyze` to read screenshot content — don't try to parse pixels
 3. For ongoing tracking, use a cronjob to periodically capture and log locations
 4. Respect privacy — only track devices/items the user owns
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

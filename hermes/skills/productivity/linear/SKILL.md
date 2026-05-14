@@ -1,20 +1,37 @@
 ---
 name: linear
-description: Manage Linear issues, projects, and teams via the GraphQL API. Create, update, search, and organize issues. Uses API key auth (no OAuth needed). All operations via curl — no dependencies.
+description: Use when you need to manage Linear issues, projects, and teams via the GraphQL API.
 version: 1.0.0
 author: Hermes Agent
 license: MIT
 prerequisites:
-  env_vars: [LINEAR_API_KEY]
-  commands: [curl]
+  env_vars:
+  - LINEAR_API_KEY
+  commands:
+  - curl
 metadata:
   hermes:
-    tags: [Linear, Project Management, Issues, GraphQL, API, Productivity]
+    tags:
+    - Linear
+    - Project Management
+    - Issues
+    - GraphQL
+    - API
+    - Productivity
+    related_skills:
+    - email
 ---
 
 # Linear — Issue & Project Management
 
+## Overview
+
+
 Manage Linear issues, projects, and teams directly via the GraphQL API using `curl`. No MCP server, no OAuth flow, no extra dependencies.
+
+## When to Use
+
+- You need to manage Linear issues, projects, and teams via the GraphQL API
 
 ## Setup
 
@@ -295,3 +312,16 @@ Combine filters with `or: [...]` for OR logic (default is AND within a filter ob
 - If `stateId` is omitted when creating issues, Linear defaults to the first backlog state
 - The `description` field supports Markdown
 - Use `python3 -m json.tool` or `jq` to format JSON responses for readability
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

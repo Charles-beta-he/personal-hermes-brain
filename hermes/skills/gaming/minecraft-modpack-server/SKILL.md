@@ -1,16 +1,34 @@
 ---
 name: minecraft-modpack-server
-description: Set up a modded Minecraft server from a CurseForge/Modrinth server pack zip. Covers NeoForge/Forge install, Java version, JVM tuning, firewall, LAN config, backups, and launch scripts.
-tags: [minecraft, gaming, server, neoforge, forge, modpack]
+description: Use when you need guidance on set up a modded Minecraft server from a CurseForge/Modrinth server pack zip.
+version: 1.0.0
+author: Hermes Agent
+license: MIT
+metadata:
+  hermes:
+    tags:
+    - minecraft
+    - gaming
+    - server
+    - neoforge
+    - forge
+    - modpack
+    related_skills:
+    - creative
+    - loop
 ---
 
 # Minecraft Modpack Server Setup
 
-## When to use
+## Overview
+
+Set up a modded Minecraft server from a CurseForge/Modrinth server pack zip. In practice, load it when you need guidance on set up a modded Minecraft server from a CurseForge/Modrinth server pack zip. It defines the expected execution lane, scope boundaries, and verification shape for this class of work.
+## When to Use
+
 - User wants to set up a modded Minecraft server from a server pack zip
 - User needs help with NeoForge/Forge server configuration
 - User asks about Minecraft server performance tuning or backups
-
+- Don't use for: requests that do not need you need guidance on set up a modded Minecraft server from a CurseForge/Modrinth server pack zip; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## Gather User Preferences First
 Before starting setup, ask the user for:
 - **Server name / MOTD** — what should it say in the server list?
@@ -169,7 +187,8 @@ Add hourly cron:
 (crontab -l 2>/dev/null | grep -v "minecraft/backup.sh"; echo "0 * * * * $HOME/minecraft-server/backup.sh >> $HOME/minecraft-server/backups/backup.log 2>&1") | crontab -
 ```
 
-## Pitfalls
+## Common Pitfalls
+
 - ALWAYS set `allow-flight=true` for modded — mods with jetpacks/flight will kick players otherwise
 - `max-tick-time=180000` or higher — modded servers often have long ticks during worldgen
 - First startup is SLOW (several minutes for big packs) — don't panic
@@ -178,9 +197,15 @@ Add hourly cron:
 - The pack's startserver.sh often has an auto-restart loop — make a clean launch script without it
 - Delete the world/ folder to regenerate with a new seed
 - Some packs have env vars to control behavior (e.g., ATM10 uses ATM10_JAVA, ATM10_RESTART, ATM10_INSTALL_ONLY)
+1. Skipping prerequisite checks and assuming the environment already matches the workflow.
+2. Applying the workflow mechanically without confirming that the request still matches this skill's trigger class.
+3. Reporting success before reading back the actual outputs, files, or external side-effects.
+## Verification Checklist
 
-## Verification
 - `pgrep -fa neoforge` or `pgrep -fa minecraft` to check if running
 - Check logs: `tail -f ~/minecraft-server/server/logs/latest.log`
 - Look for "Done (Xs)!" in the log = server is ready
 - Test connection: player adds server IP in Multiplayer
+- [ ] Preconditions, scope, and tool availability were checked before following this workflow.
+- [ ] The key output artifacts, commands, or side-effects were verified by read-back or direct inspection.
+- [ ] The final result still matches the trigger and acceptance shape of this skill.

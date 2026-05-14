@@ -1,0 +1,196 @@
+{
+  "moved_at": "2026-05-13T20:49:09.012635",
+  "reason": "temporary removal of all Lark tasks from active taskpool regardless of status",
+  "count": 27,
+  "items": [
+    {
+      "name": "2026-05-10-修复-uvisa-app-20-我的-个人信息卡片-id-为空但复制按钮仍显示的问题.md",
+      "from": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-10-修复-uvisa-app-20-我的-个人信息卡片-id-为空但复制按钮仍显示的问题.md",
+      "to": "/Users/charles/Documents/brain/05-实践与项目/tasks/_temporarily_removed_lark_tasks/20260513-204908/2026-05-10-修复-uvisa-app-20-我的-个人信息卡片-id-为空但复制按钮仍显示的问题.md",
+      "status": "pending",
+      "title": "2026-05-10-修复-uvisa-app-20-我的-个人信息卡片-id-为空但复制按钮仍显示的问题"
+    },
+    {
+      "name": "2026-05-10-修复-uvisa-通知时间后端业务事件时间源lark-6906ef6e-d0655d71-打回.md",
+      "from": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-10-修复-uvisa-通知时间后端业务事件时间源lark-6906ef6e-d0655d71-打回.md",
+      "to": "/Users/charles/Documents/brain/05-实践与项目/tasks/_temporarily_removed_lark_tasks/20260513-204908/2026-05-10-修复-uvisa-通知时间后端业务事件时间源lark-6906ef6e-d0655d71-打回.md",
+      "status": "done",
+      "title": "2026-05-10-修复-uvisa-通知时间后端业务事件时间源lark-6906ef6e-d0655d71-打回"
+    },
+    {
+      "name": "2026-05-10-多模型分析-rowboatlabs-rowboat-并完善-hermes-自身.md",
+      "from": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-10-多模型分析-rowboatlabs-rowboat-并完善-hermes-自身.md",
+      "to": "/Users/charles/Documents/brain/05-实践与项目/tasks/_temporarily_removed_lark_tasks/20260513-204908/2026-05-10-多模型分析-rowboatlabs-rowboat-并完善-hermes-自身.md",
+      "status": "done",
+      "title": "2026-05-10-多模型分析-rowboatlabs-rowboat-并完善-hermes-自身"
+    },
+    {
+      "name": "2026-05-10-恢复-uvisa-app-20-u-visa-页面原有-ui-样式并暂用硬编码假数据.md",
+      "from": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-10-恢复-uvisa-app-20-u-visa-页面原有-ui-样式并暂用硬编码假数据.md",
+      "to": "/Users/charles/Documents/brain/05-实践与项目/tasks/_temporarily_removed_lark_tasks/20260513-204908/2026-05-10-恢复-uvisa-app-20-u-visa-页面原有-ui-样式并暂用硬编码假数据.md",
+      "status": "pending",
+      "title": "2026-05-10-恢复-uvisa-app-20-u-visa-页面原有-ui-样式并暂用硬编码假数据"
+    },
+    {
+      "name": "2026-05-12-lark-reopened-uvisa-real-api-0cd14898-客服缓存真实会话刷新.md",
+      "from": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-12-lark-reopened-uvisa-real-api-0cd14898-客服缓存真实会话刷新.md",
+      "to": "/Users/charles/Documents/brain/05-实践与项目/tasks/_temporarily_removed_lark_tasks/20260513-204908/2026-05-12-lark-reopened-uvisa-real-api-0cd14898-客服缓存真实会话刷新.md",
+      "status": "done",
+      "title": "2026-05-12-lark-reopened-uvisa-real-api-0cd14898-客服缓存真实会话刷新"
+    },
+    {
+      "name": "2026-05-12-lark-reopened-uvisa-real-api-57da3f4f-大金额适配真实余额验证.md",
+      "from": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-12-lark-reopened-uvisa-real-api-57da3f4f-大金额适配真实余额验证.md",
+      "to": "/Users/charles/Documents/brain/05-实践与项目/tasks/_temporarily_removed_lark_tasks/20260513-204908/2026-05-12-lark-reopened-uvisa-real-api-57da3f4f-大金额适配真实余额验证.md",
+      "status": "done",
+      "title": "2026-05-12-lark-reopened-uvisa-real-api-57da3f4f-大金额适配真实余额验证"
+    },
+    {
+      "name": "2026-05-12-lark-reopened-uvisa-real-api-82f47f18-电子钱包收款账号格式校验-fe-be.md",
+      "from": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-12-lark-reopened-uvisa-real-api-82f47f18-电子钱包收款账号格式校验-fe-be.md",
+      "to": "/Users/charles/Documents/brain/05-实践与项目/tasks/_temporarily_removed_lark_tasks/20260513-204908/2026-05-12-lark-reopened-uvisa-real-api-82f47f18-电子钱包收款账号格式校验-fe-be.md",
+      "status": "done",
+      "title": "2026-05-12-lark-reopened-uvisa-real-api-82f47f18-电子钱包收款账号格式校验-fe-be"
+    },
+    {
+      "name": "2026-05-12-lark-reopened-uvisa-real-api-b9d0fcf8-交易记录统一真实接口聚合.md",
+      "from": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-12-lark-reopened-uvisa-real-api-b9d0fcf8-交易记录统一真实接口聚合.md",
+      "to": "/Users/charles/Documents/brain/05-实践与项目/tasks/_temporarily_removed_lark_tasks/20260513-204908/2026-05-12-lark-reopened-uvisa-real-api-b9d0fcf8-交易记录统一真实接口聚合.md",
+      "status": "done",
+      "title": "2026-05-12-lark-reopened-uvisa-real-api-b9d0fcf8-交易记录统一真实接口聚合"
+    },
+    {
+      "name": "2026-05-12-lark-reopened-uvisa-real-api-c1bb88b4-sw更新缓存非强制更新.md",
+      "from": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-12-lark-reopened-uvisa-real-api-c1bb88b4-sw更新缓存非强制更新.md",
+      "to": "/Users/charles/Documents/brain/05-实践与项目/tasks/_temporarily_removed_lark_tasks/20260513-204908/2026-05-12-lark-reopened-uvisa-real-api-c1bb88b4-sw更新缓存非强制更新.md",
+      "status": "done",
+      "title": "2026-05-12-lark-reopened-uvisa-real-api-c1bb88b4-sw更新缓存非强制更新"
+    },
+    {
+      "name": "2026-05-12-lark-reopened-uvisa-real-api-ce96f98c-cny转入绑定银行真实接口.md",
+      "from": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-12-lark-reopened-uvisa-real-api-ce96f98c-cny转入绑定银行真实接口.md",
+      "to": "/Users/charles/Documents/brain/05-实践与项目/tasks/_temporarily_removed_lark_tasks/20260513-204908/2026-05-12-lark-reopened-uvisa-real-api-ce96f98c-cny转入绑定银行真实接口.md",
+      "status": "done",
+      "title": "2026-05-12-lark-reopened-uvisa-real-api-ce96f98c-cny转入绑定银行真实接口"
+    },
+    {
+      "name": "2026-05-12-lark-reopened-uvisa-real-api-ed1cb905-单点登录真实多设备踢出.md",
+      "from": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-12-lark-reopened-uvisa-real-api-ed1cb905-单点登录真实多设备踢出.md",
+      "to": "/Users/charles/Documents/brain/05-实践与项目/tasks/_temporarily_removed_lark_tasks/20260513-204908/2026-05-12-lark-reopened-uvisa-real-api-ed1cb905-单点登录真实多设备踢出.md",
+      "status": "done",
+      "title": "2026-05-12-lark-reopened-uvisa-real-api-ed1cb905-单点登录真实多设备踢出"
+    },
+    {
+      "name": "2026-05-12-uvisa-online-ui-regression-batch-closed-lark.md",
+      "from": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-12-uvisa-online-ui-regression-batch-closed-lark.md",
+      "to": "/Users/charles/Documents/brain/05-实践与项目/tasks/_temporarily_removed_lark_tasks/20260513-204908/2026-05-12-uvisa-online-ui-regression-batch-closed-lark.md",
+      "status": "done",
+      "title": "2026-05-12-uvisa-online-ui-regression-batch-closed-lark"
+    },
+    {
+      "name": "2026-05-12-用户端-u-visa板块卡片页面中的虚拟卡修改为physical-cardu-visa没有虚拟卡功能只有实体卡功能.md",
+      "from": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-12-用户端-u-visa板块卡片页面中的虚拟卡修改为physical-cardu-visa没有虚拟卡功能只有实体卡功能.md",
+      "to": "/Users/charles/Documents/brain/05-实践与项目/tasks/_temporarily_removed_lark_tasks/20260513-204908/2026-05-12-用户端-u-visa板块卡片页面中的虚拟卡修改为physical-cardu-visa没有虚拟卡功能只有实体卡功能.md",
+      "status": "done",
+      "title": "2026-05-12-用户端-u-visa板块卡片页面中的虚拟卡修改为physical-cardu-visa没有虚拟卡功能只有实体卡功能"
+    },
+    {
+      "name": "2026-05-12-用户端-底部导航栏第一个资产菜单内下拉到最近交易板块申购类型的应该显示的是理财申购申购是花费了资金变相的是购买了产品资金流应该是减去购买理财产品的资金当前是加了.md",
+      "from": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-12-用户端-底部导航栏第一个资产菜单内下拉到最近交易板块申购类型的应该显示的是理财申购申购是花费了资金变相的是购买了产品资金流应该是减去购买理财产品的资金当前是加了.md",
+      "to": "/Users/charles/Documents/brain/05-实践与项目/tasks/_temporarily_removed_lark_tasks/20260513-204908/2026-05-12-用户端-底部导航栏第一个资产菜单内下拉到最近交易板块申购类型的应该显示的是理财申购申购是花费了资金变相的是购买了产品资金流应该是减去购买理财产品的资金当前是加了.md",
+      "status": "review",
+      "title": "2026-05-12-用户端-底部导航栏第一个资产菜单内下拉到最近交易板块申购类型的应该显示的是理财申购申购是花费了资金变相的是购买了产品资金流应该是减去购买理财产品的资金当前是加了"
+    },
+    {
+      "name": "2026-05-12-用户端-底部导航栏第一个资产菜单内下拉到最近交易板块申购类型的记录点击进入后到申购交易详情页面该页面内容和原型图中的不一致认购资金流水是减去资金这里是增加资金逻.md",
+      "from": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-12-用户端-底部导航栏第一个资产菜单内下拉到最近交易板块申购类型的记录点击进入后到申购交易详情页面该页面内容和原型图中的不一致认购资金流水是减去资金这里是增加资金逻.md",
+      "to": "/Users/charles/Documents/brain/05-实践与项目/tasks/_temporarily_removed_lark_tasks/20260513-204908/2026-05-12-用户端-底部导航栏第一个资产菜单内下拉到最近交易板块申购类型的记录点击进入后到申购交易详情页面该页面内容和原型图中的不一致认购资金流水是减去资金这里是增加资金逻.md",
+      "status": "done",
+      "title": "2026-05-12-用户端-底部导航栏第一个资产菜单内下拉到最近交易板块申购类型的记录点击进入后到申购交易详情页面该页面内容和原型图中的不一致认购资金流水是减去资金这里是增加资金逻"
+    },
+    {
+      "name": "2026-05-12-用户端-底部导航栏第一个资产菜单内点击兑换支付货币和收到的目标货币之间的转换金额应根据参考汇率进行兑换参考汇率是通过admin管理后台进行配置admin管理后台.md",
+      "from": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-12-用户端-底部导航栏第一个资产菜单内点击兑换支付货币和收到的目标货币之间的转换金额应根据参考汇率进行兑换参考汇率是通过admin管理后台进行配置admin管理后台.md",
+      "to": "/Users/charles/Documents/brain/05-实践与项目/tasks/_temporarily_removed_lark_tasks/20260513-204908/2026-05-12-用户端-底部导航栏第一个资产菜单内点击兑换支付货币和收到的目标货币之间的转换金额应根据参考汇率进行兑换参考汇率是通过admin管理后台进行配置admin管理后台.md",
+      "status": "blocked",
+      "title": "2026-05-12-用户端-底部导航栏第一个资产菜单内点击兑换支付货币和收到的目标货币之间的转换金额应根据参考汇率进行兑换参考汇率是通过admin管理后台进行配置admin管理后台"
+    },
+    {
+      "name": "2026-05-12-用户端-底部导航栏第一个资产菜单内点击兑换输入支付金额和选择收到币种后点击下一步点击确认兑换输入支付密码后继续输入邮箱验证码后顶部弹出验证失败请重试.md",
+      "from": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-12-用户端-底部导航栏第一个资产菜单内点击兑换输入支付金额和选择收到币种后点击下一步点击确认兑换输入支付密码后继续输入邮箱验证码后顶部弹出验证失败请重试.md",
+      "to": "/Users/charles/Documents/brain/05-实践与项目/tasks/_temporarily_removed_lark_tasks/20260513-204908/2026-05-12-用户端-底部导航栏第一个资产菜单内点击兑换输入支付金额和选择收到币种后点击下一步点击确认兑换输入支付密码后继续输入邮箱验证码后顶部弹出验证失败请重试.md",
+      "status": "done",
+      "title": "2026-05-12-用户端-底部导航栏第一个资产菜单内点击兑换输入支付金额和选择收到币种后点击下一步点击确认兑换输入支付密码后继续输入邮箱验证码后顶部弹出验证失败请重试"
+    },
+    {
+      "name": "2026-05-12-用户端-底部导航栏第一个资产菜单内点击财富持仓跳转到我的持仓页面理财申购的记录点击后跳转到对应的申购理财产品的详情页持有天数和起息日参数应该从admin管理后台.md",
+      "from": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-12-用户端-底部导航栏第一个资产菜单内点击财富持仓跳转到我的持仓页面理财申购的记录点击后跳转到对应的申购理财产品的详情页持有天数和起息日参数应该从admin管理后台.md",
+      "to": "/Users/charles/Documents/brain/05-实践与项目/tasks/_temporarily_removed_lark_tasks/20260513-204908/2026-05-12-用户端-底部导航栏第一个资产菜单内点击财富持仓跳转到我的持仓页面理财申购的记录点击后跳转到对应的申购理财产品的详情页持有天数和起息日参数应该从admin管理后台.md",
+      "status": "review",
+      "title": "2026-05-12-用户端-底部导航栏第一个资产菜单内点击财富持仓跳转到我的持仓页面理财申购的记录点击后跳转到对应的申购理财产品的详情页持有天数和起息日参数应该从admin管理后台"
+    },
+    {
+      "name": "2026-05-12-用户端-底部导航栏第一个资产菜单内点击转出选择跨境汇款选择汇款内支持的货币到汇款金额页面选择收款人新建收款人选择电子钱包到电子钱包收款人信息页面该页面内的昵称板.md",
+      "from": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-12-用户端-底部导航栏第一个资产菜单内点击转出选择跨境汇款选择汇款内支持的货币到汇款金额页面选择收款人新建收款人选择电子钱包到电子钱包收款人信息页面该页面内的昵称板.md",
+      "to": "/Users/charles/Documents/brain/05-实践与项目/tasks/_temporarily_removed_lark_tasks/20260513-204908/2026-05-12-用户端-底部导航栏第一个资产菜单内点击转出选择跨境汇款选择汇款内支持的货币到汇款金额页面选择收款人新建收款人选择电子钱包到电子钱包收款人信息页面该页面内的昵称板.md",
+      "status": "done",
+      "title": "2026-05-12-用户端-底部导航栏第一个资产菜单内点击转出选择跨境汇款选择汇款内支持的货币到汇款金额页面选择收款人新建收款人选择电子钱包到电子钱包收款人信息页面该页面内的昵称板"
+    },
+    {
+      "name": "2026-05-12-用户端-底部导航栏第四个我的菜单内点击交易记录进入到交易记录页面该页面和原型图中的页面不一致相差较大请根据评论区内的原型截图进行1-1复刻交易记录的页面数据显示.md",
+      "from": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-12-用户端-底部导航栏第四个我的菜单内点击交易记录进入到交易记录页面该页面和原型图中的页面不一致相差较大请根据评论区内的原型截图进行1-1复刻交易记录的页面数据显示.md",
+      "to": "/Users/charles/Documents/brain/05-实践与项目/tasks/_temporarily_removed_lark_tasks/20260513-204908/2026-05-12-用户端-底部导航栏第四个我的菜单内点击交易记录进入到交易记录页面该页面和原型图中的页面不一致相差较大请根据评论区内的原型截图进行1-1复刻交易记录的页面数据显示.md",
+      "status": "done",
+      "title": "2026-05-12-用户端-底部导航栏第四个我的菜单内点击交易记录进入到交易记录页面该页面和原型图中的页面不一致相差较大请根据评论区内的原型截图进行1-1复刻交易记录的页面数据显示"
+    },
+    {
+      "name": "2026-05-12-用户端-点击底部导航栏财富点击顶部的查看详情然后任选一款产品进入详情页点击提前赎回赎回确认弹框内显示的提前赎回金额减去管理费后的预估到账金额和实际到账金额数值不.md",
+      "from": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-12-用户端-点击底部导航栏财富点击顶部的查看详情然后任选一款产品进入详情页点击提前赎回赎回确认弹框内显示的提前赎回金额减去管理费后的预估到账金额和实际到账金额数值不.md",
+      "to": "/Users/charles/Documents/brain/05-实践与项目/tasks/_temporarily_removed_lark_tasks/20260513-204908/2026-05-12-用户端-点击底部导航栏财富点击顶部的查看详情然后任选一款产品进入详情页点击提前赎回赎回确认弹框内显示的提前赎回金额减去管理费后的预估到账金额和实际到账金额数值不.md",
+      "status": "review",
+      "title": "2026-05-12-用户端-点击底部导航栏财富点击顶部的查看详情然后任选一款产品进入详情页点击提前赎回赎回确认弹框内显示的提前赎回金额减去管理费后的预估到账金额和实际到账金额数值不"
+    },
+    {
+      "name": "2026-05-12-用户端-点击底部导航栏资产点击转入输入金额后点击下一步进入转入须知页面不勾选相关协议时点击查看收款信息需给出协议区域高亮标红提示.md",
+      "from": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-12-用户端-点击底部导航栏资产点击转入输入金额后点击下一步进入转入须知页面不勾选相关协议时点击查看收款信息需给出协议区域高亮标红提示.md",
+      "to": "/Users/charles/Documents/brain/05-实践与项目/tasks/_temporarily_removed_lark_tasks/20260513-204908/2026-05-12-用户端-点击底部导航栏资产点击转入输入金额后点击下一步进入转入须知页面不勾选相关协议时点击查看收款信息需给出协议区域高亮标红提示.md",
+      "status": "done",
+      "title": "2026-05-12-用户端-点击底部导航栏资产点击转入输入金额后点击下一步进入转入须知页面不勾选相关协议时点击查看收款信息需给出协议区域高亮标红提示"
+    },
+    {
+      "name": "2026-05-12-用户端-点击我的点击安全中心点击登录密码在原密码输入框中输入任意密码然后在新密码和确认新密码输入框中输入相同密码后点击完成系统未校验原登录密码的正确性直接判定修.md",
+      "from": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-12-用户端-点击我的点击安全中心点击登录密码在原密码输入框中输入任意密码然后在新密码和确认新密码输入框中输入相同密码后点击完成系统未校验原登录密码的正确性直接判定修.md",
+      "to": "/Users/charles/Documents/brain/05-实践与项目/tasks/_temporarily_removed_lark_tasks/20260513-204908/2026-05-12-用户端-点击我的点击安全中心点击登录密码在原密码输入框中输入任意密码然后在新密码和确认新密码输入框中输入相同密码后点击完成系统未校验原登录密码的正确性直接判定修.md",
+      "status": "done",
+      "title": "2026-05-12-用户端-点击我的点击安全中心点击登录密码在原密码输入框中输入任意密码然后在新密码和确认新密码输入框中输入相同密码后点击完成系统未校验原登录密码的正确性直接判定修"
+    },
+    {
+      "name": "2026-05-12-用户端-资产内点击转入选择国际银行电汇内的货币跳转到汇款输入金额的页面输入金额点击下一步跳转到转入须知的页面勾选后点击查看收款信息跳转到收款信息页面后该页面金额.md",
+      "from": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-12-用户端-资产内点击转入选择国际银行电汇内的货币跳转到汇款输入金额的页面输入金额点击下一步跳转到转入须知的页面勾选后点击查看收款信息跳转到收款信息页面后该页面金额.md",
+      "to": "/Users/charles/Documents/brain/05-实践与项目/tasks/_temporarily_removed_lark_tasks/20260513-204908/2026-05-12-用户端-资产内点击转入选择国际银行电汇内的货币跳转到汇款输入金额的页面输入金额点击下一步跳转到转入须知的页面勾选后点击查看收款信息跳转到收款信息页面后该页面金额.md",
+      "status": "done",
+      "title": "2026-05-12-用户端-资产内点击转入选择国际银行电汇内的货币跳转到汇款输入金额的页面输入金额点击下一步跳转到转入须知的页面勾选后点击查看收款信息跳转到收款信息页面后该页面金额"
+    },
+    {
+      "name": "2026-05-12-用户端-资产页面法币钱包内的cny接口是跟随admin后台管理内的用户端运营配置选项页面的境内-cny-转账入口启用这个按钮的勾选来决定展示或者不展示勾选就是正.md",
+      "from": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-12-用户端-资产页面法币钱包内的cny接口是跟随admin后台管理内的用户端运营配置选项页面的境内-cny-转账入口启用这个按钮的勾选来决定展示或者不展示勾选就是正.md",
+      "to": "/Users/charles/Documents/brain/05-实践与项目/tasks/_temporarily_removed_lark_tasks/20260513-204908/2026-05-12-用户端-资产页面法币钱包内的cny接口是跟随admin后台管理内的用户端运营配置选项页面的境内-cny-转账入口启用这个按钮的勾选来决定展示或者不展示勾选就是正.md",
+      "status": "done",
+      "title": "2026-05-12-用户端-资产页面法币钱包内的cny接口是跟随admin后台管理内的用户端运营配置选项页面的境内-cny-转账入口启用这个按钮的勾选来决定展示或者不展示勾选就是正"
+    },
+    {
+      "name": "2026-05-12-用户端-资产页面点击转入或者直接点击法币钱包内除了cny之外的其他货币跳转到国际电汇转入页面输入金额下一步转入须知确认再到下一步到收款信息页面该页面上的信息显示.md",
+      "from": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-12-用户端-资产页面点击转入或者直接点击法币钱包内除了cny之外的其他货币跳转到国际电汇转入页面输入金额下一步转入须知确认再到下一步到收款信息页面该页面上的信息显示.md",
+      "to": "/Users/charles/Documents/brain/05-实践与项目/tasks/_temporarily_removed_lark_tasks/20260513-204908/2026-05-12-用户端-资产页面点击转入或者直接点击法币钱包内除了cny之外的其他货币跳转到国际电汇转入页面输入金额下一步转入须知确认再到下一步到收款信息页面该页面上的信息显示.md",
+      "status": "pending",
+      "title": "2026-05-12-用户端-资产页面点击转入或者直接点击法币钱包内除了cny之外的其他货币跳转到国际电汇转入页面输入金额下一步转入须知确认再到下一步到收款信息页面该页面上的信息显示"
+    },
+    {
+      "name": "2026-05-13-uvisa-exchange-fullstack-gap-landing.md",
+      "from": "/Users/charles/Documents/brain/05-实践与项目/tasks/2026-05-13-uvisa-exchange-fullstack-gap-landing.md",
+      "to": "/Users/charles/Documents/brain/05-实践与项目/tasks/_temporarily_removed_lark_tasks/20260513-204908/2026-05-13-uvisa-exchange-fullstack-gap-landing.md",
+      "status": "blocked",
+      "title": "2026-05-13-uvisa-exchange-fullstack-gap-landing"
+    }
+  ]
+}

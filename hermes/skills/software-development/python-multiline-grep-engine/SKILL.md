@@ -1,37 +1,45 @@
 ---
 name: python-multiline-grep-engine
-description: Build a Python-native multiline grep engine to replace shell `grep -rn`. 5-layer pipeline architecture with pluggable engines, git-aware incremental mode, parallel search, count mode, and context display. 52-test coverage.
-tags:
-  - grep
-  - multiline
-  - regex
-  - python
-  - pipeline
-related_skills:
-  - systematic-debugging
-  - save-workflow-as-skill
+description: Use when you need to build a Python-native multiline grep engine to replace shell `grep -rn`.
+version: 1.0.0
+author: Hermes Agent
+license: MIT
 triggers:
-  - "需要跨行 grep"
-  - "grep 不支持多行"
-  - "替换 shell grep"
-  - "multiline grep"
-  - "跨行模式检测"
-  - "Python 原生 grep"
-  - "git-aware grep"
-  - "code search engine"
-  - "取代 grep -rn"
+- 需要跨行 grep
+- grep 不支持多行
+- 替换 shell grep
+- multiline grep
+- 跨行模式检测
+- Python 原生 grep
+- git-aware grep
+- code search engine
+- 取代 grep -rn
+metadata:
+  hermes:
+    tags:
+    - grep
+    - multiline
+    - regex
+    - python
+    - pipeline
+    related_skills:
+    - systematic-debugging
+    - save-workflow-as-skill
 ---
 
 # Python Multiline Grep Engine (v2 — Pipeline Architecture)
 
-## When to use
+## Overview
+
+Build a Python-native multiline grep engine to replace shell `grep -rn`. In practice, load it when you need to build a Python-native multiline grep engine to replace shell `grep -rn`. It defines the expected execution lane, scope boundaries, and verification shape for this class of work.
+## When to Use
 
 - You have a Python project that shells out to `grep -rn` and needs **cross-line matching**
 - You want to **eliminate shell dependency** for grep operations (portability, error handling)
 - You're adding a grep tool to an **agent tool registry** (like executor.py)
 - You need a **scalable, testable** grep engine for a long-term project
 - You need **git-aware incremental search** (only search changed files)
-
+- Don't use for: requests that do not need you need to build a Python-native multiline grep engine to replace shell `grep -rn`; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## Architecture: 5-Layer Pipeline
 
 ```
@@ -301,3 +309,16 @@ Use `Path(path).match(ex)` for glob-based exclude patterns. This supports patter
 ### 10. Binary sniff must precede extension check
 
 In `_is_binary_file` (v2) / `_is_text_file` (v1), check extension first (fast path), then sniff. Reversed order would read files unnecessarily.
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

@@ -1,16 +1,32 @@
 ---
 name: code-simplification
-description: Simplify code for clarity without changing behavior. Anti-complexity review — "would a new team member understand this faster than the original?"
-triggers:
-  - "simplify this", "clean this up", "refactor for clarity"
-  - "this is too complex", "hard to read", "too clever"
-  - after feature works but feels heavy
-model: cheap (MiMo) for routine, strong (DeepSeek) for critical paths
+description: Use when simplifying working code for clarity, readability, or maintainability without changing behavior.
+version: 1.0.0
+author: Hermes Agent
+license: MIT
+metadata:
+  hermes:
+    tags:
+    - code
+    - refactoring
+    - clarity
+    - maintainability
+    related_skills:
+    - source-driven-development
+    - incremental-implementation
+    - test-driven-development
 ---
 
 # code-simplification
 
+## Overview
+
+
 Simplify code by reducing complexity while preserving exact behavior. Goal: easier to read, understand, modify, debug.
+
+## When to Use
+
+- Simplifying working code for clarity, readability, or maintainability without changing behavior
 
 ## When NOT to use
 - Code already clean — don't simplify for its own sake
@@ -56,8 +72,15 @@ Before removing anything, understand why it exists. Check git blame. Ask: "Why w
 - "Simplify by removing comments" — only if code is self-documenting
 - "Simplify by merging configs" — separation may be intentional
 
-## Verification
+## Verification Checklist
 - [ ] All existing tests pass without modification
 - [ ] No behavior changes (input/output/side-effects identical)
 - [ ] git diff shows only structural changes, no logic changes
 - [ ] Follows project conventions (match neighboring code)
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+

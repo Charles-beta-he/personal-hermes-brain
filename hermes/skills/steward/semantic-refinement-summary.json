@@ -1,0 +1,30 @@
+{
+  "round": "semantic-refinement-pass-2",
+  "modified_pass_counts": {
+    "umbrella_refinement": 23,
+    "checklist_refinement": 30,
+    "overview_countertrigger_refinement": 178
+  },
+  "distinct_modified_files_this_round": 201,
+  "final_metrics": {
+    "yaml_parse_failures": 0,
+    "generic_placeholder_roots_remaining": 0,
+    "verification_checklist_too_short": 0,
+    "common_pitfalls_too_short": 0,
+    "overview_too_short": 62,
+    "dont_use_for_missing": 127
+  },
+  "residual_manual_focus": [
+    "62 skills still have short Overview sections, concentrated in dense specialist skills where heuristic expansion would likely reduce signal quality.",
+    "127 skills still lack explicit counter-trigger bullets in When to Use, concentrated in mature hand-written skills whose routing language should be reviewed semantically instead of patched blindly.",
+    "5 umbrella skills still use generic related_skills because they have no auto-discovered child skills: domain, diagramming, inference-sh, leisure, red-teaming.",
+    "8 duplicate-heading detections remain and should be checked manually because several are likely code-block/template false positives rather than real structural defects."
+  ],
+  "reports": [
+    "/Users/charles/.hermes/skills/steward/umbrella-refinement-report.json",
+    "/Users/charles/.hermes/skills/steward/umbrella-refinement-verify.json",
+    "/Users/charles/.hermes/skills/steward/checklist-refinement-report.json",
+    "/Users/charles/.hermes/skills/steward/overview-countertrigger-pass-report.json",
+    "/Users/charles/.hermes/skills/steward/semantic-refinement-verify.json"
+  ]
+}

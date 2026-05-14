@@ -1,17 +1,32 @@
 ---
 name: documentation-and-adrs
-description: Write Architecture Decision Records (ADRs) for significant technical choices. Self-documenting codebase that explains WHY, not just WHAT.
-triggers:
-  - "document this decision", "write an ADR"
-  - after making a significant architectural choice
-  - when someone asks "why did we build it this way?"
-  - before merging a major refactor or new system
-model: strong (DeepSeek/Claude) — ADRs require clear reasoning
+description: Use when recording significant technical decisions, rationale, and consequences as Architecture Decision Records (ADRs).
+version: 1.0.0
+author: Hermes Agent
+license: MIT
+metadata:
+  hermes:
+    tags:
+    - documentation
+    - adr
+    - architecture
+    - decision-records
+    related_skills:
+    - framework-audit
+    - writing-plans
+    - private-fork-evolution-governance
 ---
 
 # documentation-and-adrs
 
+## Overview
+
+
 Code tells WHAT. ADRs tell WHY. Every non-obvious technical decision deserves a record.
+
+## When to Use
+
+- Recording significant technical decisions, rationale, and consequences as Architecture Decision Records (ADRs)
 
 ## ADR Template
 ```markdown
@@ -56,9 +71,16 @@ What becomes easier? What becomes harder? What new risks exist?
 
 Store in: `docs/adr/` or `.hermes/notes/adr/`
 
-## Verification
+## Verification Checklist
 - [ ] ADR number is sequential (check existing ADRs)
 - [ ] Context clearly describes the problem
 - [ ] At least 2 alternatives evaluated
 - [ ] Consequences section not empty
 - [ ] Status is "proposed" (not "accepted" before review)
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+

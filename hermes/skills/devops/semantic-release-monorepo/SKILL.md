@@ -1,13 +1,41 @@
 ---
 name: semantic-release-monorepo
-description: "Configure semantic-release for pnpm monorepo with GitHub Actions. Handles automated versioning, changelog generation, and GitHub Releases on push to main."
-triggers: ["semantic-release", "自动版本", "版本管理", "changelog", "release workflow"]
+description: Use when you need guidance on configure semantic-release for pnpm monorepo with GitHub Actions.
+version: 1.0.0
+author: Hermes Agent
+license: MIT
+triggers:
+- semantic-release
+- 自动版本
+- 版本管理
+- changelog
+- release workflow
+metadata:
+  hermes:
+    tags:
+    - devops
+    - semantic
+    - release
+    - monorepo
+    - github
+    related_skills:
+    - github
 ---
 
 # semantic-release + pnpm Monorepo 配置
 
-自动化版本管理：feat→minor, fix→patch, docs/chore→无变更。
+## Overview
 
+自动化版本管理：feat→minor, fix→patch, docs/chore→无变更。. In practice, load it when you need guidance on configure semantic-release for pnpm monorepo with GitHub Actions. It defines the expected execution lane, scope boundaries, and verification shape for this class of work.
+## When to Use
+
+- You need guidance on configure semantic-release for pnpm monorepo with GitHub Actions
+- semantic-release
+- 自动版本
+- 版本管理
+- changelog
+- release workflow
+- Don't use for: requests that do not need you need guidance on configure semantic-release for pnpm monorepo with GitHub Actions; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## 关键坑点
 
 ### 1. Node.js 版本要求
@@ -184,7 +212,7 @@ ERR_PNPM_ADDING_TO_ROOT  Running this command will add the dependency to the wor
 pnpm add -Dw wrangler@3.90.0
 ```
 
-## 验证命令
+## Verification Checklist
 
 ```bash
 # 本地测试（dry-run）
@@ -196,3 +224,12 @@ gh run list --workflow=release.yml --limit 3
 # 查看 Release
 gh release view v1.0.0
 ```
+- [ ] Preconditions, scope, and tool availability were checked before following this workflow.
+- [ ] The key output artifacts, commands, or side-effects were verified by read-back or direct inspection.
+- [ ] The final result still matches the trigger and acceptance shape of this skill.
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+

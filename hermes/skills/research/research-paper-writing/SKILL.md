@@ -1,22 +1,54 @@
 ---
 name: research-paper-writing
-title: Research Paper Writing Pipeline
-description: End-to-end pipeline for writing ML/AI research papers — from experiment design through analysis, drafting, revision, and submission. Covers NeurIPS, ICML, ICLR, ACL, AAAI, COLM. Integrates automated experiment monitoring, statistical analysis, iterative writing, and citation verification.
+description: Use when you need guidance on end-to-end pipeline for writing ML/AI research papers — from experiment design through analysis, drafting, revision, and submission.
 version: 1.1.0
 author: Orchestra Research
 license: MIT
-dependencies: [semanticscholar, arxiv, habanero, requests, scipy, numpy, matplotlib, SciencePlots]
-platforms: [linux, macos]
+title: Research Paper Writing Pipeline
+dependencies:
+- semanticscholar
+- arxiv
+- habanero
+- requests
+- scipy
+- numpy
+- matplotlib
+- SciencePlots
+platforms:
+- linux
+- macos
 metadata:
   hermes:
-    tags: [Research, Paper Writing, Experiments, ML, AI, NeurIPS, ICML, ICLR, ACL, AAAI, COLM, LaTeX, Citations, Statistical Analysis]
+    tags:
+    - Research
+    - Paper Writing
+    - Experiments
+    - ML
+    - AI
+    - NeurIPS
+    - ICML
+    - ICLR
+    - ACL
+    - AAAI
+    - COLM
+    - LaTeX
+    - Citations
+    - Statistical Analysis
     category: research
-    related_skills: [arxiv, ml-paper-writing, subagent-driven-development, plan]
-    requires_toolsets: [terminal, files]
-
+    related_skills:
+    - arxiv
+    - ml-paper-writing
+    - subagent-driven-development
+    - plan
+    requires_toolsets:
+    - terminal
+    - files
 ---
 
 # Research Paper Writing Pipeline
+
+## Overview
+
 
 End-to-end pipeline for producing publication-ready ML/AI research papers targeting **NeurIPS, ICML, ICLR, ACL, AAAI, and COLM**. This skill covers the full research lifecycle: experiment design, execution, monitoring, analysis, paper writing, review, revision, and submission.
 
@@ -46,6 +78,10 @@ This is **not a linear pipeline** — it is an iterative loop. Results trigger n
 
 ---
 
+## When to Use
+
+- You need guidance on end-to-end pipeline for writing ML/AI research papers — from experiment design through analysis, drafting, revision, and submission
+- Don't use for: requests that do not need you need guidance on end-to-end pipeline for writing ML/AI research papers — from experiment design through analysis, drafting, revision, and submission; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## When To Use This Skill
 
 Use this skill when:
@@ -2375,3 +2411,16 @@ See [templates/README.md](templates/README.md) for compilation instructions.
 **APIs:** [Semantic Scholar](https://api.semanticscholar.org/api-docs/) | [CrossRef](https://www.crossref.org/documentation/retrieve-metadata/rest-api/) | [arXiv](https://info.arxiv.org/help/api/basics.html)
 
 **Venues:** [NeurIPS](https://neurips.cc/Conferences/2025/PaperInformation/StyleFiles) | [ICML](https://icml.cc/Conferences/2025/AuthorInstructions) | [ICLR](https://iclr.cc/Conferences/2026/AuthorGuide) | [ACL](https://github.com/acl-org/acl-style-files)
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

@@ -1,14 +1,31 @@
 ---
 name: incident-response
-description: "事故响应与复盘 — 线上问题发现、止血、根因分析、修复、复盘的标准流程。Use when production issues are detected: errors, outages, data corruption, performance degradation."
+description: 'Use when production issues are detected: errors, outages, data corruption, performance degradation.'
+version: 1.0.0
+author: Hermes Agent
 license: MIT
-tags: [incident, on-call, postmortem, reliability, sre]
+metadata:
+  hermes:
+    tags:
+    - incident
+    - on-call
+    - postmortem
+    - reliability
+    - sre
+    related_skills:
+    - post-deploy-verification
+    - systematic-debugging
 ---
 
 # Incident Response — 事故响应与复盘
 
-> 线上出问题不可怕，怕的是没有 SOP。止血要快，复盘要深。
+## Overview
 
+线上出问题不可怕，怕的是没有 SOP。止血要快，复盘要深。. In practice, load it when production issues are detected: errors, outages, data corruption, performance degradation. It defines the expected execution lane, scope boundaries, and verification shape for this class of work.
+## When to Use
+
+- Production issues are detected: errors, outages, data corruption, performance degradation
+- Don't use for: requests that do not need production issues are detected: errors, outages, data corruption, performance degradation; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## 响应阶段
 
 ### Phase 1: 发现与通报 (0-5 min)
@@ -103,3 +120,16 @@ npx wrangler pages deployment tail --project-name <project> --deployment-id <sta
 - ❌ 修复后不写回归测试——同样的问题会再来
 - ❌ 不复盘——浪费了一次成长机会
 - ❌ 复盘时追责——复盘是为了改进，不是批斗
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

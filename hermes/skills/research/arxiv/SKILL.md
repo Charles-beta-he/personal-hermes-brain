@@ -1,19 +1,31 @@
 ---
 name: arxiv
-description: Search and retrieve academic papers from arXiv using their free REST API. No API key needed. Search by keyword, author, category, or ID. Combine with web_extract or the ocr-and-documents skill to read full paper content.
+description: Use when you need to search and retrieve academic papers from arXiv using their free REST API.
 version: 1.0.0
 author: Hermes Agent
 license: MIT
 metadata:
   hermes:
-    tags: [Research, Arxiv, Papers, Academic, Science, API]
-    related_skills: [ocr-and-documents]
+    tags:
+    - Research
+    - Arxiv
+    - Papers
+    - Academic
+    - Science
+    - API
+    related_skills:
+    - ocr-and-documents
 ---
 
 # arXiv Research
 
-Search and retrieve academic papers from arXiv via their free REST API. No API key, no dependencies — just curl.
+## Overview
 
+Search and retrieve academic papers from arXiv via their free REST API. No API key, no dependencies — just curl. In practice, load it when you need to search and retrieve academic papers from arXiv using their free REST API. It defines the expected execution lane, scope boundaries, and verification shape for this class of work.
+## When to Use
+
+- You need to search and retrieve academic papers from arXiv using their free REST API
+- Don't use for: requests that do not need you need to search and retrieve academic papers from arXiv using their free REST API; choose a more specific child skill or a broader routing skill that actually matches the task.
 ## Quick Reference
 
 | Action | Command |
@@ -279,3 +291,16 @@ Papers can be withdrawn after submission. When this happens:
 - The `<summary>` field contains a withdrawal notice (look for "withdrawn" or "retracted")
 - Metadata fields may be incomplete
 - Always check the summary before treating a result as a valid paper
+
+## Common Pitfalls
+
+1. Loading this skill outside its trigger class and skipping a simpler, more direct path.
+2. Ignoring prerequisites such as platform, credentials, installed commands, or linked reference files.
+3. Treating the skill as a static memo instead of verifying the exact commands, artifacts, or outputs in the current environment.
+
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+

@@ -1,16 +1,28 @@
 ---
 name: baoyu-comic
-description: Knowledge comic creator supporting multiple art styles and tones. Creates original educational comics with detailed panel layouts and sequential image generation. Use when user asks to create "知识漫画", "教育漫画", "biography comic", "tutorial comic", or "Logicomix-style comic".
+description: Use when user asks to create "知识漫画", "教育漫画", "biography comic", "tutorial comic", or "Logicomix-style comic".
 version: 1.56.1
 author: 宝玉 (JimLiu)
 license: MIT
 metadata:
   hermes:
-    tags: [comic, knowledge-comic, creative, image-generation]
+    tags:
+    - comic
+    - knowledge-comic
+    - creative
+    - image-generation
     homepage: https://github.com/JimLiu/baoyu-skills#baoyu-comic
+    related_skills:
+    - design
+    - github
+    - maps
+    - outlines
 ---
 
 # Knowledge Comic Creator
+
+## Overview
+
 
 Adapted from [baoyu-comic](https://github.com/JimLiu/baoyu-skills) for Hermes Agent's tool ecosystem.
 
@@ -234,7 +246,7 @@ Full step-by-step workflow (analysis, storyboard, review gates, regeneration var
 
 **IMPORTANT**: When updating pages, ALWAYS update the prompt file (`prompts/NN-{cover|page}-[slug].md`) FIRST before regenerating. This ensures changes are documented and reproducible.
 
-## Pitfalls
+## Common Pitfalls
 
 - Image generation: 10-30 seconds per page; auto-retry once on failure
 - **Always download** the URL returned by `image_generate` to a local PNG — downstream tooling (and the user's review) expects files in the output directory, not ephemeral URLs
@@ -244,3 +256,12 @@ Full step-by-step workflow (analysis, storyboard, review gates, regeneration var
 - **Steps 4/6 conditional** - only if user requested in Step 2
 - **Step 7.1 character sheet** - recommended for multi-page comics, optional for simple presets. The PNG is a review/regeneration aid; page prompts (written in Step 5) use the text descriptions in `characters/characters.md`, not the PNG. `image_generate` does not accept images as visual input
 - **Strip secrets** — scan source content for API keys, tokens, or credentials before writing any output file
+1. Skipping prerequisite checks and assuming the environment already matches the workflow.
+2. Applying the workflow mechanically without confirming that the request still matches this skill's trigger class.
+3. Reporting success before reading back the actual outputs, files, or external side-effects.
+## Verification Checklist
+
+- [ ] The task actually matches this skill's trigger class and the current route is still appropriate.
+- [ ] All prerequisites, linked references, templates, scripts, and required tools have been checked before execution.
+- [ ] Claimed outputs, commands, files, or external side-effects were read back or otherwise verified before completion.
+
