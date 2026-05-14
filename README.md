@@ -2,13 +2,18 @@
 
 Sanitized private backup/export for Charles' Hermes personal brain.
 
-Generated: 2026-05-14T20:16:51Z
+Generated: 2026-05-14T20:28:27Z
 
 This repo intentionally contains portable knowledge and deterministic source artifacts only.
 It does not contain raw Hermes memory, auth files, OAuth tokens, logs, caches, sessions,
 SQLite indexes, checkpoints, `.env`, or runtime state.
 It does include reviewed `hermes/project-profiles/*.json` plus selected control-plane scripts
 so another machine can restore project-profile-aware task routing.
+
+Boundary:
+- Portable control-plane capability is included: project profiles, selected scripts, and skills can be restored into `~/.hermes`.
+- Machine-specific runtime state is still excluded.
+- If the target machine uses different local checkout paths, some `project-profiles/*.json` `paths.*` entries may need local adjustment.
 
 Restore path:
 

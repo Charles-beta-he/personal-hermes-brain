@@ -79,6 +79,13 @@ Default policy: local commit is OK; do not push unless explicitly approved.
 
 User-specific override pattern: if the user explicitly authorizes ongoing remote backup for Hermes itself / the personal assistant, treat that as approval for a guarded backup cadence, not as permission to push raw `~/.hermes`. Keep the fail-closed safe-tree validator and pre-push hook. Prefer a dedicated sanitized backup repo/worktree with an allowlist export, then push only after validation passes. Business/project repos remain separate and should still follow their own default push policy.
 
+If the user needs cross-machine recovery of Hermes taskpool project profiles and profile-aware smart routing, include reviewed `~/.hermes/project-profiles/*.json` in the sanitized export under `hermes/project-profiles/`. Pair that with a restore script such as `bootstrap/sync_import.sh` that copies:
+- `hermes/project-profiles/*` -> `~/.hermes/project-profiles/`
+- `hermes/scripts/*` -> `~/.hermes/scripts/`
+- `hermes/skills/*` -> `~/.hermes/skills/`
+
+Call out the remaining boundary explicitly: profile JSON can be portable, but machine-specific repo paths inside `paths.*` may still need adjustment on the destination machine before routing/execution is fully live.
+
 Recommended guarded cadence after explicit authorization:
 
 - Commit sanitized evolution/source artifacts locally after meaningful self-improvement work.
@@ -88,6 +95,8 @@ Recommended guarded cadence after explicit authorization:
 ## Export automation pattern
 
 For a recurring private backup, create a sanitized export script rather than pointing Git at live `~/.hermes`.
+
+For this user's Hermes/taskpool setup, if another machine must preserve project-profile-aware smart routing, make `project-profiles` an explicit allowlisted export surface instead of assuming brain notes alone are enough.
 
 Recommended script behavior:
 

@@ -392,7 +392,7 @@ Profiles use `~/.hermes/profiles/<name>/` with the same layout.
 
 ### Private repo sync / reproducing a personal Hermes assistant
 
-When the user wants to sync or reproduce their Hermes personal assistant through GitHub/private Git, use `references/private-repo-personal-assistant-sync.md`. Key rule: never commit the whole `~/.hermes` and never upload raw persistent memory (`~/.hermes/memories/MEMORY.md`, `USER.md`, or `~/.hermes/memory/`). Sync only reviewed brain notes, skills, selected deterministic scripts, and sanitized config templates. Add fail-closed secret/raw-memory validation plus a pre-push guard; local commits are fine, but do not push unless explicitly approved.
+When the user wants to sync or reproduce their Hermes personal assistant through GitHub/private Git, use `references/private-repo-personal-assistant-sync.md`. Key rule: never commit the whole `~/.hermes` and never upload raw persistent memory (`~/.hermes/memories/MEMORY.md`, `USER.md`, or `~/.hermes/memory/`). Sync only reviewed brain notes, skills, selected deterministic scripts, sanitized config templates, and—when the goal is cross-machine taskpool/project routing continuity—reviewed `~/.hermes/project-profiles/*.json`. Add fail-closed secret/raw-memory validation plus a pre-push guard; local commits are fine, but do not push unless explicitly approved.
 
 ### Auditing Project-Local Hermes Artifacts
 
