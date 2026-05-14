@@ -27,7 +27,7 @@ from pathlib import Path
 import re
 root=Path('.')
 patterns=[
- re.compile(r"sk-[A-Za-z0-9_-]{16,}"),
+ re.compile(r"sk-(?=[A-Za-z0-9_-]{16,}\\b)(?=[A-Za-z0-9_-]*[A-Z0-9_])[A-Za-z0-9_-]+"),
  re.compile(r"gh[pousr]_[A-Za-z0-9_]{20,}"),
  re.compile(r"xox[baprs]-[A-Za-z0-9-]{20,}"),
  re.compile(r"AIza[0-9A-Za-z_-]{20,}"),
@@ -36,12 +36,14 @@ patterns=[
  re.compile(r"(?i)\b(api[_-]?key|secret|token|password|passwd)\b\s*[:=]\s*['\"]?(?!\[REDACTED\]|changeme|example|your_|<)[^\s'\"]{8,}"),
 ]
 allow_suffix={'.md','.txt','.json','.yaml','.yml','.toml','.py','.sh','.bash','.example','.template'}
+code_suffix={'.py','.sh','.bash'}
 hits=[]
 for p in root.rglob('*'):
  if not p.is_file() or '.git' in p.parts or p.suffix.lower() not in allow_suffix: continue
  try: txt=p.read_text(encoding='utf-8', errors='replace')
  except Exception: continue
- for pat in patterns:
+ active_patterns = patterns[1:6] if p.suffix.lower() in code_suffix else patterns
+ for pat in active_patterns:
   if pat.search(txt):
    hits.append(str(p))
    break

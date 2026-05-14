@@ -1,0 +1,988 @@
+{
+  "source_tick": "/Users/charles/.hermes/tick-20260507-172524",
+  "discussion_result": {
+    "status": "certified",
+    "models_consulted": [
+      "claude-opus-4-7",
+      "gpt-5.5",
+      "deepseek-v4-pro",
+      "mimo-v2.5-pro"
+    ],
+    "rounds_used": 1,
+    "agreement_matrix": {
+      "framing": 0.95,
+      "approach": 0.95,
+      "implementation_order": 0.95
+    },
+    "final_design": {
+      "meta": {
+        "planner_model": "ensemble:4",
+        "planner_role": "merged",
+        "state_hash": "d94fb9c27a7ff62ceb85f37aaa485739bee0aa48eaa60cc8bd23aec7a21537de",
+        "tier_target": "T3",
+        "confidence": 0.693,
+        "source_plans": 4
+      },
+      "diagnosis": {
+        "root_cause_class": "no_action",
+        "summary": "Merged from 4 planners, consensus score=0.693"
+      },
+      "patches": [],
+      "merge_info": {
+        "strategy": "intersection_first",
+        "planners": 4,
+        "quorum": 3,
+        "unanimous_count": 0,
+        "majority_count": 0,
+        "minority_count": 4,
+        "arbitration_needed": true,
+        "minority_patches": [
+          "P1-noop-certify",
+          "noop-certification-no-scoped-delta",
+          "PATCH-NOOP-001",
+          "noop-certify-clean"
+        ],
+        "consensus_score": 0.693,
+        "consensus_verdict": "weak_consensus",
+        "max_blast_radius": "single_tier"
+      },
+      "verification": {
+        "expected_metric_delta": {
+          "main_pass_rate": 0.01
+        },
+        "guard_metrics": [
+          "main_pass_rate"
+        ],
+        "tier_eval_plan": "T0_T1"
+      },
+      "rollback_signal": {
+        "auto_rollback_if": "main_pass_rate < pre - 0.05",
+        "kill_switch_inc": false
+      },
+      "quota_snapshot": {
+        "anthropic::claude-opus-4-7": {
+          "model": "claude-opus-4-7",
+          "provider": "anthropic",
+          "status": "unknown",
+          "observability": "unknown",
+          "quota_type": "unknown",
+          "remaining_tokens": null,
+          "remaining_requests": null,
+          "remaining_usd": null,
+          "reset_at": null,
+          "source": "response_headers",
+          "confidence": 0.1,
+          "stale_after_seconds": 300,
+          "last_updated": "2026-05-07T17:20:30.677031Z",
+          "usage": {}
+        },
+        "openai-codex::gpt-5.5": {
+          "model": "gpt-5.5",
+          "provider": "openai-codex",
+          "status": "unobservable",
+          "observability": "unobservable",
+          "quota_type": "subscription_cap",
+          "remaining_tokens": null,
+          "remaining_requests": null,
+          "remaining_usd": null,
+          "reset_at": null,
+          "source": "response_headers",
+          "confidence": 0.2,
+          "stale_after_seconds": 300,
+          "last_updated": "2026-05-07T17:22:08.398356Z",
+          "usage": {}
+        },
+        "deepseek::deepseek-v4-pro": {
+          "model": "deepseek-v4-pro",
+          "provider": "deepseek",
+          "status": "unknown",
+          "observability": "unknown",
+          "quota_type": "unknown",
+          "remaining_tokens": null,
+          "remaining_requests": null,
+          "remaining_usd": null,
+          "reset_at": null,
+          "source": "response_headers",
+          "confidence": 0.1,
+          "stale_after_seconds": 300,
+          "last_updated": "2026-05-07T17:22:28.324352Z",
+          "usage": {}
+        },
+        "xiaomi::mimo-v2.5-pro": {
+          "model": "mimo-v2.5-pro",
+          "provider": "xiaomi",
+          "status": "unknown",
+          "observability": "unknown",
+          "quota_type": "unknown",
+          "remaining_tokens": null,
+          "remaining_requests": null,
+          "remaining_usd": null,
+          "reset_at": null,
+          "source": "response_headers",
+          "confidence": 0.1,
+          "stale_after_seconds": 300,
+          "last_updated": "2026-05-07T17:24:18.385858Z",
+          "usage": {}
+        }
+      },
+      "quota_confidence": {
+        "schema_version": 1,
+        "exact_count": 0,
+        "estimated_count": 0,
+        "unknown_count": 3,
+        "unobservable_count": 1,
+        "exhausted_count": 0,
+        "has_low_confidence_quota": true,
+        "low_confidence_models": [
+          "claude-opus-4-7",
+          "deepseek-v4-pro",
+          "gpt-5.5",
+          "mimo-v2.5-pro"
+        ]
+      },
+      "skipped_due_to_quota": [],
+      "fanout_certification": {
+        "schema_version": 1,
+        "status": "fanout_quorum_met",
+        "certified": true,
+        "multi_model_certified": true,
+        "certification_scope": "multi_model",
+        "below_min_quorum": false,
+        "success_count": 4,
+        "fail_count": 0,
+        "planner_count": 4,
+        "min_quorum": 2,
+        "reason": "planner fan-out met min_quorum: 4/2"
+      },
+      "planner_patch_summary": {
+        "schema_version": 1,
+        "planner_count": 4,
+        "total_patch_count": 4,
+        "noop_patch_count": 4,
+        "conditional_advisory_patch_count": 0,
+        "concrete_patch_count": 0,
+        "malformed_plan_count": 0,
+        "plans_missing_patches_count": 0,
+        "plans_non_list_patches_count": 0,
+        "non_dict_patch_count": 0,
+        "models_with_concrete_patches": [],
+        "certification_intent": "no_action_certification"
+      },
+      "evidence_bundle": {
+        "schema_version": 1,
+        "created_at": "2026-05-07T17:25:24.703922+00:00",
+        "claims": [
+          {
+            "id": "C1",
+            "text": "Markdown task notes in ~/Documents/brain remain canonical; dashboards and sorted pool are derived views.",
+            "severity": 3
+          },
+          {
+            "id": "C2",
+            "text": "User can add tasks from Obsidian via 任务收件箱 and trigger ingestion with natural language or documented CLI.",
+            "severity": 3
+          },
+          {
+            "id": "C3",
+            "text": "brain_task_orchestrator.py provides deterministic list/add/ingest-inbox/claim/release/done/retry/dashboard/next/dispatch-dry-run/selfcheck commands.",
+            "severity": 3
+          },
+          {
+            "id": "C4",
+            "text": "Task pool sorting is deterministic and live generated; current active_count is zero, so there is no pending local-brain task in scope.",
+            "severity": 3
+          },
+          {
+            "id": "C5",
+            "text": "consult_models Claude discussion/planning adapter caveat is fixed by using Claude Code CLI for Claude models, so the previous manual ratification workaround is no longer a deliverable caveat.",
+            "severity": 3
+          },
+          {
+            "id": "C6",
+            "text": "All deterministic gates pass and accepted_risks is empty in the landing selfcheck.",
+            "severity": 3
+          }
+        ],
+        "evidence": [
+          {
+            "id": "E-001",
+            "type": "command_output",
+            "summary": "E1_py_compile",
+            "supports": [
+              "C3",
+              "C5"
+            ],
+            "contradicts": [],
+            "exit_code": 0,
+            "output_excerpt": ""
+          },
+          {
+            "id": "E-002",
+            "type": "command_output",
+            "summary": "E2_unit_test",
+            "supports": [
+              "C2",
+              "C3"
+            ],
+            "contradicts": [],
+            "exit_code": 0,
+            "output_excerpt": "PASS"
+          },
+          {
+            "id": "E-003",
+            "type": "command_output",
+            "summary": "E3_dashboard",
+            "supports": [
+              "C1",
+              "C2",
+              "C4"
+            ],
+            "contradicts": [],
+            "exit_code": 0,
+            "output_excerpt": "{\n  \"status\": \"OK\",\n  \"write\": true,\n  \"dashboard\": \"/Users/charles/Documents/brain/07-仪表盘/待完成任务运行态.md\",\n  \"sorted_pool\": \"/Users/charles/Documents/brain/05-实践与项目/tasks/任务池-排序.md\",\n  \"control_center\": \"/Users/charles/Documents/brain/07-仪表盘/待完成任务控制台.md\",\n  \"active_count\": 0\n}"
+          },
+          {
+            "id": "E-004",
+            "type": "command_output",
+            "summary": "E4_orchestrator_selfcheck",
+            "supports": [
+              "C2",
+              "C3",
+              "C4"
+            ],
+            "contradicts": [],
+            "exit_code": 0,
+            "output_excerpt": "{\n  \"status\": \"PASS\",\n  \"task_count\": 2,\n  \"failures\": [],\n  \"warnings\": [],\n  \"paths\": {\n    \"dashboard\": \"/Users/charles/Documents/brain/07-仪表盘/待完成任务运行态.md\",\n    \"control_center\": \"/Users/charles/Documents/brain/07-仪表盘/待完成任务控制台.md\",\n    \"sorted_pool\": \"/Users/charles/Documents/brain/05-实践与项目/tasks/任务池-排序.md\",\n    \"inbox\": \"/Users/charles/Documents/brain/05-实践与项目/tasks/任务收件箱.md\"\n  }\n}"
+          },
+          {
+            "id": "E-005",
+            "type": "command_output",
+            "summary": "E5_landing_selfcheck",
+            "supports": [
+              "C1",
+              "C2",
+              "C3",
+              "C4",
+              "C6"
+            ],
+            "contradicts": [],
+            "exit_code": 0,
+            "output_excerpt": "{\n  \"status\": \"PASS\",\n  \"vault\": \"/Users/charles/Documents/brain\",\n  \"required_file_count\": 15,\n  \"files\": {\n    \"project\": {\n      \"path\": \"/Users/charles/Documents/brain/05-实践与项目/projects/symphony-inspired-local-task-orchestrator/Project - Symphony-inspired Local Task Orchestrator.md\",\n      \"exists\": true\n    },\n    \"p10\": {\n      \"path\": \"/Users/charles/Documents/brain/05-实践与项目/projects/symphony-inspired-local-task-orchestrator/P10 - Long-term Strategy.md\",\n      \"exists\": true\n    },\n    \"p9\": {\n      \"path\": \"/Users/charles/Documents/brain/05-实践与项目/projects/symphony-inspired-local-task-orchestrator/P9 - Implementation Backlog.md\",\n      \"exists\": true\n    },\n    \"playbook\": {\n      \"path\": \"/Users/charles/Documents/brain/05-实践与项目/实践方案/11-Symphony-inspired本地任务编排Playbook.md\",\n      \"exists\": true\n    },\n    \"task_template\": {\n      \"path\": \"/Users/charles/Documents/brain/08-模板/local-brain-task-note-template.md\",\n      \"exists\": true\n    },\n    \"workflow_template\": {\n      \"path\": \"/Users/charles/Documents/brain/08-模板/task-workflow-contract-template.md\",\n      \"exists\": true\n    },\n    \"control_center\": {\n      \"path\": \"/Users/charles/Documents/brain/07-仪表盘/待完成任务控制台.md\",\n      \""
+          },
+          {
+            "id": "E-006",
+            "type": "command_output",
+            "summary": "E6_next",
+            "supports": [
+              "C4"
+            ],
+            "contradicts": [],
+            "exit_code": 0,
+            "output_excerpt": "{\n  \"status\": \"OK\",\n  \"next\": null,\n  \"message\": \"No active local-brain tasks in canonical task notes.\"\n}"
+          },
+          {
+            "id": "E-007",
+            "type": "command_output",
+            "summary": "E7_dispatch",
+            "supports": [
+              "C3",
+              "C4"
+            ],
+            "contradicts": [],
+            "exit_code": 0,
+            "output_excerpt": "{\n  \"status\": \"OK\",\n  \"dry_run\": true,\n  \"dispatchable\": false,\n  \"message\": \"No active local-brain tasks in canonical task notes.\"\n}"
+          },
+          {
+            "id": "E-008",
+            "type": "command_output",
+            "summary": "E8_claude_adapter",
+            "supports": [
+              "C5"
+            ],
+            "contradicts": [],
+            "exit_code": 0,
+            "output_excerpt": "OK"
+          }
+        ],
+        "grounding": {
+          "C1": {
+            "claim_id": "C1",
+            "claim_text": "Markdown task notes in ~/Documents/brain remain canonical; dashboards and sorted pool are derived views.",
+            "severity": 3,
+            "truth_status": "verified_by_evidence",
+            "supporting_evidence_ids": [
+              "E-003",
+              "E-005"
+            ],
+            "non_verifying_supporting_evidence_ids": [],
+            "contradicting_evidence_ids": [],
+            "candidate_evidence_ids": []
+          },
+          "C2": {
+            "claim_id": "C2",
+            "claim_text": "User can add tasks from Obsidian via 任务收件箱 and trigger ingestion with natural language or documented CLI.",
+            "severity": 3,
+            "truth_status": "verified_by_evidence",
+            "supporting_evidence_ids": [
+              "E-002",
+              "E-003",
+              "E-004",
+              "E-005"
+            ],
+            "non_verifying_supporting_evidence_ids": [],
+            "contradicting_evidence_ids": [],
+            "candidate_evidence_ids": []
+          },
+          "C3": {
+            "claim_id": "C3",
+            "claim_text": "brain_task_orchestrator.py provides deterministic list/add/ingest-inbox/claim/release/done/retry/dashboard/next/dispatch-dry-run/selfcheck commands.",
+            "severity": 3,
+            "truth_status": "verified_by_evidence",
+            "supporting_evidence_ids": [
+              "E-001",
+              "E-002",
+              "E-004",
+              "E-005",
+              "E-007"
+            ],
+            "non_verifying_supporting_evidence_ids": [],
+            "contradicting_evidence_ids": [],
+            "candidate_evidence_ids": []
+          },
+          "C4": {
+            "claim_id": "C4",
+            "claim_text": "Task pool sorting is deterministic and live generated; current active_count is zero, so there is no pending local-brain task in scope.",
+            "severity": 3,
+            "truth_status": "verified_by_evidence",
+            "supporting_evidence_ids": [
+              "E-003",
+              "E-004",
+              "E-005",
+              "E-006",
+              "E-007"
+            ],
+            "non_verifying_supporting_evidence_ids": [],
+            "contradicting_evidence_ids": [],
+            "candidate_evidence_ids": []
+          },
+          "C5": {
+            "claim_id": "C5",
+            "claim_text": "consult_models Claude discussion/planning adapter caveat is fixed by using Claude Code CLI for Claude models, so the previous manual ratification workaround is no longer a deliverable caveat.",
+            "severity": 3,
+            "truth_status": "verified_by_evidence",
+            "supporting_evidence_ids": [
+              "E-001",
+              "E-008"
+            ],
+            "non_verifying_supporting_evidence_ids": [],
+            "contradicting_evidence_ids": [],
+            "candidate_evidence_ids": []
+          },
+          "C6": {
+            "claim_id": "C6",
+            "claim_text": "All deterministic gates pass and accepted_risks is empty in the landing selfcheck.",
+            "severity": 3,
+            "truth_status": "verified_by_evidence",
+            "supporting_evidence_ids": [
+              "E-005"
+            ],
+            "non_verifying_supporting_evidence_ids": [],
+            "contradicting_evidence_ids": [],
+            "candidate_evidence_ids": []
+          }
+        },
+        "evidence_coverage": 1.0,
+        "verified_claim_count": 6,
+        "claim_count": 6
+      },
+      "truth_assessment": {
+        "schema_version": 1,
+        "truth_status": "grounded",
+        "can_certify_truth": true,
+        "claim_count": 6,
+        "verified_claim_count": 6,
+        "evidence_coverage": 1.0,
+        "unsupported_claim_ids": [],
+        "unsupported_high_severity_claim_ids": [],
+        "needs_link_review_claim_ids": [],
+        "needs_link_review_high_severity_claim_ids": [],
+        "contradicted_claim_ids": [],
+        "contradicted_high_severity_claim_ids": [],
+        "reasons": []
+      }
+    },
+    "issue_ledger": [],
+    "ratification_votes": [
+      {
+        "model": "claude-opus-4-7",
+        "vote": "approve",
+        "best_within_constraints": true,
+        "reasoning": "Truth gate grounded: 6/6 claims verified, coverage=1.0. Fan-out certified 4/4 planners >= min_quorum=2. certification_intent=no_action_certification with concrete_patch_count=0 — empty patches list valid per packet instructions, not dropped-patch contradiction. round_delta.unresolved_issues empty. No novel sev>=3 blockers. Approve."
+      },
+      {
+        "model": "gpt-5.5",
+        "vote": "approve",
+        "best_within_constraints": true,
+        "reasoning": "No unresolved round_delta issues and no novel severity>=3 blockers are present. truth_gate permits certification: 6/6 claims verified, evidence_coverage=1.0. Planner fanout quorum met 4/2 with 0 concrete patches and explicit no_action_certification intent; empty patches is not a blocker per instructions. Claims C1-C6 are grounded by E-001 through E-008."
+      },
+      {
+        "model": "deepseek-v4-pro",
+        "vote": "approve",
+        "best_within_constraints": true,
+        "reasoning": "All 6 claims verified, evidence coverage 1.0, no unresolved issues, no contradictions or unsupported claims. Truth status is grounded and can certify. No critiques or evidence requests needed."
+      },
+      {
+        "model": "mimo-v2.5-pro",
+        "vote": "approve",
+        "best_within_constraints": true,
+        "reasoning": "All 6 claims verified, 100% evidence coverage, truth_status grounded, no unsupported or contradicted claims, no unresolved issues. Ground truth fully established per schema v1 requirements."
+      }
+    ],
+    "discussion_transcript": [
+      {
+        "round": 1,
+        "unresolved_issue_ids": [],
+        "votes": [
+          {
+            "model": "claude-opus-4-7",
+            "vote": "approve",
+            "best_within_constraints": true,
+            "reasoning": "Truth gate grounded: 6/6 claims verified, coverage=1.0. Fan-out certified 4/4 planners >= min_quorum=2. certification_intent=no_action_certification with concrete_patch_count=0 — empty patches list valid per packet instructions, not dropped-patch contradiction. round_delta.unresolved_issues empty. No novel sev>=3 blockers. Approve."
+          },
+          {
+            "model": "gpt-5.5",
+            "vote": "approve",
+            "best_within_constraints": true,
+            "reasoning": "No unresolved round_delta issues and no novel severity>=3 blockers are present. truth_gate permits certification: 6/6 claims verified, evidence_coverage=1.0. Planner fanout quorum met 4/2 with 0 concrete patches and explicit no_action_certification intent; empty patches is not a blocker per instructions. Claims C1-C6 are grounded by E-001 through E-008."
+          },
+          {
+            "model": "deepseek-v4-pro",
+            "vote": "approve",
+            "best_within_constraints": true,
+            "reasoning": "All 6 claims verified, evidence coverage 1.0, no unresolved issues, no contradictions or unsupported claims. Truth status is grounded and can certify. No critiques or evidence requests needed."
+          },
+          {
+            "model": "mimo-v2.5-pro",
+            "vote": "approve",
+            "best_within_constraints": true,
+            "reasoning": "All 6 claims verified, 100% evidence coverage, truth_status grounded, no unsupported or contradicted claims, no unresolved issues. Ground truth fully established per schema v1 requirements."
+          }
+        ],
+        "status": {
+          "status": "certified",
+          "approval_count": 4,
+          "reject_count": 0,
+          "reasons": []
+        },
+        "prompt_chars": 18164,
+        "prompt_chars_by_model": {
+          "claude-opus-4-7": 4541,
+          "gpt-5.5": 4541,
+          "deepseek-v4-pro": 4541,
+          "mimo-v2.5-pro": 4541
+        },
+        "estimated_chars_saved": 56676
+      }
+    ],
+    "communication": {
+      "schema": "multi_model_comm_packet_v1",
+      "mode": "manifest_delta",
+      "rounds": [
+        {
+          "round": 1,
+          "mode": "manifest_delta",
+          "prompt_chars_by_model": {
+            "claude-opus-4-7": 4541,
+            "gpt-5.5": 4541,
+            "deepseek-v4-pro": 4541,
+            "mimo-v2.5-pro": 4541
+          },
+          "prompt_chars": 18164,
+          "raw_context_chars_per_model": 18710,
+          "packet_chars_per_model": 4541,
+          "estimated_chars_saved": 56676,
+          "estimated_tokens_saved": 14172,
+          "compression_ratio": 0.2427
+        }
+      ],
+      "total_prompt_chars": 18164,
+      "estimated_chars_saved": 56676,
+      "estimated_tokens_saved": 14172,
+      "policy": "send manifest+delta packets; keep full artifacts in tick files; request omitted evidence explicitly"
+    },
+    "remaining_risks": [],
+    "truth_assessment": {
+      "schema_version": 1,
+      "truth_status": "grounded",
+      "can_certify_truth": true,
+      "claim_count": 6,
+      "verified_claim_count": 6,
+      "evidence_coverage": 1.0,
+      "unsupported_claim_ids": [],
+      "unsupported_high_severity_claim_ids": [],
+      "needs_link_review_claim_ids": [],
+      "needs_link_review_high_severity_claim_ids": [],
+      "contradicted_claim_ids": [],
+      "contradicted_high_severity_claim_ids": [],
+      "reasons": []
+    },
+    "evidence_bundle": {
+      "schema_version": 1,
+      "created_at": "2026-05-07T17:25:24.703922+00:00",
+      "claims": [
+        {
+          "id": "C1",
+          "text": "Markdown task notes in ~/Documents/brain remain canonical; dashboards and sorted pool are derived views.",
+          "severity": 3
+        },
+        {
+          "id": "C2",
+          "text": "User can add tasks from Obsidian via 任务收件箱 and trigger ingestion with natural language or documented CLI.",
+          "severity": 3
+        },
+        {
+          "id": "C3",
+          "text": "brain_task_orchestrator.py provides deterministic list/add/ingest-inbox/claim/release/done/retry/dashboard/next/dispatch-dry-run/selfcheck commands.",
+          "severity": 3
+        },
+        {
+          "id": "C4",
+          "text": "Task pool sorting is deterministic and live generated; current active_count is zero, so there is no pending local-brain task in scope.",
+          "severity": 3
+        },
+        {
+          "id": "C5",
+          "text": "consult_models Claude discussion/planning adapter caveat is fixed by using Claude Code CLI for Claude models, so the previous manual ratification workaround is no longer a deliverable caveat.",
+          "severity": 3
+        },
+        {
+          "id": "C6",
+          "text": "All deterministic gates pass and accepted_risks is empty in the landing selfcheck.",
+          "severity": 3
+        }
+      ],
+      "evidence": [
+        {
+          "id": "E-001",
+          "type": "command_output",
+          "summary": "E1_py_compile",
+          "supports": [
+            "C3",
+            "C5"
+          ],
+          "contradicts": [],
+          "exit_code": 0,
+          "output_excerpt": ""
+        },
+        {
+          "id": "E-002",
+          "type": "command_output",
+          "summary": "E2_unit_test",
+          "supports": [
+            "C2",
+            "C3"
+          ],
+          "contradicts": [],
+          "exit_code": 0,
+          "output_excerpt": "PASS"
+        },
+        {
+          "id": "E-003",
+          "type": "command_output",
+          "summary": "E3_dashboard",
+          "supports": [
+            "C1",
+            "C2",
+            "C4"
+          ],
+          "contradicts": [],
+          "exit_code": 0,
+          "output_excerpt": "{\n  \"status\": \"OK\",\n  \"write\": true,\n  \"dashboard\": \"/Users/charles/Documents/brain/07-仪表盘/待完成任务运行态.md\",\n  \"sorted_pool\": \"/Users/charles/Documents/brain/05-实践与项目/tasks/任务池-排序.md\",\n  \"control_center\": \"/Users/charles/Documents/brain/07-仪表盘/待完成任务控制台.md\",\n  \"active_count\": 0\n}"
+        },
+        {
+          "id": "E-004",
+          "type": "command_output",
+          "summary": "E4_orchestrator_selfcheck",
+          "supports": [
+            "C2",
+            "C3",
+            "C4"
+          ],
+          "contradicts": [],
+          "exit_code": 0,
+          "output_excerpt": "{\n  \"status\": \"PASS\",\n  \"task_count\": 2,\n  \"failures\": [],\n  \"warnings\": [],\n  \"paths\": {\n    \"dashboard\": \"/Users/charles/Documents/brain/07-仪表盘/待完成任务运行态.md\",\n    \"control_center\": \"/Users/charles/Documents/brain/07-仪表盘/待完成任务控制台.md\",\n    \"sorted_pool\": \"/Users/charles/Documents/brain/05-实践与项目/tasks/任务池-排序.md\",\n    \"inbox\": \"/Users/charles/Documents/brain/05-实践与项目/tasks/任务收件箱.md\"\n  }\n}"
+        },
+        {
+          "id": "E-005",
+          "type": "command_output",
+          "summary": "E5_landing_selfcheck",
+          "supports": [
+            "C1",
+            "C2",
+            "C3",
+            "C4",
+            "C6"
+          ],
+          "contradicts": [],
+          "exit_code": 0,
+          "output_excerpt": "{\n  \"status\": \"PASS\",\n  \"vault\": \"/Users/charles/Documents/brain\",\n  \"required_file_count\": 15,\n  \"files\": {\n    \"project\": {\n      \"path\": \"/Users/charles/Documents/brain/05-实践与项目/projects/symphony-inspired-local-task-orchestrator/Project - Symphony-inspired Local Task Orchestrator.md\",\n      \"exists\": true\n    },\n    \"p10\": {\n      \"path\": \"/Users/charles/Documents/brain/05-实践与项目/projects/symphony-inspired-local-task-orchestrator/P10 - Long-term Strategy.md\",\n      \"exists\": true\n    },\n    \"p9\": {\n      \"path\": \"/Users/charles/Documents/brain/05-实践与项目/projects/symphony-inspired-local-task-orchestrator/P9 - Implementation Backlog.md\",\n      \"exists\": true\n    },\n    \"playbook\": {\n      \"path\": \"/Users/charles/Documents/brain/05-实践与项目/实践方案/11-Symphony-inspired本地任务编排Playbook.md\",\n      \"exists\": true\n    },\n    \"task_template\": {\n      \"path\": \"/Users/charles/Documents/brain/08-模板/local-brain-task-note-template.md\",\n      \"exists\": true\n    },\n    \"workflow_template\": {\n      \"path\": \"/Users/charles/Documents/brain/08-模板/task-workflow-contract-template.md\",\n      \"exists\": true\n    },\n    \"control_center\": {\n      \"path\": \"/Users/charles/Documents/brain/07-仪表盘/待完成任务控制台.md\",\n      \""
+        },
+        {
+          "id": "E-006",
+          "type": "command_output",
+          "summary": "E6_next",
+          "supports": [
+            "C4"
+          ],
+          "contradicts": [],
+          "exit_code": 0,
+          "output_excerpt": "{\n  \"status\": \"OK\",\n  \"next\": null,\n  \"message\": \"No active local-brain tasks in canonical task notes.\"\n}"
+        },
+        {
+          "id": "E-007",
+          "type": "command_output",
+          "summary": "E7_dispatch",
+          "supports": [
+            "C3",
+            "C4"
+          ],
+          "contradicts": [],
+          "exit_code": 0,
+          "output_excerpt": "{\n  \"status\": \"OK\",\n  \"dry_run\": true,\n  \"dispatchable\": false,\n  \"message\": \"No active local-brain tasks in canonical task notes.\"\n}"
+        },
+        {
+          "id": "E-008",
+          "type": "command_output",
+          "summary": "E8_claude_adapter",
+          "supports": [
+            "C5"
+          ],
+          "contradicts": [],
+          "exit_code": 0,
+          "output_excerpt": "OK"
+        }
+      ],
+      "grounding": {
+        "C1": {
+          "claim_id": "C1",
+          "claim_text": "Markdown task notes in ~/Documents/brain remain canonical; dashboards and sorted pool are derived views.",
+          "severity": 3,
+          "truth_status": "verified_by_evidence",
+          "supporting_evidence_ids": [
+            "E-003",
+            "E-005"
+          ],
+          "non_verifying_supporting_evidence_ids": [],
+          "contradicting_evidence_ids": [],
+          "candidate_evidence_ids": []
+        },
+        "C2": {
+          "claim_id": "C2",
+          "claim_text": "User can add tasks from Obsidian via 任务收件箱 and trigger ingestion with natural language or documented CLI.",
+          "severity": 3,
+          "truth_status": "verified_by_evidence",
+          "supporting_evidence_ids": [
+            "E-002",
+            "E-003",
+            "E-004",
+            "E-005"
+          ],
+          "non_verifying_supporting_evidence_ids": [],
+          "contradicting_evidence_ids": [],
+          "candidate_evidence_ids": []
+        },
+        "C3": {
+          "claim_id": "C3",
+          "claim_text": "brain_task_orchestrator.py provides deterministic list/add/ingest-inbox/claim/release/done/retry/dashboard/next/dispatch-dry-run/selfcheck commands.",
+          "severity": 3,
+          "truth_status": "verified_by_evidence",
+          "supporting_evidence_ids": [
+            "E-001",
+            "E-002",
+            "E-004",
+            "E-005",
+            "E-007"
+          ],
+          "non_verifying_supporting_evidence_ids": [],
+          "contradicting_evidence_ids": [],
+          "candidate_evidence_ids": []
+        },
+        "C4": {
+          "claim_id": "C4",
+          "claim_text": "Task pool sorting is deterministic and live generated; current active_count is zero, so there is no pending local-brain task in scope.",
+          "severity": 3,
+          "truth_status": "verified_by_evidence",
+          "supporting_evidence_ids": [
+            "E-003",
+            "E-004",
+            "E-005",
+            "E-006",
+            "E-007"
+          ],
+          "non_verifying_supporting_evidence_ids": [],
+          "contradicting_evidence_ids": [],
+          "candidate_evidence_ids": []
+        },
+        "C5": {
+          "claim_id": "C5",
+          "claim_text": "consult_models Claude discussion/planning adapter caveat is fixed by using Claude Code CLI for Claude models, so the previous manual ratification workaround is no longer a deliverable caveat.",
+          "severity": 3,
+          "truth_status": "verified_by_evidence",
+          "supporting_evidence_ids": [
+            "E-001",
+            "E-008"
+          ],
+          "non_verifying_supporting_evidence_ids": [],
+          "contradicting_evidence_ids": [],
+          "candidate_evidence_ids": []
+        },
+        "C6": {
+          "claim_id": "C6",
+          "claim_text": "All deterministic gates pass and accepted_risks is empty in the landing selfcheck.",
+          "severity": 3,
+          "truth_status": "verified_by_evidence",
+          "supporting_evidence_ids": [
+            "E-005"
+          ],
+          "non_verifying_supporting_evidence_ids": [],
+          "contradicting_evidence_ids": [],
+          "candidate_evidence_ids": []
+        }
+      },
+      "evidence_coverage": 1.0,
+      "verified_claim_count": 6,
+      "claim_count": 6
+    },
+    "evidence_requests": [
+      {
+        "id": "ER-001",
+        "requested_by": "mimo-v2.5-pro",
+        "claim_id": "C5",
+        "claim": "",
+        "tool_needed": "terminal",
+        "command": "cat /Users/charles/Documents/brain/05-实践与项目/projects/symphony-inspired-local-task-orchestrator/P9\\ -\\ Implementation\\ Backlog.md | grep -A5 -i 'claude\\|adapter\\|caveat'",
+        "why": "E-008 returned only 'OK' with no output_excerpt detail. For full audit trail confidence, inspect the P9 backlog or the Claude adapter source to confirm the manual-ratification workaround was explicitly removed or superseded, not just silently passing.",
+        "status": "requested",
+        "safety": "read_only_or_orchestrator_approved"
+      },
+      {
+        "id": "ER-002",
+        "requested_by": "mimo-v2.5-pro",
+        "claim_id": "C3",
+        "claim": "",
+        "tool_needed": "terminal",
+        "command": "python3 brain_task_orchestrator.py --help 2>&1 | head -40",
+        "why": "E-001 (py_compile) has empty output_excerpt. While exit_code=0 and E-002/E-004/E-007 confirm multiple commands work, a --help listing would provide direct surface-area evidence for the full command list claimed in C3 (list/add/ingest-inbox/claim/release/done/retry/dashboard/next/dispatch-dry-run/selfcheck).",
+        "status": "requested",
+        "safety": "read_only_or_orchestrator_approved"
+      }
+    ],
+    "provenance": [
+      "claude-opus-4-7 contributed seed proposal",
+      "gpt-5.5 contributed seed proposal",
+      "deepseek-v4-pro contributed seed proposal",
+      "mimo-v2.5-pro contributed seed proposal"
+    ],
+    "reasons": [],
+    "quota_snapshot": {
+      "anthropic::claude-opus-4-7": {
+        "model": "claude-opus-4-7",
+        "provider": "anthropic",
+        "status": "unknown",
+        "observability": "unknown",
+        "quota_type": "unknown",
+        "remaining_tokens": null,
+        "remaining_requests": null,
+        "remaining_usd": null,
+        "reset_at": null,
+        "source": "response_headers",
+        "confidence": 0.1,
+        "stale_after_seconds": 300,
+        "last_updated": "2026-05-07T17:20:30.677031Z",
+        "usage": {}
+      },
+      "openai-codex::gpt-5.5": {
+        "model": "gpt-5.5",
+        "provider": "openai-codex",
+        "status": "unobservable",
+        "observability": "unobservable",
+        "quota_type": "subscription_cap",
+        "remaining_tokens": null,
+        "remaining_requests": null,
+        "remaining_usd": null,
+        "reset_at": null,
+        "source": "response_headers",
+        "confidence": 0.2,
+        "stale_after_seconds": 300,
+        "last_updated": "2026-05-07T17:22:08.398356Z",
+        "usage": {}
+      },
+      "deepseek::deepseek-v4-pro": {
+        "model": "deepseek-v4-pro",
+        "provider": "deepseek",
+        "status": "unknown",
+        "observability": "unknown",
+        "quota_type": "unknown",
+        "remaining_tokens": null,
+        "remaining_requests": null,
+        "remaining_usd": null,
+        "reset_at": null,
+        "source": "response_headers",
+        "confidence": 0.1,
+        "stale_after_seconds": 300,
+        "last_updated": "2026-05-07T17:22:28.324352Z",
+        "usage": {}
+      },
+      "xiaomi::mimo-v2.5-pro": {
+        "model": "mimo-v2.5-pro",
+        "provider": "xiaomi",
+        "status": "unknown",
+        "observability": "unknown",
+        "quota_type": "unknown",
+        "remaining_tokens": null,
+        "remaining_requests": null,
+        "remaining_usd": null,
+        "reset_at": null,
+        "source": "response_headers",
+        "confidence": 0.1,
+        "stale_after_seconds": 300,
+        "last_updated": "2026-05-07T17:24:18.385858Z",
+        "usage": {}
+      }
+    },
+    "quota_confidence": {
+      "schema_version": 1,
+      "exact_count": 0,
+      "estimated_count": 0,
+      "unknown_count": 3,
+      "unobservable_count": 1,
+      "exhausted_count": 0,
+      "has_low_confidence_quota": true,
+      "low_confidence_models": [
+        "claude-opus-4-7",
+        "deepseek-v4-pro",
+        "gpt-5.5",
+        "mimo-v2.5-pro"
+      ]
+    },
+    "skipped_due_to_quota": [],
+    "fanout_certification": {
+      "schema_version": 1,
+      "status": "fanout_quorum_met",
+      "certified": true,
+      "multi_model_certified": true,
+      "certification_scope": "multi_model",
+      "below_min_quorum": false,
+      "success_count": 4,
+      "fail_count": 0,
+      "planner_count": 4,
+      "min_quorum": 2,
+      "reason": "planner fan-out met min_quorum: 4/2"
+    }
+  },
+  "certification_manifest": {
+    "schema_version": "certification_manifest_v1",
+    "generated_at": "2026-05-07T17:29:48.091626Z",
+    "tick_dir": "/Users/charles/.hermes/tick-20260507-172524",
+    "status": "certified",
+    "can_claim_complete_certification": true,
+    "reasons": [],
+    "gates": {
+      "tick_dir_exists": true,
+      "plans_present": true,
+      "merged_plan_present": true,
+      "discussion_result_present": true,
+      "fanout_certified": true,
+      "multi_model_certified": true,
+      "truth_can_certify": true,
+      "merged_fanout_certified": true,
+      "merged_multi_model_certified": true,
+      "merged_truth_can_certify": true,
+      "issue_ledger_present": true,
+      "issue_ledger_malformed_count": 0,
+      "ratification_votes_present": true,
+      "ratification_vote_count": 4,
+      "non_dict_vote_count": 0,
+      "expected_vote_count": 4,
+      "planner_count": 4,
+      "success_count": 4,
+      "merged_planner_count": 4,
+      "merged_success_count": 4,
+      "plan_file_count": 4,
+      "approval_count": 4,
+      "unique_approval_count": 4,
+      "reject_count": 0,
+      "no_reject_votes": true,
+      "all_votes_best_within_constraints": true,
+      "vote_models_unique": true,
+      "vote_models_nonempty": true,
+      "vote_models_expected": true,
+      "ratification_quorum_met": true,
+      "unresolved_severity_ge_3_count": 0,
+      "agreement_matrix_present": true,
+      "agreement_matrix_min": 0.95,
+      "agreement_matrix_pass": true,
+      "discussion_status": "certified",
+      "merged_patches_are_list": true,
+      "empty_patches_have_no_action_intent": true,
+      "plan_patch_artifacts_well_formed": true
+    },
+    "artifacts": {
+      "plans": {
+        "count": 4,
+        "files": [
+          {
+            "path": "plans/claude-opus-4-7.json",
+            "exists": true,
+            "bytes": 2030,
+            "sha256": "67863e45779657d1d37675c62c73140cfbd579c619fc084b06d57941c05b044c"
+          },
+          {
+            "path": "plans/deepseek-v4-pro.json",
+            "exists": true,
+            "bytes": 1918,
+            "sha256": "b2e9462d7c23744fa86a73bea60f002b34335bf872576ed82215d768ec630fe0"
+          },
+          {
+            "path": "plans/gpt-5.5.json",
+            "exists": true,
+            "bytes": 2541,
+            "sha256": "d13276248bca4005742c53f2e6196ba38a48c97de0bf1f6ab19ef0a3a06c95db"
+          },
+          {
+            "path": "plans/mimo-v2.5-pro.json",
+            "exists": true,
+            "bytes": 3230,
+            "sha256": "a2feee5e25f95f13ceee01453062c8b60f8b8be9a215924e9c3f566afc79c9ef"
+          }
+        ]
+      },
+      "merged_plan": {
+        "path": "merged_plan.json",
+        "exists": true,
+        "bytes": 13984,
+        "sha256": "b6da58448dee8e63206db508ab3a908f26989c378d2df6d4a10447c2eff60b6d"
+      },
+      "discussion_result": {
+        "path": "discussion_result.json",
+        "exists": true,
+        "bytes": 33724,
+        "sha256": "7bff2e7ca105414ee2264c8c28447d91449b939992c629f781a6c67a8c0c382a"
+      },
+      "certification_manifest": {
+        "path": "final/certification_manifest.json",
+        "exists": true
+      }
+    }
+  },
+  "state_file": "/tmp/brain-task-orchestrator-final-cert-linked-state.json",
+  "status": "certified",
+  "truth_status": "grounded",
+  "claim_count": 6,
+  "verified_claim_count": 6,
+  "evidence_coverage": 1.0,
+  "unresolved_severity_ge_3_count": 0,
+  "can_claim_complete_certification": true,
+  "scope": "P0/P1/P2/P3-dry-run local-brain-native task planning/control plane",
+  "caveats": []
+}

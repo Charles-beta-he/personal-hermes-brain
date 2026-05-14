@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-05-08T16:47:43+08:00",
+  "scope": "local-brain-taskflow-closure-infrastructure-only",
+  "status": "certified_with_merge_dissent_not_blocking",
+  "truth_status": "grounded",
+  "discussion_status": "certified",
+  "can_claim_complete_certification": true,
+  "consensus_verdict": "dissent",
+  "consensus_score": 0.282,
+  "arbitration_needed": true,
+  "interpretation": "Planner patches differed but both were no-op certification intents; no concrete patch was requested. Truth gate certified all 5 high-severity claims.",
+  "tick_dir": "/Users/charles/.hermes/tick-20260508-084332",
+  "discussion_result": "/Users/charles/.hermes/tick-20260508-084332/discussion_result.json",
+  "certification_manifest": "/Users/charles/.hermes/tick-20260508-084332/final/certification_manifest.json",
+  "evidence_bundle": {
+    "schema_version": 1,
+    "created_at": "2026-05-08T08:43:32.194153+00:00",
+    "claims": [
+      {
+        "id": "C-001",
+        "text": "brain_task_orchestrator implements reconcile for expired/stale/due retry tasks",
+        "severity": 3
+      },
+      {
+        "id": "C-002",
+        "text": "done requires structured evidence and proof-check detects missing/unstructured done evidence",
+        "severity": 3
+      },
+      {
+        "id": "C-003",
+        "text": "brain_task_dispatch_tick is safe: it ingests, reconciles, writes dashboard, proof-checks, and emits dispatch hint without executing tasks or marking done",
+        "severity": 3
+      },
+      {
+        "id": "C-004",
+        "text": "Agent技能树路由矩阵 includes task-pool closure and external GitHub project analysis routes",
+        "severity": 3
+      },
+      {
+        "id": "C-005",
+        "text": "no_agent cron local-brain-task-dispatch-safe-tick is scheduled",
+        "severity": 3
+      }
+    ],
+    "evidence": [
+      {
+        "id": "E-001",
+        "kind": "command",
+        "supports": [
+          "C-001",
+          "C-002",
+          "C-003"
+        ],
+        "summary": "py_compile, unit test, selfcheck, proof-check, dispatch tick all passed after patching tests and cleanup",
+        "type": "note",
+        "contradicts": []
+      },
+      {
+        "id": "E-002",
+        "kind": "file",
+        "supports": [
+          "C-004"
+        ],
+        "path": "/Users/charles/Documents/brain/07-仪表盘/Agent技能树路由矩阵.md",
+        "summary": "matrix now contains 任务池 / 长期闭环路线 and 外部 GitHub 项目分析 -> 技能树完善路线",
+        "type": "note",
+        "contradicts": []
+      },
+      {
+        "id": "E-003",
+        "kind": "cron",
+        "supports": [
+          "C-005"
+        ],
+        "summary": "cron job e8c87fd3eed7 created as no_agent script brain_task_dispatch_tick.py schedule 10 */2 * * *",
+        "type": "note",
+        "contradicts": []
+      }
+    ],
+    "grounding": {
+      "C-001": {
+        "claim_id": "C-001",
+        "claim_text": "brain_task_orchestrator implements reconcile for expired/stale/due retry tasks",
+        "severity": 3,
+        "truth_status": "verified_by_evidence",
+        "supporting_evidence_ids": [
+          "E-001"
+        ],
+        "non_verifying_supporting_evidence_ids": [],
+        "contradicting_evidence_ids": [],
+        "candidate_evidence_ids": []
+      },
+      "C-002": {
+        "claim_id": "C-002",
+        "claim_text": "done requires structured evidence and proof-check detects missing/unstructured done evidence",
+        "severity": 3,
+        "truth_status": "verified_by_evidence",
+        "supporting_evidence_ids": [
+          "E-001"
+        ],
+        "non_verifying_supporting_evidence_ids": [],
+        "contradicting_evidence_ids": [],
+        "candidate_evidence_ids": []
+      },
+      "C-003": {
+        "claim_id": "C-003",
+        "claim_text": "brain_task_dispatch_tick is safe: it ingests, reconciles, writes dashboard, proof-checks, and emits dispatch hint without executing tasks or marking done",
+        "severity": 3,
+        "truth_status": "verified_by_evidence",
+        "supporting_evidence_ids": [
+          "E-001"
+        ],
+        "non_verifying_supporting_evidence_ids": [],
+        "contradicting_evidence_ids": [],
+        "candidate_evidence_ids": []
+      },
+      "C-004": {
+        "claim_id": "C-004",
+        "claim_text": "Agent技能树路由矩阵 includes task-pool closure and external GitHub project analysis routes",
+        "severity": 3,
+        "truth_status": "verified_by_evidence",
+        "supporting_evidence_ids": [
+          "E-002"
+        ],
+        "non_verifying_supporting_evidence_ids": [],
+        "contradicting_evidence_ids": [],
+        "candidate_evidence_ids": []
+      },
+      "C-005": {
+        "claim_id": "C-005",
+        "claim_text": "no_agent cron local-brain-task-dispatch-safe-tick is scheduled",
+        "severity": 3,
+        "truth_status": "verified_by_evidence",
+        "supporting_evidence_ids": [
+          "E-003"
+        ],
+        "non_verifying_supporting_evidence_ids": [],
+        "contradicting_evidence_ids": [],
+        "candidate_evidence_ids": []
+      }
+    },
+    "evidence_coverage": 1.0,
+    "verified_claim_count": 5,
+    "claim_count": 5
+  },
+  "truth_assessment": {
+    "schema_version": 1,
+    "truth_status": "grounded",
+    "can_certify_truth": true,
+    "claim_count": 5,
+    "verified_claim_count": 5,
+    "evidence_coverage": 1.0,
+    "unsupported_claim_ids": [],
+    "unsupported_high_severity_claim_ids": [],
+    "needs_link_review_claim_ids": [],
+    "needs_link_review_high_severity_claim_ids": [],
+    "contradicted_claim_ids": [],
+    "contradicted_high_severity_claim_ids": [],
+    "reasons": []
+  },
+  "remaining_scope_boundary": "The Agent-S GitHub analysis task remains pending and intentionally dispatchable; this certification covers task-pool closure infrastructure only."
+}

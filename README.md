@@ -2,7 +2,7 @@
 
 Sanitized private backup/export for Charles' Hermes personal brain.
 
-Generated: 2026-05-14T20:28:27Z
+Generated: 2026-05-14T20:39:40Z
 
 This repo intentionally contains portable knowledge and deterministic source artifacts only.
 It does not contain raw Hermes memory, auth files, OAuth tokens, logs, caches, sessions,
@@ -21,4 +21,5 @@ Restore path:
 2. Read `docs/BOOTSTRAP.md` and `docs/SYNC_POLICY.md`.
 3. Restore credentials manually from the local password manager, never from Git.
 4. Run `bash bootstrap/verify.sh` before importing.
-5. Run `bash bootstrap/sync_import.sh` to restore scripts, skills, and project profiles into `~/.hermes`.
+5. Run `bash bootstrap/bootstrap_machine.sh` for one-click restore and validation.
+   - Optional path rewrite: `bash bootstrap/bootstrap_machine.sh --rewrite-prefix /old/checkout=/new/checkout`
