@@ -1,6 +1,6 @@
 {
   "schema": "personal_hermes_brain_export_result_v1",
-  "generated_at": "2026-05-14T20:05:32Z",
+  "generated_at": "2026-05-14T20:16:52Z",
   "dest": "/Users/charles/personal-hermes-brain",
   "remote": "https://github.com/Charles-beta-he/personal-hermes-brain.git",
   "stats": {
@@ -8,6 +8,11 @@
       "copied": 383,
       "skipped": 32,
       "secret_skipped": 136
+    },
+    "project_profiles": {
+      "copied": 5,
+      "skipped": 0,
+      "secret_skipped": 0
     },
     "skills": {
       "copied": 1594,

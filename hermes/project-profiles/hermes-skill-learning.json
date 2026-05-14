@@ -1,0 +1,21 @@
+{
+  "project": "hermes-skill-learning",
+  "display_name": "Hermes 技能学习与评估",
+  "tech_stack": {
+    "type": "evaluation/research",
+    "output": "skill SKILL.md + references",
+    "validation": "skill_view + skill_manage"
+  },
+  "conventions": [
+    "分析外部项目 → 提炼可复用模式 → 写入 skill",
+    "必须有 references/ 目录存放原始资料",
+    "skill 描述必须包含 trigger conditions",
+    "必须有 pitfalls 部分"
+  ],
+  "acceptance": [
+    "skill 可被 skill_view 加载",
+    "包含至少 3 个可执行步骤",
+    "有 pitfalls 部分",
+    "references 不为空"
+  ]
+}

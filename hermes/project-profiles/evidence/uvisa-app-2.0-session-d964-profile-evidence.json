@@ -1,0 +1,181 @@
+{
+  "artifact": "uvisa_profile_update_evidence_v1",
+  "generated_at": "2026-05-13T11:10:07",
+  "source_session": {
+    "path": "/Users/charles/.claude/projects/-Users-charles/d964ad07-b963-498e-9d25-53f4d60d3d31.jsonl",
+    "session_id": "d964ad07-b963-498e-9d25-53f4d60d3d31",
+    "record_count": 12363,
+    "direct_user_prompt_count": 101,
+    "first_timestamp": "2026-05-12T07:01:48.069Z",
+    "last_timestamp": "2026-05-13T03:04:18.918Z",
+    "cwd_hits": [
+      [
+        "/Users/charles/Desktop/folder/work/uvisa-app-2.0",
+        6202
+      ],
+      [
+        "/Users/charles/Desktop/folder/work/uvisa-backend",
+        2672
+      ],
+      [
+        "/Users/charles",
+        682
+      ],
+      [
+        "/Users/charles/Documents/brain/05-实践与项目/tasks",
+        391
+      ],
+      [
+        "/Users/charles/Desktop/folder/work/uvisa-backend/app/uvisa-app",
+        21
+      ]
+    ],
+    "theme_counts": {
+      "fullstack/backend_contract": 133,
+      "lark_tasks": 210,
+      "no_delete_preserve": 12,
+      "evidence_verification": 92,
+      "loop_exhaustive": 104,
+      "classification": 51,
+      "money_security_domains": 36,
+      "push_remote_frontend": 76,
+      "project_profile": 55
+    },
+    "tool_use_counts": [
+      [
+        "Bash",
+        1537
+      ],
+      [
+        "Read",
+        304
+      ],
+      [
+        "Edit",
+        260
+      ],
+      [
+        "Write",
+        35
+      ],
+      [
+        "TaskUpdate",
+        11
+      ],
+      [
+        "TaskCreate",
+        8
+      ],
+      [
+        "AskUserQuestion",
+        5
+      ],
+      [
+        "ToolSearch",
+        4
+      ]
+    ]
+  },
+  "selected_evidence": [
+    {
+      "id": "E-001",
+      "summary": "Session is heavily bound to frontend repo, backend repo, local brain task files; cwd hits show frontend 6202, backend 2672, tasks 391.",
+      "supports": [
+        "C-001",
+        "C-002"
+      ]
+    },
+    {
+      "id": "E-002",
+      "summary": "User asked: “为什么现在改的任务，后端并未修改？重新查看hermes本地大脑的uvisa-app-2.0项目画像”; assistant then identified FE-only fixes and implemented backend commit 27a41ae.",
+      "supports": [
+        "C-002"
+      ]
+    },
+    {
+      "id": "E-003",
+      "summary": "User repeatedly requested “根据项目画像，本地前后端测试 / 本地前后端进行UI测试”; assistant booted backend+frontend and drove real UI testing.",
+      "supports": [
+        "C-006"
+      ]
+    },
+    {
+      "id": "E-004",
+      "summary": "User said: “项目画像中应该有原型地址”; Workpad records prototype address https://napp.denatrust.com as UI/prototype comparison, not real integration environment.",
+      "supports": [
+        "C-003"
+      ]
+    },
+    {
+      "id": "E-005",
+      "summary": "During prototype audit, user corrected priority: “任务描述优先级最高…” then “description应该是你用来代替评论区评论的功能，不应作为要求”; session shows generated description fields must not be treated as authoritative if they merely substitute comments; actual Lark task/comment/prototype evidence must be reconciled and conflicts recorded.",
+      "supports": [
+        "C-004"
+      ]
+    },
+    {
+      "id": "E-006",
+      "summary": "User repeatedly commanded “前端rebase 远端feat/uvisa-2.0再push，后端rebase main分支再push”; session closeout pushed FE feat/uvisa-2.0 and BE main.",
+      "supports": [
+        "C-005"
+      ]
+    },
+    {
+      "id": "E-007",
+      "summary": "Current profile already encodes fullstack identity, backend complete landing, remote frontend build monitoring, and no secret persistence; update should extend those rules rather than replace them.",
+      "supports": [
+        "C-007"
+      ]
+    }
+  ],
+  "claims": [
+    {
+      "id": "C-001",
+      "claim": "The resumed Claude session d964ad07 is a UVISA 2.0 fullstack work session spanning frontend, backend, and local-brain taskpool context.",
+      "severity": 2
+    },
+    {
+      "id": "C-002",
+      "claim": "The project profile should further harden default fullstack-integrated execution: backend-owned semantics require backend inspection and direct backend changes when backend is the correct fix point.",
+      "severity": 4
+    },
+    {
+      "id": "C-003",
+      "claim": "The project profile should include the prototype URL https://napp.denatrust.com as a UI/prototype comparison anchor and label it non-real-backend/non-integration evidence.",
+      "severity": 3
+    },
+    {
+      "id": "C-004",
+      "claim": "The project profile should clarify Lark evidence precedence: real Lark task text/comments/PM screenshots/prototype anchors are evidence sources; generated taskpool description placeholders are not authoritative requirements, and conflicts must be recorded rather than silently resolved.",
+      "severity": 4
+    },
+    {
+      "id": "C-005",
+      "claim": "The project profile should encode release branch sync: frontend publishes from feat/uvisa-2.0 and backend from main; on explicit release sync request, rebase/push both scoped branches with tests/evidence.",
+      "severity": 3
+    },
+    {
+      "id": "C-006",
+      "claim": "For local fullstack UI acceptance, the profile should require local backend + local frontend + browser/Playwright evidence, with mock/Railway only comparison/monitoring evidence.",
+      "severity": 4
+    },
+    {
+      "id": "C-007",
+      "claim": "Profile update should avoid raw transcript dumps, credentials, OTPs, cookies, and secrets; only compact redacted evidence and durable workflow rules should be persisted.",
+      "severity": 5
+    }
+  ],
+  "candidate_profile_updates": {
+    "add_paths.prototype": "https://napp.denatrust.com",
+    "add_lark_evidence_policy": [
+      "actual Lark task body/comments/PM evidence and prototype anchors outrank generated taskpool description placeholders",
+      "record conflict when task/comment/prototype disagree",
+      "explicit current task acceptance wins over broad prototype parity"
+    ],
+    "strengthen_branch_policy": {
+      "frontend_release_branch": "feat/uvisa-2.0",
+      "backend_release_branch": "main"
+    },
+    "strengthen_fullstack_ui_acceptance": "boot local backend + local frontend; browser/Playwright against real backend; mock/Railway only comparison/monitoring"
+  }
+}

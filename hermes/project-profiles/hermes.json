@@ -1,0 +1,31 @@
+{
+  "project": "hermes",
+  "display_name": "Hermes / local-brain default taskpool profile",
+  "tech_stack": {
+    "runtime": "Python 3",
+    "taskpool": "Obsidian Markdown task notes",
+    "verification": "unittest-style Python scripts + p10-health"
+  },
+  "paths": {
+    "hermes_home": "/Users/charles/.hermes",
+    "brain_vault": "/Users/charles/Documents/brain"
+  },
+  "conventions": [
+    "Markdown task notes are canonical; dashboards are derived",
+    "Fail closed on missing evidence, stale claims, invalid lifecycle transitions, or missing project profile",
+    "Do not execute Markdown task bodies as scripts",
+    "Scoped local commits only; do not push unless explicitly requested"
+  ],
+  "test_cmd": "python3 ~/.hermes/scripts/test_brain_task_orchestrator.py",
+  "build_cmd": "~/.hermes/scripts/p10-health.sh",
+  "acceptance": [
+    "focused tests pass",
+    "brain_task_orchestrator.py selfcheck --json returns PASS",
+    "p10-health remains Grade A or any degradation is explicitly classified"
+  ],
+  "forbidden": [
+    "Starting a worker without project profile context",
+    "Marking task done without structured evidence",
+    "Treating model agreement as evidence without claim-linked artifacts"
+  ]
+}
