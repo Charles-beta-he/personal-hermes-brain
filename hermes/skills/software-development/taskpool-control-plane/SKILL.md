@@ -70,6 +70,14 @@ Use this order:
 
 This ordering keeps you from over-indexing on historical governance debt before confirming whether a concrete task can already be claimed.
 
+## Legacy data / routing compatibility repairs
+
+If a local-brain task is `project: hermes` but `architecture_target: local-brain`, old autorun allowlists/policies that contain `project:local-brain` should match the architecture/brain routing surface, not only `task.project`. Fix both boundaries when this stalls: `autorun_allowlist_matches(...)` in `brain_task_orchestrator.py` and `validate_policy_for_task(...)` in `brain_task_autorun_step.py`. Keep it narrow: match `project`, `architecture_target`, `brain`, and their explicit `project:` / `architecture:` / `brain:` forms; do not broaden to all Hermes tasks.
+
+If historical auto-subtask backfill wrote relationship evidence such as `child-task:` / `child-axis:`, accept those as structured compatibility evidence. They are taskpool relationship links, not free-form proof. Continue to reject ordinary unprefixed free text.
+
+If an autorun review-close path can move a P1/evolution/`requires_multimodel` task to `done` using only static proof such as `command:py_compile_taskpool PASS`, add/verify a `lifecycle_gate(... to_status="done")` hard check: when `task_multimodel_intervention_required(task)` is true and `task_multimodel_passed(task)` is false, fail with `multimodel_certification_required_before_done`. If any task was closed before this gate existed, force-revert it to `review` with structured repair evidence and let the multimodel path certify it.
+
 ## Implementation guidance for dispatch tick fixes
 
 When patching dispatch logic:
