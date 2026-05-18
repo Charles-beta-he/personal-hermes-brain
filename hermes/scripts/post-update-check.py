@@ -15,8 +15,11 @@ import json
 import os
 import sys
 import subprocess
+import pathlib
 
-HERMES_ROOT = os.path.expanduser("~/.hermes/hermes-agent")
+LEGACY_HERMES_HOME = pathlib.Path(__file__).resolve().parent.parent
+HERMES_ROOT = str(LEGACY_HERMES_HOME / "hermes-agent")
+OVERLAY_REGISTRY = str(LEGACY_HERMES_HOME / "overlays" / "hermes-local-enhancements.json")
 CHECKS = []
 
 def register(name, file_rel, pattern_needle, fix_desc, fix_func=None):
@@ -513,6 +516,476 @@ register(
 # Runner
 # ═══════════════════════════════════════════════════════════════════
 
+
+def _run_cmd(cmd, cwd=None, timeout=120):
+    try:
+        proc = subprocess.run(
+            cmd,
+            cwd=cwd,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            timeout=timeout,
+        )
+        return proc.returncode, (proc.stdout or "").strip()
+    except Exception as exc:
+        return 99, str(exc)
+
+
+def _git(args, timeout=30):
+    return _run_cmd(["git", *args], cwd=HERMES_ROOT, timeout=timeout)
+
+
+def check_private_repo_governance():
+    """Guard the private Hermes code-repo topology and runtime-state boundary.
+
+    This check makes the first-governance landing durable: future self-checks
+    should catch regressions where origin is accidentally pointed back at the
+    official repo, upstream disappears, governance docs are lost, or live runtime
+    state leaks into the source checkout again.
+    """
+    if not os.path.isdir(os.path.join(HERMES_ROOT, ".git")):
+        return "BROKEN (Hermes root is not a git checkout)"
+
+    issues = []
+    rc, branch = _git(["branch", "--show-current"])
+    if rc != 0:
+        issues.append("cannot read current branch")
+    elif branch and not (branch == "private/main" or branch.startswith("integrate/")):
+        issues.append(f"unexpected branch {branch!r}; expected private/main or integrate/*")
+
+    rc, origin = _git(["remote", "get-url", "origin"])
+    if rc != 0:
+        issues.append("missing origin remote")
+    elif "Charles-beta-he/hermes-agent-private" not in origin:
+        issues.append(f"origin is not private Hermes repo: {origin}")
+
+    rc, upstream = _git(["remote", "get-url", "upstream"])
+    if rc != 0:
+        issues.append("missing upstream remote")
+    elif "NousResearch/hermes-agent" not in upstream:
+        issues.append(f"upstream is not official Hermes repo: {upstream}")
+
+    for ref in ("private/main", "backup/landing-20260518-203325"):
+        rc, _ = _git(["rev-parse", "--verify", ref])
+        if rc != 0:
+            issues.append(f"missing local ref {ref}")
+
+    required_docs = [
+        "docs/private/overlay-registry.md",
+        "docs/private/upgrade-sop.md",
+        "docs/private/stable-points.md",
+    ]
+    missing_docs = [rel for rel in required_docs if not os.path.exists(os.path.join(HERMES_ROOT, rel))]
+    if missing_docs:
+        issues.append("missing governance docs: " + ", ".join(missing_docs))
+
+    forbidden = ["state.db", ".hermes"]
+    leaked = [rel for rel in forbidden if os.path.exists(os.path.join(HERMES_ROOT, rel))]
+    if leaked:
+        issues.append("runtime state leaked into source checkout: " + ", ".join(leaked))
+
+    gitignore = os.path.join(HERMES_ROOT, ".gitignore")
+    try:
+        ignore_text = pathlib.Path(gitignore).read_text(encoding="utf-8")
+    except Exception as exc:
+        issues.append(f"cannot read .gitignore: {exc}")
+    else:
+        for needle in ("state.db", ".hermes/", "*.db-wal", "*.db-shm"):
+            if needle not in ignore_text:
+                issues.append(f".gitignore missing {needle}")
+
+    if issues:
+        return "BROKEN (" + "; ".join(issues[:8]) + (f"; +{len(issues)-8} more" if len(issues) > 8 else "") + ")"
+
+    return f"OK (branch={branch or '<detached>'}, origin=private, upstream=official, docs=present, runtime-clean)"
+
+
+def check_overlay_registry():
+    if not os.path.exists(OVERLAY_REGISTRY):
+        return f"MISSING overlay registry: {OVERLAY_REGISTRY}"
+    try:
+        data = json.loads(open(OVERLAY_REGISTRY, "r", encoding="utf-8").read())
+    except Exception as exc:
+        return f"BAD overlay registry JSON: {exc}"
+
+    overlays = data.get("overlays") or []
+    if not overlays:
+        return "MISSING overlay registry entries"
+
+    required = ["id", "kind", "artifact_paths", "verification", "upstream_absorb_when"]
+    schema_issues = []
+    missing = []
+    for overlay in overlays:
+        overlay_id = overlay.get("id") or "<missing-id>"
+        for key in required:
+            value = overlay.get(key)
+            if value in (None, "") or value == []:
+                schema_issues.append(f"{overlay_id}:{key}")
+        for relpath in overlay.get("artifact_paths") or []:
+            abspath = os.path.join(HERMES_ROOT, relpath)
+            if not os.path.exists(abspath):
+                missing.append(relpath)
+
+    if schema_issues:
+        return "BAD overlay schema: " + ", ".join(schema_issues[:12])
+    if missing:
+        return "MISSING overlay artifacts: " + ", ".join(sorted(set(missing))[:12])
+
+    verified = sum(1 for overlay in overlays if overlay.get("verification"))
+    return f"OK ({len(overlays)} overlays registered, {verified} with verification commands)"
+
+
+def check_conductor_runtime_productization():
+    """Regression gate for default-off conductor runtime scaffolding."""
+    root = HERMES_ROOT
+    required = [
+        os.path.join(root, "agent", "conductor_runtime.py"),
+        os.path.join(root, "tests", "agent", "test_conductor_runtime.py"),
+        os.path.expanduser("~/.hermes/scripts/hermes_conductor_runtime.py"),
+        os.path.expanduser("~/.hermes/scripts/hermes_background_task_worker.py"),
+        os.path.expanduser("~/.hermes/config/model_profiles.yaml"),
+    ]
+    missing = [path for path in required if not os.path.exists(path)]
+    if missing:
+        return "BROKEN (missing conductor runtime files: " + ", ".join(os.path.basename(x) for x in missing) + ")"
+
+    py = os.path.join(root, ".venv", "bin", "python")
+    if not os.path.exists(py):
+        py = sys.executable
+
+    rc, out = _run_cmd([
+        py, "-m", "py_compile",
+        "agent/conductor_runtime.py",
+        "agent/conversation_loop.py",
+        "tests/agent/test_conductor_runtime.py",
+        os.path.expanduser("~/.hermes/scripts/hermes_conductor_runtime.py"),
+        os.path.expanduser("~/.hermes/scripts/hermes_background_task_worker.py"),
+    ], cwd=root)
+    if rc != 0:
+        return "BROKEN (py_compile failed: " + out[-500:] + ")"
+
+    rc, _ = _run_cmd([py, "-m", "pytest", "--version"], cwd=root, timeout=30)
+    if rc == 0:
+        rc, out = _run_cmd([py, "-m", "pytest", "tests/agent/test_conductor_runtime.py", "-q"], cwd=root)
+        runner = "pytest"
+    else:
+        manual = """
+import sys
+sys.path.insert(0,'.')
+from tests.agent import test_conductor_runtime as t
+for name in sorted(dir(t)):
+    if name.startswith('test_'):
+        getattr(t, name)()
+print('manual-tests-ok')
+"""
+        rc, out = _run_cmd([sys.executable, "-c", manual], cwd=root)
+        runner = "manual"
+    if rc != 0:
+        return f"BROKEN ({runner} tests failed: {out[-500:]})"
+
+    script = os.path.expanduser("~/.hermes/scripts/hermes_conductor_runtime.py")
+    rc, out = _run_cmd([sys.executable, script, "config"], cwd=root)
+    if rc != 0:
+        return "BROKEN (config command failed: " + out[-400:] + ")"
+    try:
+        cfg = json.loads(out)
+    except Exception as exc:
+        return "BROKEN (config JSON parse failed: " + str(exc) + ")"
+    if cfg.get("conductor_runtime_enabled") is not True:
+        return "BROKEN (conductor runtime must be enabled)"
+    if cfg.get("sakana_fugu_enabled") is not False:
+        return "BROKEN (sakana_fugu must remain default-off)"
+    if cfg.get("router_call_isolated") is not True:
+        return "BROKEN (router_call_isolated must remain true)"
+
+    rc, out = _run_cmd([sys.executable, script, "fugu-probe"], cwd=root)
+    if rc != 0:
+        return "BROKEN (fugu probe command failed: " + out[-400:] + ")"
+    try:
+        probe = json.loads(out)
+    except Exception as exc:
+        return "BROKEN (fugu probe JSON parse failed: " + str(exc) + ")"
+    if probe.get("status") != "unavailable" or probe.get("fail_soft") is not True:
+        return "BROKEN (Fugu adapter must fail-soft when disabled/no key)"
+
+    rc, out = _run_cmd([sys.executable, script, "role-plan"], cwd=root)
+    if rc != 0:
+        return "BROKEN (role-plan command failed: " + out[-400:] + ")"
+    try:
+        plan = json.loads(out)
+    except Exception as exc:
+        return "BROKEN (role-plan JSON parse failed: " + str(exc) + ")"
+    if plan.get("conductor_enabled") is not True:
+        return "BROKEN (role-plan must show conductor_enabled=true)"
+    if plan.get("schema") != "hermes_conductor_role_plan_v1":
+        return "BROKEN (role-plan schema mismatch)"
+
+    worker_script = os.path.expanduser("~/.hermes/scripts/hermes_background_task_worker.py")
+    rc, out = _run_cmd([sys.executable, worker_script, "probe", "--task-id", "nonexistent"], cwd=root)
+    if rc != 0:
+        return "BROKEN (background worker probe command failed: " + out[-400:] + ")"
+    try:
+        probe_w = json.loads(out)
+    except Exception as exc:
+        return "BROKEN (background worker probe JSON parse failed: " + str(exc) + ")"
+    if "error" not in probe_w:
+        return "BROKEN (background worker must return error for nonexistent task)"
+
+    return f"OK (tests={runner}, conductor=enabled, fugu=fail-soft, role-plan=enabled, worker=ok)"
+
+
+def check_openclaw_productization():
+    """Regression gate for Hermes-local OpenClaw-informed hardening.
+
+    This is intentionally a behavior check, not a live OpenClaw integration:
+    - compile the helper/router/tests
+    - run the helper benchmark
+    - run pytest if available, otherwise fall back to direct test function calls
+    - confirm config stays default-off
+    """
+    root = HERMES_ROOT
+    required = [
+        os.path.join(root, "agent", "openclaw_control_plane.py"),
+        os.path.join(root, "agent", "task_router.py"),
+        os.path.join(root, "tests", "agent", "test_openclaw_control_plane.py"),
+        os.path.expanduser("~/.hermes/scripts/hermes_openclaw_control_plane.py"),
+    ]
+    missing = [path for path in required if not os.path.exists(path)]
+    if missing:
+        return "BROKEN (missing OpenClaw hardening files: " + ", ".join(os.path.basename(x) for x in missing) + ")"
+
+    rc, out = _run_cmd([
+        sys.executable, "-m", "py_compile",
+        "agent/openclaw_control_plane.py",
+        "agent/task_router.py",
+        "tests/agent/test_openclaw_control_plane.py",
+    ], cwd=root)
+    if rc != 0:
+        return "BROKEN (py_compile failed: " + out[-400:] + ")"
+
+    bench_script = os.path.expanduser("~/.hermes/scripts/hermes_openclaw_control_plane.py")
+    rc, out = _run_cmd([sys.executable, bench_script, "benchmark"], cwd=root)
+    if rc != 0:
+        return "BROKEN (benchmark command failed: " + out[-400:] + ")"
+    try:
+        bench = json.loads(out)
+    except Exception as exc:
+        return "BROKEN (benchmark JSON parse failed: " + str(exc) + ")"
+    if bench.get("verdict") != "pass" or bench.get("passed") != bench.get("total"):
+        return f"BROKEN (benchmark {bench.get('passed')}/{bench.get('total')} verdict={bench.get('verdict')})"
+
+    rc, _ = _run_cmd([sys.executable, "-m", "pytest", "--version"], cwd=root, timeout=30)
+    if rc == 0:
+        rc, out = _run_cmd([sys.executable, "-m", "pytest", "tests/agent/test_openclaw_control_plane.py", "-q"], cwd=root)
+        runner = "pytest"
+    else:
+        manual = """
+import sys
+sys.path.insert(0,'.')
+from tests.agent import test_openclaw_control_plane as t
+for name in sorted(dir(t)):
+    if name.startswith('test_'):
+        getattr(t, name)()
+print('manual-tests-ok')
+"""
+        rc, out = _run_cmd([sys.executable, "-c", manual], cwd=root)
+        runner = "manual"
+    if rc != 0:
+        return f"BROKEN ({runner} tests failed: {out[-500:]})"
+
+    rc, out = _run_cmd([sys.executable, bench_script, "config"], cwd=root)
+    if rc != 0:
+        return "BROKEN (config check failed: " + out[-400:] + ")"
+    try:
+        cfg = json.loads(out)
+    except Exception as exc:
+        return "BROKEN (config JSON parse failed: " + str(exc) + ")"
+    if cfg.get("openclaw_activation_hints_enabled") is not True:
+        return "BROKEN (activation_hints must be enabled)"
+    return f"OK (benchmark {bench.get('passed')}/{bench.get('total')}, tests={runner}, activation_hints=on)"
+
+
+CONTINUATION_FRAGMENTATION_KEYWORDS = (
+    "handoff", "handoffs", "relay", "relays", "resume", "resumes", "retry", "retries", "recovery", "missed",
+)
+CONTINUATION_FRAGMENTATION_WRITE_MARKERS = (
+    ".write_text(", ".write_bytes(", "json.dump(", "open(", "Path(", "mkdir(",
+)
+CONTINUATION_CANONICAL_MARKERS = (
+    "agent.continuation",
+    "build_continuation_packet",
+    "write_continuation_packet",
+    "ContinuationPacket",
+    "continuation_status",
+)
+CONTINUATION_FRAGMENTATION_ALLOWLIST = {
+    "tests/",
+    "docs/",
+    "scripts/post-update-check.py",
+}
+
+
+def _iter_python_files_for_continuation_guard(*roots):
+    seen = set()
+    for root in roots:
+        base = pathlib.Path(root).expanduser()
+        if not base.exists():
+            continue
+        for path in base.rglob("*.py"):
+            resolved = str(path.resolve())
+            if resolved in seen:
+                continue
+            seen.add(resolved)
+            yield path
+
+
+def _relative_to_any(path, roots):
+    p = pathlib.Path(path).resolve()
+    for root in roots:
+        try:
+            return p.relative_to(pathlib.Path(root).resolve()).as_posix()
+        except Exception:
+            continue
+    return p.as_posix()
+
+
+def _is_continuation_guard_allowlisted(rel_path: str) -> bool:
+    normalized = rel_path.replace("\\", "/")
+    return any(normalized == item.rstrip("/") or normalized.startswith(item) for item in CONTINUATION_FRAGMENTATION_ALLOWLIST)
+
+
+def _looks_like_ad_hoc_resumable_writer(content: str) -> bool:
+    lines = content.splitlines()
+    lowered_lines = [line.lower() for line in lines]
+    candidate_indexes = [
+        idx for idx, line in enumerate(lowered_lines)
+        if ".hermes" in line and "state" in line and any(keyword in line for keyword in CONTINUATION_FRAGMENTATION_KEYWORDS)
+    ]
+    for idx in candidate_indexes:
+        start = max(0, idx - 5)
+        end = min(len(lines), idx + 6)
+        if any(marker in lines[j] for j in range(start, end) for marker in CONTINUATION_FRAGMENTATION_WRITE_MARKERS):
+            return True
+    return False
+
+
+def _uses_canonical_continuation(content: str) -> bool:
+    return any(marker in content for marker in CONTINUATION_CANONICAL_MARKERS)
+
+
+def find_continuation_fragmentation_issues(repo_root=None, scripts_root=None):
+    """Find ad-hoc resumable-state writers that bypass agent.continuation.
+
+    This is intentionally a conservative governance guard. It does not ban
+    legacy relay/handoff compatibility paths; it requires writers of resumable
+    state to either use/reference the canonical continuation API or live in a
+    test/doc/selfcheck allowlist.
+    """
+    repo = pathlib.Path(repo_root or HERMES_ROOT).expanduser()
+    scripts = pathlib.Path(scripts_root or (LEGACY_HERMES_HOME / "scripts")).expanduser()
+    roots = [repo, scripts]
+    issues = []
+    for path in _iter_python_files_for_continuation_guard(repo, scripts):
+        rel = _relative_to_any(path, roots)
+        if _is_continuation_guard_allowlisted(rel):
+            continue
+        try:
+            content = path.read_text(encoding="utf-8")
+        except UnicodeDecodeError:
+            content = path.read_text(encoding="utf-8", errors="ignore")
+        except Exception:
+            continue
+        if not _looks_like_ad_hoc_resumable_writer(content):
+            continue
+        if _uses_canonical_continuation(content):
+            continue
+        evidence = ""
+        for line in content.splitlines():
+            lowered = line.lower()
+            if any(keyword in lowered for keyword in CONTINUATION_FRAGMENTATION_KEYWORDS) and any(marker.strip("(") in line for marker in CONTINUATION_FRAGMENTATION_WRITE_MARKERS):
+                evidence = line.strip()[:220]
+                break
+        if not evidence:
+            for line in content.splitlines():
+                lowered = line.lower()
+                if any(keyword in lowered for keyword in CONTINUATION_FRAGMENTATION_KEYWORDS):
+                    evidence = line.strip()[:220]
+                    break
+        issues.append({"path": rel, "evidence": evidence})
+    return issues
+
+
+def check_continuation_fragmentation_guard() -> str:
+    issues = find_continuation_fragmentation_issues(HERMES_ROOT, LEGACY_HERMES_HOME / "scripts")
+    if not issues:
+        return "OK (no ad-hoc resumable-state writers outside agent.continuation)"
+    preview = "; ".join(f"{i['path']}: {i['evidence']}" for i in issues[:5])
+    suffix = f"; +{len(issues) - 5} more" if len(issues) > 5 else ""
+    return "BROKEN (ad-hoc continuation/handoff writers bypass agent.continuation: " + preview + suffix + ")"
+
+
+def check_hook_registry_selfcheck() -> str:
+    script = str(pathlib.Path(__file__).resolve().parent / "hermes_hook_registry_selfcheck.py")
+    if not os.path.exists(script):
+        return f"BROKEN (missing selfcheck: {script})"
+    rc, out = _run_cmd([sys.executable, script], cwd=HERMES_ROOT)
+    text = (out or "").strip()
+    if rc == 0:
+        return "OK (hook registry selfcheck clean)"
+    try:
+        payload = json.loads(text)
+    except Exception:
+        tail = text.splitlines()[-1] if text else f"exit={rc}"
+        return f"BROKEN (hook registry selfcheck unreadable: {tail[:300]})"
+    issues = payload.get("issues") or []
+    if issues:
+        return "BROKEN (hook registry selfcheck: " + "; ".join(str(x) for x in issues[:3]) + ")"
+    return f"BROKEN (hook registry selfcheck exit={rc})"
+
+
+register(
+    "private_repo_governance",
+    ".",
+    None,
+    "Validate private Hermes repo topology, governance docs, and runtime-state boundary",
+)
+
+register(
+    "overlay_registry",
+    ".",
+    None,
+    "Validate local overlay registry and artifact presence",
+)
+
+register(
+    "hook_registry_selfcheck",
+    ".",
+    None,
+    "Validate lifecycle hook registry trust boundaries and fail-closed gates",
+)
+
+register(
+    "continuation_fragmentation_guard",
+    ".",
+    None,
+    "Detect ad-hoc continuation/handoff/relay/resume/retry writers that bypass agent.continuation",
+)
+
+register(
+    "conductor_runtime_productization_regression",
+    ".",
+    None,
+    "Run default-off Hermes conductor runtime/Fugu adapter regression gate",
+)
+
+register(
+    "openclaw_productization_regression",
+    ".",
+    None,
+    "Run OpenClaw-informed Hermes hardening regression gate",
+)
+
 def main():
     apply_fixes = "--fix" in sys.argv
 
@@ -546,6 +1019,18 @@ def main():
                 result = check_skill_tracking()
             elif "skill_quality" in name:
                 result = check_skill_quality()
+            elif "private_repo_governance" in name:
+                result = check_private_repo_governance()
+            elif "overlay_registry" in name:
+                result = check_overlay_registry()
+            elif "hook_registry_selfcheck" in name:
+                result = check_hook_registry_selfcheck()
+            elif "continuation_fragmentation_guard" in name:
+                result = check_continuation_fragmentation_guard()
+            elif "conductor_runtime" in name:
+                result = check_conductor_runtime_productization()
+            elif "openclaw_productization" in name:
+                result = check_openclaw_productization()
             else:
                 result = ""
             if result == "OK" or (isinstance(result, str) and result.startswith("OK (")):
@@ -603,12 +1088,18 @@ def main():
 
     ok_count = sum(1 for _, s in statuses if s == "OK")
     fix_count = sum(1 for _, s in statuses if s == "FIXED")
-    warn_count = sum(1 for _, s in statuses if s in ("NEEDS_FIX", "MANUAL", "DORMANT", "GHOSTS", "MISSING"))
+    attention_free = {"OK", "FIXED", "INSTALLED_NO_DATA_YET"}
+    warn_count = sum(1 for _, s in statuses if s not in attention_free)
 
     for name, status in statuses:
-        icon = {"OK": "✅", "FIXED": "🔧", "NEEDS_FIX": "⚠️", "MANUAL": "👤",
-                "DORMANT": "💤", "FIX_FAILED": "❌", "MISSING": "⚠️",
-                "INSTALLED_NO_DATA_YET": "📦"}.get(status, "❓")
+        if isinstance(status, str) and status.startswith("BROKEN"):
+            icon = "❌"
+        elif isinstance(status, str) and status.startswith("MISSING"):
+            icon = "⚠️"
+        else:
+            icon = {"OK": "✅", "FIXED": "🔧", "NEEDS_FIX": "⚠️", "MANUAL": "👤",
+                    "DORMANT": "💤", "FIX_FAILED": "❌", "MISSING": "⚠️",
+                    "INSTALLED_NO_DATA_YET": "📦"}.get(status, "❓")
         print(f"  {icon} {name}: {status}")
 
     print()
