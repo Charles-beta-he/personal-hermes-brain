@@ -536,6 +536,37 @@ def _git(args, timeout=30):
     return _run_cmd(["git", *args], cwd=HERMES_ROOT, timeout=timeout)
 
 
+
+def check_multi_brain_registry():
+    """Validate Hermes multi-brain overlay registry and basic routing boundary."""
+    script = os.path.expanduser("~/.hermes/scripts/brainctl.py")
+    registry = os.path.expanduser("~/.hermes/brains/registry.yaml")
+    if not os.path.exists(script):
+        return f"BROKEN (missing brainctl: {script})"
+    if not os.path.exists(registry):
+        return f"BROKEN (missing registry: {registry})"
+    rc, out = _run_cmd([sys.executable, script, "--json", "brains", "validate"], cwd=HERMES_ROOT, timeout=60)
+    if rc != 0:
+        return "BROKEN (brainctl brains validate failed: " + (out or "")[-500:] + ")"
+    try:
+        payload = json.loads(out)
+    except Exception as exc:
+        return "BROKEN (brainctl validate JSON parse failed: " + str(exc) + ")"
+    if payload.get("passed") is not True:
+        errors = payload.get("errors") or []
+        return "BROKEN (" + "; ".join(str(e) for e in errors[:6]) + ")"
+    rc, out = _run_cmd([sys.executable, script, "--json", "brains", "route", "Hermes private repo overlay governance"], cwd=HERMES_ROOT, timeout=60)
+    if rc != 0:
+        return "BROKEN (brainctl brains route failed: " + (out or "")[-400:] + ")"
+    try:
+        route = json.loads(out)
+    except Exception as exc:
+        return "BROKEN (brainctl route JSON parse failed: " + str(exc) + ")"
+    if route.get("brain") != "hermes-core":
+        return f"BROKEN (Hermes private repo route expected hermes-core, got {route.get('brain')})"
+    checks = payload.get("checks") or []
+    return f"OK ({len(checks)} registry/boundary checks, private repo routes to hermes-core)"
+
 def check_private_repo_governance():
     """Guard the private Hermes code-repo topology and runtime-state boundary.
 
@@ -945,6 +976,13 @@ def check_hook_registry_selfcheck() -> str:
 
 
 register(
+    "multi_brain_registry",
+    ".",
+    None,
+    "Validate Hermes multi-brain overlay registry and hermes-core routing boundary",
+)
+
+register(
     "private_repo_governance",
     ".",
     None,
@@ -1019,6 +1057,8 @@ def main():
                 result = check_skill_tracking()
             elif "skill_quality" in name:
                 result = check_skill_quality()
+            elif "multi_brain_registry" in name:
+                result = check_multi_brain_registry()
             elif "private_repo_governance" in name:
                 result = check_private_repo_governance()
             elif "overlay_registry" in name:

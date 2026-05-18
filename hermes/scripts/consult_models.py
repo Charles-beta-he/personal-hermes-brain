@@ -221,6 +221,13 @@ def _utc_now_iso() -> str:
     return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
 
 
+def make_tick_id(chain_id: str = "") -> str:
+    """Return a per-process unique tick id safe for parallel consult runs."""
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S-%f")
+    chain_prefix = re.sub(r"[^A-Za-z0-9]+", "", str(chain_id or "nochain"))[:8] or "nochain"
+    return f"{stamp}-p{os.getpid()}-{chain_prefix}-{uuid.uuid4().hex[:8]}"
+
+
 def _read_json_file(path: str, default: Any = None) -> Any:
     try:
         with open(os.path.expanduser(path)) as f:
@@ -374,15 +381,18 @@ def _finalize_packet_token_budget(packet: dict, raw_chars: int) -> dict:
         if len(json.dumps(packet, ensure_ascii=False)) == actual_packet_chars:
             return packet
     # Extremely unlikely fallback: keep telemetry honest even if JSON digit lengths did
-    # not converge inside the safety cap.
+    # not converge inside the safety cap.  Non-convergence of the self-referential
+    # packet_chars field is not evidence of zero manifest savings; only claim zero
+    # when the final packet is actually no smaller than the raw context.
     actual_packet_chars = len(json.dumps(packet, ensure_ascii=False))
+    chars_saved = max(0, raw_chars - actual_packet_chars)
     packet["token_budget"].update({
         "raw_context_chars": raw_chars,
         "packet_chars": actual_packet_chars,
-        "estimated_chars_saved": 0,
-        "estimated_tokens_saved": 0,
+        "estimated_chars_saved": chars_saved,
+        "estimated_tokens_saved": 0 if chars_saved <= 0 else _approx_tokens(chars_saved),
         "compression_ratio": round(actual_packet_chars / raw_chars, 4) if raw_chars else 1.0,
-        "policy": "size telemetry did not converge; no savings claimed",
+        "policy": "size telemetry did not converge; final-size savings reported",
     })
     return packet
 
@@ -517,6 +527,7 @@ def build_discussion_comm_packet(
             "If a fact needs omitted detail, emit evidence_requests rather than restating full context.",
             "Vote approve only if best_within_constraints and truth_gate permits certification.",
             "An empty current_best_summary.patches list is not by itself a blocker when current_best_summary.planner_patch_summary.certification_intent == 'no_action_certification' and concrete_patch_count == 0; treat it as evidence that planners explicitly signed off with noop/advisory patches, not as a dropped-patch contradiction.",
+            "When certification_intent == 'unresolved_noop_vs_change', do not claim current_best dropped implementation_required patches; resolve the explicit noop-vs-change issue ledger first, then either accept concrete patches or downgrade them to advisory/noop with evidence.",
         ],
         "required_output": {
             "critiques": [{"target_model": "...", "severity": 1, "claim": "...", "evidence": "evidence id/ref, not full blob", "correction": "...", "novel": True}],
@@ -588,6 +599,82 @@ Rules:
   conditional `add_verifier` patch.
 
 Keep patches ≤ 5. Be concrete. Confidence must be honest."""
+
+
+def build_conductor_enhanced_prompt(
+    state: dict,
+    state_hash: str,
+    model: str,
+    tier: str,
+    role_instruction: str = "",
+) -> str:
+    """Wrap build_planner_prompt with optional conductor role-specific instruction.
+
+    When role_instruction is non-empty, it is prepended to the planner prompt so
+    each model receives guidance tailored to its conductor role (scout/planner/
+    implementer/critic/verifier/architect/arbiter).  This does NOT replace the
+    existing planner prompt — it augments it.
+    """
+    base = build_planner_prompt(state, state_hash, model, tier)
+    if not role_instruction:
+        return base
+    return f"{role_instruction}\n\n---\n\n{base}"
+
+
+def generate_conductor_trace_for_consult(
+    selected_planners: List[str],
+    tier: str,
+    state: dict,
+    router_model: str = "",
+    profile_path: str = "",
+) -> dict:
+    """Produce a conductor_trace alongside the existing quorum-based discussion.
+
+    This is advisory-only: it records which models were assigned which roles
+    and whether the router_model was isolated from participants.  It does NOT
+    change the existing quorum/consensus logic.
+    """
+    try:
+        sys.path.insert(0, os.path.expanduser("~/.hermes/hermes-agent"))
+        from agent.conductor_runtime import MultiModelConductor
+
+        conductor = MultiModelConductor(
+            profile_path=profile_path or os.path.expanduser("~/.hermes/config/model_profiles.yaml")
+        )
+        task_context = {
+            "goal": state.get("question", ""),
+            "risk_level": state.get("risk_level", "medium"),
+            "multimodel_mode": "advisory",
+        }
+        plan = conductor.build_role_plan(
+            task_context=task_context,
+            router_model=router_model,
+            exclude_router_from_participants=True,
+        )
+        # Build role instruction map: model_id -> instruction
+        role_instructions: Dict[str, str] = {}
+        for entry in plan.get("role_plan", []):
+            model_id = entry.get("model", "")
+            role = entry.get("role", "")
+            if model_id and role:
+                role_instructions[model_id] = conductor.build_model_specific_instruction(
+                    model_id, role, task_context
+                )
+        return {
+            "conductor_trace": plan.get("conductor_trace", {}),
+            "role_plan": plan.get("role_plan", []),
+            "participant_models": plan.get("participant_models", []),
+            "role_instructions": role_instructions,
+            "conductor_enabled": conductor.is_enabled(),
+        }
+    except Exception as exc:
+        return {
+            "conductor_trace": {"error": str(exc), "fallback": True},
+            "role_plan": [],
+            "participant_models": selected_planners,
+            "role_instructions": {},
+            "conductor_enabled": False,
+        }
 
 
 def model_provider(config: dict, model: str) -> str:
@@ -1506,16 +1593,16 @@ def _plan_declares_no_action(plan: dict) -> bool:
     )
     return any(marker in summary for marker in no_action_markers)
 
-
 def _is_no_action_advisory_patch(patch: dict, plan: dict) -> bool:
     """Classify low-risk follow-up ideas under a no-action plan as advisory.
 
-    Some planners certify the current system as complete but still emit low-risk
-    tune/document/observability follow-ups. Treating those as concrete blockers
-    creates a false noop-vs-change contradiction and prevents certification even
-    though the same plan says the acceptance criteria are already satisfied.
+    Planner prompts sometimes include optional verifier/observability/doc ideas even
+    after they state the best current action is certification/no code change. Treating
+    those optional follow-ups as concrete implementation disagreement creates a false
+    noop-vs-change contradiction and prevents certification even when all models agree
+    no current implementation patch is needed.
     """
-    if not isinstance(patch, dict) or not _plan_declares_no_action(plan):
+    if not isinstance(patch, dict) or not isinstance(plan, dict):
         return False
     op = str(patch.get("op", "")).strip().lower()
     if op not in {"tune_threshold", "document", "update_docs", "add_observability", "add_metric"}:
@@ -1539,6 +1626,44 @@ def _is_no_action_advisory_patch(patch: dict, plan: dict) -> bool:
     return safe_scope and any(marker in rationale for marker in advisory_markers)
 
 
+def _is_self_relaxing_governance_patch(patch: dict) -> bool:
+    """Defer patches that would make the current failed certification easier to pass.
+
+    A minority patch that changes ratification thresholds/gates is governance work,
+    not evidence that the current task is certified. Keeping it out of the current
+    patch disagreement avoids a self-unblocking loop: a failed certification must not
+    be resolved by lowering its own certification threshold.
+    """
+    if not isinstance(patch, dict):
+        return False
+    op = str(patch.get("op", "")).strip().lower()
+    if op not in {"tune_threshold", "relax_gate", "change_gate", "update_policy"}:
+        return False
+    target = str(patch.get("target_file") or patch.get("file") or "").strip().lower()
+    rationale = str(patch.get("rationale", "")).strip().lower()
+    governance_target = any(marker in target for marker in (
+        "brain_task_orchestrator.py",
+        "consult_models.py",
+        "ratification",
+        "certification",
+        "gate",
+        "control_plane",
+    ))
+    self_relaxing_rationale = any(marker in rationale for marker in (
+        "ratification gate",
+        "certification",
+        "single available model",
+        "single-model",
+        "single model",
+        "evidence_coverage=1.0",
+        "relax",
+        "threshold",
+        "quorum",
+        "unblock",
+    ))
+    return governance_target and self_relaxing_rationale
+
+
 def _planner_patch_summary(plans: List[dict]) -> dict:
     """Summarize planner patch intent after advisory/noop normalization.
 
@@ -1560,9 +1685,13 @@ def _planner_patch_summary(plans: List[dict]) -> dict:
         "plans_non_list_patches_count": 0,
         "non_dict_patch_count": 0,
         "models_with_concrete_patches": [],
+        "models_with_noop_only_patches": [],
+        "concrete_model_count": 0,
+        "noop_only_model_count": 0,
         "certification_intent": "unknown",
     }
     concrete_models: List[str] = []
+    noop_only_models: List[str] = []
     for idx, plan in enumerate(plans or []):
         if not isinstance(plan, dict):
             summary["malformed_plan_count"] += 1
@@ -1570,6 +1699,7 @@ def _planner_patch_summary(plans: List[dict]) -> dict:
         summary["planner_count"] += 1
         model = _plan_model(plan, f"model_{idx}")
         model_has_concrete = False
+        model_has_noop_or_advisory = False
         if "patches" not in plan:
             summary["plans_missing_patches_count"] += 1
             continue
@@ -1585,14 +1715,25 @@ def _planner_patch_summary(plans: List[dict]) -> dict:
             op = str(patch_obj.get("op", "")).strip().lower()
             if op == "noop":
                 summary["noop_patch_count"] += 1
-            elif _is_conditional_advisory_patch(patch_obj) or _is_no_action_advisory_patch(patch_obj, plan):
+                model_has_noop_or_advisory = True
+            elif (
+                _is_conditional_advisory_patch(patch_obj)
+                or _is_no_action_advisory_patch(patch_obj, plan)
+                or _is_self_relaxing_governance_patch(patch_obj)
+            ):
                 summary["conditional_advisory_patch_count"] += 1
+                model_has_noop_or_advisory = True
             else:
                 summary["concrete_patch_count"] += 1
                 model_has_concrete = True
         if model_has_concrete:
             concrete_models.append(model)
+        elif model_has_noop_or_advisory:
+            noop_only_models.append(model)
     summary["models_with_concrete_patches"] = sorted(set(concrete_models))
+    summary["models_with_noop_only_patches"] = sorted(set(noop_only_models))
+    summary["concrete_model_count"] = len(summary["models_with_concrete_patches"])
+    summary["noop_only_model_count"] = len(summary["models_with_noop_only_patches"])
     malformed_count = (
         summary["malformed_plan_count"]
         + summary["plans_missing_patches_count"]
@@ -1603,6 +1744,8 @@ def _planner_patch_summary(plans: List[dict]) -> dict:
         summary["certification_intent"] = "malformed_patch_data"
     elif summary["concrete_patch_count"] == 0 and summary["planner_count"] > 0:
         summary["certification_intent"] = "no_action_certification"
+    elif summary["concrete_patch_count"] > 0 and summary["noop_only_model_count"] > 0:
+        summary["certification_intent"] = "unresolved_noop_vs_change"
     elif summary["concrete_patch_count"] > 0:
         summary["certification_intent"] = "implementation_required"
     else:
@@ -1646,7 +1789,12 @@ def build_issue_ledger(plans: List[dict]) -> List[dict]:
             # A noop patch is an explicit certification/no-change vote, not a proposed
             # implementation delta. Heterogeneous noop ids alone should not create false
             # blockers, but noop-vs-real-change is still a real disagreement below.
-            if op == "noop" or _is_conditional_advisory_patch(patch) or _is_no_action_advisory_patch(patch, plan):
+            if (
+                op == "noop"
+                or _is_conditional_advisory_patch(patch)
+                or _is_no_action_advisory_patch(patch, plan)
+                or _is_self_relaxing_governance_patch(patch)
+            ):
                 noop_seen = True
                 continue
             non_noop_seen = True
@@ -3618,7 +3766,7 @@ def run_fanout(
     chain_id = str(uuid.uuid4())
 
     # ── 3. 创建 TICK_DIR ──
-    tick_id = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
+    tick_id = make_tick_id(chain_id)
     tick_dir = os.path.join(HERMES_HOME, f"tick-{tick_id}")
     plans_dir = os.path.join(tick_dir, "plans")
     os.makedirs(plans_dir, exist_ok=True)

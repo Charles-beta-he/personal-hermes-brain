@@ -25,6 +25,20 @@ def load_orchestrator_module():
 
 
 def run(env, *args, check=True):
+    args = list(args)
+    if check and args and args[0] == "add":
+        defaults = [
+            ("--priority-layer", "P2"),
+            ("--dependency-order", "1"),
+            ("--multimodel-triage-result", "P3"),
+        ]
+        insert_at = args.index("--json") if "--json" in args else len(args)
+        injected = []
+        for flag, value in defaults:
+            if flag not in args:
+                injected.extend([flag, value])
+        if injected:
+            args[insert_at:insert_at] = injected
     cmd = [sys.executable, str(SCRIPT), *args]
     r = subprocess.run(cmd, capture_output=True, text=True, env=env)
     if check and r.returncode != 0:
@@ -122,6 +136,21 @@ ratification_artifact: artifact:mission-incident-mm-advisory
     task_path.write_text(text, encoding="utf-8")
 
 
+def add_non_blocking_auto_subtask_parent_fields(task_path, child_id):
+    text = task_path.read_text(encoding="utf-8")
+    text = text.replace("status: pending", "status: blocked", 1)
+    marker = "evidence: []"
+    fields = f"""
+auto_subtask_kind: non_convergence_narrowing
+auto_subtask_children: [\"{child_id}\"]
+auto_subtask_open_children: []
+auto_subtask_missing_children: []
+auto_subtask_ready_for_parent: false
+""".lstrip()
+    text = text.replace(marker, fields + marker, 1)
+    task_path.write_text(text, encoding="utf-8")
+
+
 def add_mission_node_fields(task_path, *, mission_id="mission-alpha", node_id="node-a", depends_on=None, gates=None):
     depends_on = depends_on or []
     gates = gates or []
@@ -143,6 +172,68 @@ def mark_task_done_directly(task_path):
     text = text.replace("status: pending", "status: done", 1)
     text = text.replace("evidence: []", "evidence:\n  - command: fixture done PASS", 1)
     task_path.write_text(text, encoding="utf-8")
+
+
+
+def test_add_persists_explicit_multimodel_contract_and_triggers_without_heuristics():
+    td, _vault, env = make_env_and_vault()
+    with td:
+        created = json.loads(run(
+            env,
+            "add",
+            "普通外部仓库分析",
+            "--priority",
+            "P2",
+            "--project",
+            "research",
+            "--requires-multimodel",
+            "--multimodel-reason",
+            "external repo priority analysis requires independent model agreement",
+            "--expected-participants",
+            "claude-opus-4-7,gpt-5.5,deepseek-v4-pro",
+            "--truth-gate",
+            "evidence-first ratification with canonical participant IDs",
+            "--evidence-bundle",
+            "repo-analysis.md",
+            "--json",
+        ).stdout)
+        assert created["status"] == "OK", created
+        task_text = Path(created["created"]).read_text(encoding="utf-8")
+        assert "requires_multimodel: true" in task_text
+        assert "multimodel_reason:" in task_text
+        assert "expected_participants:" in task_text
+        rows = json.loads(run(env, "list", "--json").stdout)["tasks"]
+        row = next(r for r in rows if r["id"] == created["id"])
+        assert row["requires_multimodel"] is True, row
+        assert row["multimodel_intervention_required"] is True, row
+        assert "explicit_requires_multimodel" in row["multimodel_intervention_reasons"], row
+        assert row["expected_participants"] == ["claude-opus-4-7", "gpt-5.5", "deepseek-v4-pro"], row
+        assert row["truth_gate"], row
+        assert row["evidence_bundle"] == "repo-analysis.md", row
+
+
+def test_ingest_inbox_preserves_explicit_multimodel_contract_metadata():
+    td, vault, env = make_env_and_vault()
+    with td:
+        run(env, "ingest-inbox", "--json")
+        inbox = vault / "05-实践与项目" / "tasks" / "任务收件箱.md"
+        inbox_text = inbox.read_text(encoding="utf-8")
+        inbox_text = inbox_text.replace(
+            "## Ingested Log",
+            "- [ ] 外部文章任务 | priority:P2 | project:research | priority_layer:P2 | dependency_order:1 | multimodel_triage_result:P2-explicit-multimodel | requires_multimodel:true | multimodel_reason:external article priority analysis | expected_participants:claude-opus-4-7,gpt-5.5 | truth_gate:evidence-first | evidence_bundle:article-notes.md\n\n## Ingested Log",
+        )
+        inbox.write_text(inbox_text, encoding="utf-8")
+        ing = json.loads(run(env, "ingest-inbox", "--write", "--json").stdout)
+        assert ing["created_count"] >= 1, ing
+        created = ing["created"][0]
+        task_text = Path(created["created"]).read_text(encoding="utf-8")
+        assert "requires_multimodel: true" in task_text
+        assert "expected_participants:" in task_text
+        rows = json.loads(run(env, "list", "--json").stdout)["tasks"]
+        row = next(r for r in rows if r["id"] == created["id"])
+        assert row["requires_multimodel"] is True, row
+        assert "explicit_requires_multimodel" in row["multimodel_intervention_reasons"], row
+        assert row["expected_participants"] == ["claude-opus-4-7", "gpt-5.5"], row
 
 
 def test_mission_envelope_schema_is_enforced_fail_closed():
@@ -275,7 +366,7 @@ def test_add_list_claim_release_dashboard_inbox_selfcheck():
 def test_lifecycle_transition_gate_and_audit():
     td, _vault, env = make_env_and_vault()
     with td:
-        task_id, task_path = add_task(env, title="验证任务生命周期状态机")
+        task_id, task_path = add_task(env, title="验证任务生命周期状态机", project="test-harness")
 
         pending_to_running = run(env, "transition", task_id, "--to", "running", "--actor", "tester", "--json", check=False)
         assert pending_to_running.returncode != 0
@@ -312,7 +403,7 @@ def test_lifecycle_transition_gate_and_audit():
         assert done_without_evidence.returncode != 0
         assert "requires structured --evidence" in done_without_evidence.stderr
 
-        done = json.loads(run(env, "transition", task_id, "--to", "done", "--actor", "tester", "--evidence", "command: final lifecycle PASS", "--json").stdout)
+        done = json.loads(run(env, "transition", task_id, "--to", "done", "--actor", "tester", "--evidence", "command: final lifecycle PASS test build browser curl commit verification", "--json").stdout)
         assert done["from_status"] == "review"
         assert done["to_status"] == "done"
         assert done["next_allowed"] == ["archived"]
@@ -493,6 +584,12 @@ def test_lane_architecture_alignment_and_work_priority_gate():
             "hermes-evolution",
             "--lane",
             "evolution",
+            "--priority-layer",
+            "P1",
+            "--dependency-order",
+            "1",
+            "--multimodel-triage-result",
+            "P2",
             "--json",
             check=False,
         )
@@ -517,6 +614,12 @@ def test_lane_architecture_alignment_and_work_priority_gate():
             "mapped to L0-L5",
             "--acceptance-evidence",
             "command: selfcheck PASS",
+            "--priority-layer",
+            "P1",
+            "--dependency-order",
+            "1",
+            "--multimodel-triage-result",
+            "P2",
             "--json",
             check=False,
         )
@@ -928,7 +1031,7 @@ def test_autorun_runner_pauses_on_pending_permission_gate():
         state_dir = Path(env["HERMES_BRAIN_AUTORUN_STATE_DIR"])
         state_dir.mkdir(parents=True, exist_ok=True)
         (state_dir / "auto_run_allowlist.json").write_text(json.dumps([task_id], ensure_ascii=False), encoding="utf-8")
-        Path(env["HERMES_AUTONOMY_WRITE_ALLOWLIST"]).write_text(json.dumps(["kanban-worker"], ensure_ascii=False), encoding="utf-8")
+        Path(env["HERMES_AUTONOMY_WRITE_ALLOWLIST"]).write_text(json.dumps(["taskpool"], ensure_ascii=False), encoding="utf-8")
 
         eligibility = json.loads(run(env, "eligibility-check", "--task", task_id, "--json").stdout)
         assert eligibility["eligible"] is False, eligibility
@@ -980,7 +1083,7 @@ def test_autorun_eligibility_and_handoff_are_fail_closed():
         assert "surface_allowlisted" in guard_blocked["write_guard"]["failed_required_checks"]
         assert "status: pending" in task_path.read_text(encoding="utf-8")
 
-        Path(env["HERMES_AUTONOMY_WRITE_ALLOWLIST"]).write_text(json.dumps(["kanban-worker"], ensure_ascii=False), encoding="utf-8")
+        Path(env["HERMES_AUTONOMY_WRITE_ALLOWLIST"]).write_text(json.dumps(["taskpool"], ensure_ascii=False), encoding="utf-8")
         handoff = json.loads(run(env, "auto-claim-and-handoff", "--actor", "hermes-autorun", "--ttl-minutes", "15", "--json").stdout)
         assert handoff["status"] == "OK", handoff
         assert handoff["claimed"] is True
@@ -1001,6 +1104,34 @@ def test_autorun_eligibility_and_handoff_are_fail_closed():
         row = next(r for r in rows if r["id"] == task_id)
         assert row["status"] == "claimed"
         assert row["claimed_by"] == "hermes-autorun"
+
+
+
+def test_non_blocking_auto_subtask_reconcile_actions_do_not_block_next_or_eligibility():
+    td, _vault, env = make_env_and_vault()
+    with td:
+        parent_id, parent_path = add_evolution_task(env, title="Parent blocked by child progress", priority="P1")
+        child_id, _child_path = add_evolution_task(env, title="Dispatchable child task", priority="P1")
+        add_non_blocking_auto_subtask_parent_fields(parent_path, child_id)
+        run(env, "dashboard", "--write", "--json")
+
+        nxt = json.loads(run(env, "next", "--json").stdout)
+        assert nxt["status"] == "OK", nxt
+        assert nxt["next"]["id"] == child_id, nxt
+        assert nxt["reconcile"]["action_count"] >= 1, nxt
+        assert any(action["action"] == "auto_subtask_progress_synced" and action["task"] == parent_id for action in nxt["reconcile"]["actions"]), nxt
+
+        env["HERMES_LOCAL_BRAIN_AUTORUN"] = "1"
+        state_dir = Path(env["HERMES_BRAIN_AUTORUN_STATE_DIR"])
+        state_dir.mkdir(parents=True, exist_ok=True)
+        (state_dir / "auto_run_allowlist.json").write_text(json.dumps([child_id], ensure_ascii=False), encoding="utf-8")
+
+        eligible = json.loads(run(env, "eligibility-check", "--json").stdout)
+        assert eligible["status"] == "PASS", eligible
+        assert eligible["eligible"] is True, eligible
+        assert eligible["task_id"] == child_id, eligible
+        assert "reconcile_required" not in eligible["reasons"], eligible
+
 
 
 def test_autorun_kill_switches_and_evolution_preemption_gate():
@@ -1113,7 +1244,7 @@ def test_autorun_done_requires_valid_proof_hash():
         state_dir = Path(env["HERMES_BRAIN_AUTORUN_STATE_DIR"])
         state_dir.mkdir(parents=True, exist_ok=True)
         (state_dir / "auto_run_allowlist.json").write_text(json.dumps([task_id], ensure_ascii=False), encoding="utf-8")
-        Path(env["HERMES_AUTONOMY_WRITE_ALLOWLIST"]).write_text(json.dumps(["kanban-worker"], ensure_ascii=False), encoding="utf-8")
+        Path(env["HERMES_AUTONOMY_WRITE_ALLOWLIST"]).write_text(json.dumps(["taskpool"], ensure_ascii=False), encoding="utf-8")
         handoff = json.loads(run(env, "auto-claim-and-handoff", "--actor", "hermes-autorun", "--json").stdout)
         proof_hash = handoff["proof_hash"]
 
@@ -1128,7 +1259,7 @@ def test_autorun_done_requires_valid_proof_hash():
         assert bad_proof.returncode != 0
         assert "autorun proof hash not found or chain verification failed" in bad_proof.stderr
 
-        done = json.loads(run(env, "done", task_id, "--actor", "hermes-autorun", "--evidence", f"proof:{proof_hash}", "--evidence", "command: final PASS", "--json").stdout)
+        done = json.loads(run(env, "done", task_id, "--actor", "hermes-autorun", "--evidence", f"proof:{proof_hash}", "--evidence", "command: final PASS test build browser curl commit verification", "--json").stdout)
         assert done["status"] == "OK", done
         proof_check = json.loads(run(env, "proof-check", "--json").stdout)
         assert proof_check["status"] == "PASS", proof_check
@@ -1164,6 +1295,7 @@ def main():
     test_autonomy_readiness_reports_complete_fail_closed_architecture()
     test_autorun_runner_pauses_on_pending_permission_gate()
     test_autorun_eligibility_and_handoff_are_fail_closed()
+    test_non_blocking_auto_subtask_reconcile_actions_do_not_block_next_or_eligibility()
     test_autorun_kill_switches_and_evolution_preemption_gate()
     test_boundary_check_and_parallel_dispatch_dry_run_are_fail_closed()
     test_autorun_done_requires_valid_proof_hash()

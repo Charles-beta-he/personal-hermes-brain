@@ -39,7 +39,18 @@ AUTORUN_KILL_SWITCH = AUTORUN_STATE_DIR / "auto_run_kill_switch"
 AUTORUN_PROOF_LOG = AUTORUN_STATE_DIR / "auto_run_proof.jsonl"
 AUTORUN_HANDOFF_DIR = AUTORUN_STATE_DIR / "auto_run_handoffs"
 PARALLEL_HANDOFF_DIR = AUTORUN_STATE_DIR / "parallel_handoffs"
+BUDGET_SIGNALS_PATH = AUTORUN_STATE_DIR / "budget_signals.jsonl"
+GOVERNANCE_RATCHET_PATH = AUTORUN_STATE_DIR / "governance_ratchet.json"
+MAX_T3_ROUNDS_BEFORE_THROTTLE = 3
+MAX_T3_ROUNDS_BEFORE_PAUSE = 5
 HERMES_HOME = Path(os.environ.get("HERMES_HOME", str(Path.home() / ".hermes"))).expanduser()
+PROJECT_PROFILES_DIR = Path(os.environ.get("HERMES_PROJECT_PROFILES_DIR", str(HERMES_HOME / "project-profiles"))).expanduser()
+SCRIPTS_DIR = HERMES_HOME / "scripts"
+if str(SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(SCRIPTS_DIR))
+
+import permission_taxonomy as taxonomy  # noqa: E402
+
 AUTONOMY_WRITE_GUARD = HERMES_HOME / "scripts" / "autonomy-write-guard.py"
 AUTONOMY_WRITE_ALLOWLIST = Path(
     os.environ.get("HERMES_AUTONOMY_WRITE_ALLOWLIST", str(HERMES_HOME / "config" / "autonomy-write-allowlist.json"))
@@ -53,6 +64,15 @@ TASKPOOL_CRON_JOB_NAMES = [
     "multimodel-intervention-step",
     "local-brain-taskpool-auto-completer",
 ]
+SAFE_AUTO_COMPLETER_SEMANTIC_STATUSES = {
+    "ok",
+    "ok_with_task_blocker",
+    "retryable_runtime_timeout",
+    "truth_grounded_advisory_not_ratified",
+    "certification_not_certified",
+    "certification_long_running",
+    "recursive_evidence_spine_self_lock",
+}
 VALID_STATUSES = ["proposed", "pending", "claimed", "running", "retry", "review", "blocked", "done", "archived", "expired"]
 STATUS_ALIASES = {"completed": "done"}  # legacy notes may use completed; normalize as terminal done.
 ACTIVE_STATUSES = {"proposed", "pending", "claimed", "running", "retry", "review", "blocked"}
@@ -60,7 +80,13 @@ TERMINAL_STATUSES = {"done", "archived", "expired"}
 PRIORITY_WEIGHT = {"P0": 400, "P1": 300, "P2": 200, "P3": 100}
 STATUS_WEIGHT = {"retry": 60, "running": 50, "claimed": 45, "blocked": 40, "review": 35, "pending": 30, "proposed": 10, "done": -100, "archived": -120, "expired": -130}
 VALID_LANES = ["work", "evolution", "advisory"]
-LANE_SORT_WEIGHT = {"work": 0, "advisory": 1, "evolution": 2}
+DEFAULT_TASKPOOL_PRIORITY_MODE = "work-first"
+VALID_TASKPOOL_PRIORITY_MODES = {"work-first", "evolution-first"}
+TASKPOOL_PRIORITY_MODE_FILE = AUTORUN_STATE_DIR / "taskpool_priority_mode.json"
+LANE_SORT_WEIGHT_BY_MODE = {
+    "work-first": {"work": 0, "advisory": 1, "evolution": 2},
+    "evolution-first": {"evolution": 0, "work": 1, "advisory": 2},
+}
 ARCHITECTURE_TARGETS = {
     "L0", "L1", "L2", "L3", "L4", "L5", "LX",
     "local-brain", "skill-graph", "provider-quota", "taskpool",
@@ -143,14 +169,15 @@ LIFECYCLE_TRANSITIONS: dict[str, list[str]] = {
     "running": ["review", "retry", "blocked", "expired"],
     "review": ["done", "retry", "blocked", "pending", "archived", "expired"],
     "retry": ["pending", "claimed", "blocked", "archived", "expired"],
-    "blocked": ["pending", "retry", "archived", "expired"],
+    "blocked": ["pending", "retry", "review", "archived", "expired"],
     "done": ["archived"],
     "archived": [],
     "expired": ["archived"],
 }
 REASON_REQUIRED_TO = {"retry", "blocked"}
 EVIDENCE_REQUIRED_TO = {"review", "done"}
-CLAIM_BOUND_STATUSES = {"claimed", "running", "review"}
+CLAIM_BOUND_STATUSES = {"claimed", "running"}
+PROFILE_GATED_STATUSES = CLAIM_BOUND_STATUSES | {"review", "done"}
 INITIAL_TASK_STATUSES = {"proposed", "pending"}
 RECONCILE_STALE_CLAIM_STATUSES = {"pending", "blocked", "expired"}
 RECONCILE_OVER_RETRY_STATUSES = {"blocked", "expired"}
@@ -160,8 +187,168 @@ def now() -> datetime:
     return datetime.now(TZ).replace(microsecond=0)
 
 
-def iso(dt: datetime | None = None) -> str:
-    return (dt or now()).isoformat()
+def iso(value: datetime | None = None) -> str:
+    return (value or now()).isoformat()
+
+
+def event_hook_multimodel_route(event: str, task_id: str = "") -> dict[str, Any]:
+    """Decide whether an event hook should run the expensive multimodel step.
+
+    Modes:
+    - 0/false/off: never run in the hook.
+    - 1/true/on: run, scoped to task_id when available.
+    - auto (default): run only when the added/changed task's deterministic local
+      signals say multi-model review is useful enough to justify blocking the
+      event hook. The step is task-scoped to avoid the old global-top-task fanout.
+    """
+    mode = str(os.environ.get("HERMES_TASKPOOL_EVENT_HOOK_MULTIMODEL", "auto") or "auto").strip().lower()
+    off_values = {"0", "false", "no", "off", "disabled"}
+    on_values = {"1", "true", "yes", "on", "enabled", "force"}
+    if mode in off_values:
+        return {"enabled": False, "mode": mode, "reason": "disabled_by_env"}
+
+    route: dict[str, Any] = {
+        "enabled": False,
+        "mode": mode,
+        "event": event,
+        "task_id": task_id,
+        "reason": "not_routed",
+        "scope": "task" if task_id else "global",
+    }
+    if mode in on_values:
+        route.update({"enabled": True, "reason": "forced_by_env"})
+        return route
+    if mode != "auto":
+        return {**route, "reason": "unknown_mode"}
+    if event not in {"task_added", "task_transitioned", "task_ingested"}:
+        return {**route, "reason": "event_not_eligible"}
+    if not task_id:
+        return {**route, "reason": "missing_task_id"}
+
+    try:
+        task = find_task(task_id)
+        reasons = task_multimodel_intervention_reasons(task)
+        cert_reasons = task_multimodel_certification_reasons(task)
+        advisory_reasons = task_multimodel_advisory_reasons(task)
+    except BaseException as exc:
+        return {**route, "reason": "classification_failed", "error": str(exc)}
+
+    route.update({
+        "task_status": task.status,
+        "priority": task.priority,
+        "lane": task.lane,
+        "project": task.project,
+        "reasons": reasons,
+        "certification_reasons": cert_reasons,
+        "advisory_reasons": advisory_reasons,
+    })
+    if not reasons:
+        return {**route, "reason": "no_multimodel_reasons"}
+
+    high_priority = task.priority in {"P0", "P1"}
+    evolution_p2 = task.priority == "P2" and task.lane == "evolution"
+    explicit = str(task.fm.get("multimodel_required") or task.fm.get("requires_multimodel") or "").lower() in {"1", "true", "yes", "required"}
+    if cert_reasons or high_priority or evolution_p2 or explicit:
+        route.update({
+            "enabled": True,
+            "reason": "smart_route_matched",
+            "timeout_seconds": int(os.environ.get("HERMES_TASKPOOL_EVENT_HOOK_MULTIMODEL_TIMEOUT", "900")),
+            "command_timeout_seconds": int(os.environ.get("HERMES_TASKPOOL_EVENT_HOOK_MULTIMODEL_COMMAND_TIMEOUT", "840")),
+        })
+        return route
+    return {**route, "reason": "advisory_low_priority_deferred"}
+
+
+def maybe_fire_taskpool_event_hook(event: str, *, task_id: str = "", reason: str = "") -> dict[str, Any]:
+    """Run one bounded taskpool dispatch tick after local taskpool mutations.
+
+    Cron remains the fallback. This event hook closes the gap between task creation /
+    state transition and the next periodic sweep. It is deliberately fail-soft and
+    non-recursive: hook failures are recorded but do not make the originating task
+    mutation fail, and child orchestrator calls see HERMES_TASKPOOL_EVENT_HOOK_DEPTH=1.
+    """
+    if os.environ.get("HERMES_TASKPOOL_EVENT_HOOK_DISABLED") == "1":
+        return {"status": "SKIPPED", "reason": "disabled"}
+    if os.environ.get("HERMES_TASKPOOL_EVENT_HOOK_DEPTH"):
+        return {"status": "SKIPPED", "reason": "recursive_guard"}
+    tick = Path.home() / ".hermes" / "scripts" / "brain_task_dispatch_tick.py"
+    if not tick.exists():
+        return {"status": "SKIPPED", "reason": "tick_missing", "tick": str(tick)}
+    log_dir = AUTORUN_STATE_DIR / "taskpool_event_hooks"
+    log_dir.mkdir(parents=True, exist_ok=True)
+    safe = re.sub(r"[^A-Za-z0-9_.-]+", "-", (task_id or event))[:96].strip("-") or "taskpool"
+    log_path = log_dir / f"event-{now().strftime('%Y%m%d%H%M%S')}-{safe}.json"
+    env = os.environ.copy()
+    env["HERMES_TASKPOOL_EVENT_HOOK_DEPTH"] = "1"
+    env.setdefault("HERMES_TASKPOOL_EVENT", event)
+    if task_id:
+        env.setdefault("HERMES_TASKPOOL_EVENT_TASK", task_id)
+    cmd = [sys.executable, str(tick), "--summary", "--autorun-step", "--no-state", "--print-always"]
+    route = event_hook_multimodel_route(event, task_id)
+    timeout_seconds = int(os.environ.get("HERMES_TASKPOOL_EVENT_HOOK_TIMEOUT", "240"))
+    if route.get("enabled"):
+        cmd.append("--multimodel-step")
+        if task_id:
+            cmd.extend(["--multimodel-task", task_id])
+        env["HERMES_LOCAL_BRAIN_AUTORUN_MULTIMODEL"] = "1"
+        if route.get("command_timeout_seconds"):
+            env.setdefault("HERMES_BRAIN_DISPATCH_TICK_COMMAND_TIMEOUT_SECONDS", str(route["command_timeout_seconds"]))
+        timeout_seconds = max(timeout_seconds, int(route.get("timeout_seconds") or timeout_seconds))
+    started = iso()
+    try:
+        proc = subprocess.run(cmd, text=True, capture_output=True, timeout=timeout_seconds, env=env)
+        payload: dict[str, Any] = {
+            "status": "OK" if proc.returncode == 0 else "ERROR",
+            "event": event,
+            "task_id": task_id,
+            "reason": reason,
+            "started_at": started,
+            "finished_at": iso(),
+            "returncode": proc.returncode,
+            "cmd": cmd,
+            "multimodel_route": route,
+            "timeout_seconds": timeout_seconds,
+            "stdout": proc.stdout[-20000:],
+            "stderr": proc.stderr[-12000:],
+        }
+        try:
+            payload["summary"] = json.loads(proc.stdout) if proc.stdout.strip().startswith("{") else {}
+        except Exception as exc:
+            payload["summary_parse_error"] = str(exc)
+        log_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        return {
+            "status": payload["status"],
+            "event": event,
+            "task_id": task_id,
+            "log": str(log_path),
+            "returncode": proc.returncode,
+            "multimodel_route": route,
+            "dispatchable": (payload.get("summary") or {}).get("dispatchable"),
+            "next_task_id": (payload.get("summary") or {}).get("next_task_id"),
+            "autorun": (payload.get("summary") or {}).get("autorun"),
+            "error_count": (payload.get("summary") or {}).get("error_count"),
+        }
+    except subprocess.TimeoutExpired as exc:
+        payload = {
+            "status": "TIMEOUT",
+            "event": event,
+            "task_id": task_id,
+            "reason": reason,
+            "started_at": started,
+            "finished_at": iso(),
+            "cmd": cmd,
+            "multimodel_route": route,
+            "timeout": exc.timeout,
+            "timeout_seconds": timeout_seconds,
+            "stdout": (exc.stdout or "")[-20000:] if isinstance(exc.stdout, str) else "",
+            "stderr": (exc.stderr or "")[-12000:] if isinstance(exc.stderr, str) else "",
+        }
+        log_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        return {"status": "TIMEOUT", "event": event, "task_id": task_id, "log": str(log_path)}
+    except Exception as exc:
+        payload = {"status": "ERROR", "event": event, "task_id": task_id, "reason": reason, "error": str(exc), "finished_at": iso()}
+        log_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        return {"status": "ERROR", "event": event, "task_id": task_id, "log": str(log_path), "error": str(exc)}
 
 
 def parse_dt(value: Any) -> datetime | None:
@@ -195,7 +382,7 @@ def _load_autonomy_write_guard():
 def guard_autorun_claim_and_handoff(task_id: str, actor: str) -> dict[str, Any]:
     """Fail closed before local task-pool autorun mutates claim/handoff state."""
     guard = _load_autonomy_write_guard()
-    evidence = guard.guard_or_raise("kanban-worker", "claim-and-handoff", "dispatch-hint", AUTONOMY_WRITE_ALLOWLIST)
+    evidence = guard.guard_or_raise("taskpool", "claim-and-handoff", "dispatch-hint", AUTONOMY_WRITE_ALLOWLIST)
     evidence.setdefault("caller", "brain_task_orchestrator.auto-claim-and-handoff")
     evidence.setdefault("task_id", task_id)
     evidence.setdefault("actor", actor)
@@ -218,6 +405,412 @@ def slugify(text: str) -> str:
     s = re.sub(r"\s+", "-", s).strip("-")
     s = re.sub(r"[^a-z0-9\-\u4e00-\u9fff]+", "", s)
     return s[:80] or "task"
+
+
+def project_profile_candidates(project: str) -> list[Path]:
+    """Return project-specific candidates followed by hermes fallback.
+
+    Project profiles are local JSON evidence, not remote configuration.  Exact
+    project names are allowed when they are safe filenames; slug fallback handles
+    task IDs/projects that contain spaces or punctuation.  The final hermes.json
+    fallback is still a real profile and must exist before execution.
+    """
+    project = str(project or "").strip()
+    candidates: list[Path] = []
+    if project:
+        safe_exact = re.sub(r"[^A-Za-z0-9._-]", "-", project).strip(".-")
+        if safe_exact:
+            candidates.append(PROJECT_PROFILES_DIR / f"{safe_exact}.json")
+        slug = slugify(project)
+        slug_path = PROJECT_PROFILES_DIR / f"{slug}.json"
+        if slug_path not in candidates:
+            candidates.append(slug_path)
+    fallback = PROJECT_PROFILES_DIR / "hermes.json"
+    if fallback not in candidates:
+        candidates.append(fallback)
+    return candidates
+
+
+def profile_alias_values(profile: dict[str, Any]) -> set[str]:
+    aliases: set[str] = set()
+    for key in ("project", "profile_id", "canonical_project"):
+        value = profile.get(key)
+        if isinstance(value, str) and value.strip():
+            aliases.add(value.strip())
+    raw_aliases = profile.get("aliases") or profile.get("project_aliases") or []
+    if isinstance(raw_aliases, str):
+        raw_aliases = [raw_aliases]
+    if isinstance(raw_aliases, list):
+        for value in raw_aliases:
+            if isinstance(value, str) and value.strip():
+                aliases.add(value.strip())
+    return aliases
+
+
+def project_profile_alias_candidates(project: str, known: list[Path]) -> list[Path]:
+    """Find canonical profiles that explicitly claim project as an alias.
+
+    This keeps project profiles SSOT-compliant: historical task project names can
+    route to one canonical JSON file without maintaining duplicate profile files.
+    Invalid unrelated JSON files are ignored during alias discovery; if an exact
+    candidate is invalid, load_project_profile still reports it fail-closed.
+    """
+    project = str(project or "").strip()
+    if not project or not PROJECT_PROFILES_DIR.exists():
+        return []
+    known_set = set(known)
+    matches: list[Path] = []
+    fallback = PROJECT_PROFILES_DIR / "hermes.json"
+    for path in sorted(PROJECT_PROFILES_DIR.glob("*.json")):
+        if path in known_set or path == fallback:
+            continue
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        if isinstance(data, dict) and project in profile_alias_values(data):
+            matches.append(path)
+    return matches
+
+
+def load_project_profile(project: str) -> dict[str, Any]:
+    direct_candidates = project_profile_candidates(project)
+    fallback = PROJECT_PROFILES_DIR / "hermes.json"
+    non_fallback = [p for p in direct_candidates if p != fallback]
+    alias_candidates = project_profile_alias_candidates(project, direct_candidates)
+    candidates = non_fallback + alias_candidates
+    if fallback not in candidates:
+        candidates.append(fallback)
+    direct_set = set(non_fallback)
+    for path in candidates:
+        if not path.exists():
+            continue
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except Exception as exc:
+            return {
+                "status": "invalid",
+                "missing": True,
+                "project": project,
+                "path": str(path),
+                "error": f"invalid_project_profile_json:{exc}",
+                "candidates": [str(p) for p in candidates],
+            }
+        if not isinstance(data, dict):
+            return {
+                "status": "invalid",
+                "missing": True,
+                "project": project,
+                "path": str(path),
+                "error": "project_profile_not_object",
+                "candidates": [str(p) for p in candidates],
+            }
+        status = "fallback" if path == fallback else ("project" if path in direct_set else "alias")
+        return {
+            "status": status,
+            "missing": False,
+            "project": project,
+            "canonical_project": str(data.get("project") or project),
+            "path": str(path),
+            "profile": data,
+            "candidates": [str(p) for p in candidates],
+        }
+    return {
+        "status": "missing",
+        "missing": True,
+        "project": project,
+        "path": "",
+        "error": "project_profile_missing",
+        "candidates": [str(p) for p in candidates],
+    }
+
+
+def project_profile_failures(task_or_fm: Any) -> list[str]:
+    if isinstance(task_or_fm, Task):
+        project = task_or_fm.project
+    else:
+        project = str((task_or_fm or {}).get("project") or "")
+    result = load_project_profile(project)
+    if result.get("missing"):
+        return [f"project_profile_missing:{project or '(empty-project)'}"]
+    return []
+
+
+def compact_profile_value(value: Any, *, max_items: int = 8) -> str:
+    if isinstance(value, dict):
+        parts = [f"{k}={v}" for k, v in list(value.items())[:max_items]]
+        return "; ".join(parts)
+    if isinstance(value, list):
+        return "; ".join(str(x) for x in value[:max_items])
+    return str(value or "")
+
+
+def format_project_profile_context(project: str) -> str:
+    result = load_project_profile(project)
+    if result.get("missing"):
+        return (
+            "PROJECT PROFILE: MISSING (FAIL-CLOSED)\n"
+            f"Project: {project or '(empty-project)'}\n"
+            f"Expected candidates: {', '.join(result.get('candidates', []))}\n"
+            "Do not start a worker or claim/handoff this task until a project-specific profile or hermes.json fallback exists."
+        )
+    profile = result.get("profile") if isinstance(result.get("profile"), dict) else {}
+    lines = [
+        "PROJECT PROFILE:",
+        f"Status: {result.get('status')}",
+        f"Path: {result.get('path')}",
+        f"Name: {profile.get('display_name') or profile.get('project') or project}",
+    ]
+    for key in ("tech_stack", "paths", "conventions", "test_cmd", "build_cmd", "acceptance", "forbidden", "backend_contract_policy", "regression_coverage_policy"):
+        if key in profile and profile.get(key) not in (None, "", [], {}):
+            lines.append(f"{key}: {compact_profile_value(profile.get(key))}")
+    contract = profile_policy_contract(project, loaded=result)
+    if not contract.get("missing"):
+        lines.extend([
+            "",
+            "PROFILE POLICY CONTRACT (WARN-ONLY SOFT-LAUNCH):",
+            json.dumps(contract, ensure_ascii=False, indent=2),
+        ])
+    return "\n".join(lines)
+
+
+SEMANTIC_TASK_CLASSES = [
+    "frontend-only",
+    "backend-owned",
+    "fullstack-integrated",
+    "cross-cutting-infrastructure",
+    "prototype-asset-dependent",
+    "release-sync",
+    "evidence-only/regression-proof-already-satisfied",
+    "admin/out-of-scope",
+]
+
+PROFILE_POLICY_RUNTIME_CONSUMERS = [
+    "task_classification",
+    "dispatch_prompt",
+    "worker_handoff",
+    "completion_gate",
+    "proof_gate_warn",
+    "ratification_route",
+    "learning_writeback",
+]
+
+PROFILE_POLICY_REQUIRED_FIELDS = [
+    "lark_task_execution_policy",
+    "lark_evidence_policy.closeout_required_labels",
+    "backend_contract_policy",
+    "regression_coverage_policy",
+]
+
+
+def _profile_get_path(profile: dict[str, Any], dotted: str) -> Any:
+    current: Any = profile
+    for part in dotted.split("."):
+        if not isinstance(current, dict):
+            return None
+        current = current.get(part)
+    return current
+
+
+def profile_policy_contract(project: str, *, loaded: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Return the typed project policy contract injected into workers.
+
+    This is intentionally WARN-only. It exposes semantic commitments from the
+    project profile to runtime consumers without turning advisory/not-certified
+    profile work into a fail-closed gate.
+    """
+    result = loaded if loaded is not None else load_project_profile(project)
+    if result.get("missing"):
+        return {
+            "schema": "profile_policy_contract_v1",
+            "missing": True,
+            "project": project,
+            "profile_status": str(result.get("status") or "missing"),
+            "profile_path": str(result.get("path") or ""),
+            "enforcement": "fail_closed_missing_profile",
+            "soft_launch": False,
+            "warnings": [f"project_profile_missing:{project or '(empty-project)'}"],
+        }
+    profile = result.get("profile") if isinstance(result.get("profile"), dict) else {}
+    lark_policy = profile.get("lark_task_execution_policy") if isinstance(profile.get("lark_task_execution_policy"), dict) else {}
+    lark_evidence = profile.get("lark_evidence_policy") if isinstance(profile.get("lark_evidence_policy"), dict) else {}
+    strategy = profile.get("semantic_control_plane_strategy") if isinstance(profile.get("semantic_control_plane_strategy"), dict) else {}
+    classes = list_value(lark_policy.get("classification_required")) or list_value(strategy.get("recommended_task_classes")) or list(SEMANTIC_TASK_CLASSES)
+    classes = [c for c in classes if c]
+    for cls in SEMANTIC_TASK_CLASSES:
+        if cls not in classes:
+            classes.append(cls)
+    labels = list_value(lark_evidence.get("closeout_required_labels"))
+    warnings = []
+    if result.get("status") != "fallback":
+        for field in PROFILE_POLICY_REQUIRED_FIELDS:
+            value = _profile_get_path(profile, field)
+            if value in (None, "", [], {}):
+                warnings.append(f"profile_control_plane_missing:{field}")
+    return {
+        "schema": "profile_policy_contract_v1",
+        "missing": False,
+        "project": project,
+        "canonical_project": str(result.get("canonical_project") or profile.get("project") or project),
+        "profile_status": str(result.get("status") or ""),
+        "profile_path": str(result.get("path") or ""),
+        "status": "WARN" if warnings else "OK",
+        "enforcement": "warn_only",
+        "soft_launch": True,
+        "task_classes": classes,
+        "default_task_class": str(lark_policy.get("default_classification") or "fullstack-integrated"),
+        "required_evidence_labels": labels,
+        "runtime_consumers": list(PROFILE_POLICY_RUNTIME_CONSUMERS),
+        "ratification_authority": {
+            "advisory_tiers": ["T1", "T2"],
+            "full_closeout_tier": "T3",
+            "full_closeout_requires": ["discussion_result.json", "4/4 canonical participants", "no unresolved severity>=3"],
+        },
+        "learning_writeback": {
+            "policy": "record repeated evidence/user corrections before promoting global rules",
+            "target": "project profile / Workpad / umbrella skill, not global memory for stale task state",
+        },
+        "warnings": warnings,
+    }
+
+
+def _semantic_blob(task: "Task") -> str:
+    return f"{task.title}\n{task.body}\n{json.dumps(task.fm, ensure_ascii=False)}".lower()
+
+
+def classify_task_with_profile_policy(task: "Task", contract: dict[str, Any] | None = None) -> dict[str, Any]:
+    contract = contract or profile_policy_contract(task.project)
+    text = _semantic_blob(task)
+    classes = set(contract.get("task_classes") or SEMANTIC_TASK_CLASSES)
+    default_class = str(contract.get("default_task_class") or "fullstack-integrated")
+    reasons: list[str] = []
+    warnings: list[str] = []
+
+    def allowed(preferred: str, fallback: str = "fullstack-integrated") -> str:
+        return preferred if preferred in classes else (fallback if fallback in classes else default_class)
+
+    money_or_security = any(token in text for token in (
+        "金额", "余额", "支付", "付款", "收款", "提现", "入金", "出金", "换汇", "汇率", "fx", "wallet",
+        "auth", "登录", "密码", "2fa", "mfa", "otp", "kyc", "device", "session", "真实接口", "api", "后端",
+        "status", "time", "order", "ledger", "transaction",
+    ))
+    prototype = any(token in text for token in ("原型", "1:1", "复刻", "文案", "样式", "布局", "ui", "prototype"))
+    release = any(token in text for token in ("push", "发布", "同步", "rebase", "remote build", "railway", "deploy", "打包"))
+    cross_cutting = any(token in text for token in ("基础设施", "校验", "validator", "validation", "缓存", "i18n", "安全", "权限", "全局"))
+    evidence_only = any(token in text for token in ("已满足", "already satisfied", "regression-proof", "仅验证", "evidence-only"))
+    backend_only = any(token in text for token in ("纯后端", "定时", "批处理", "job", "migration")) and not prototype
+    frontend_only = prototype and not money_or_security and not any(token in text for token in ("接口", "api", "后端", "真实"))
+
+    if evidence_only:
+        task_class = allowed("evidence-only/regression-proof-already-satisfied")
+        reasons.append("evidence_only_or_already_satisfied")
+    elif money_or_security:
+        task_class = allowed("fullstack-integrated")
+        reasons.append("money_or_security_backend_semantics")
+        if release:
+            reasons.append("release_or_branch_sync_secondary")
+    elif release:
+        task_class = allowed("release-sync")
+        reasons.append("release_or_branch_sync")
+    elif cross_cutting:
+        task_class = allowed("cross-cutting-infrastructure")
+        reasons.append("cross_cutting_policy_or_validation")
+    elif backend_only:
+        task_class = allowed("backend-owned")
+        reasons.append("backend_only_batch_or_job")
+    elif frontend_only:
+        task_class = allowed("prototype-asset-dependent", "frontend-only")
+        reasons.append("prototype_or_ui_asset_dependency")
+    elif prototype:
+        task_class = allowed("prototype-asset-dependent", "frontend-only")
+        reasons.append("prototype_or_ui_asset_dependency")
+    elif task.lane != "work":
+        task_class = allowed("evidence-only/regression-proof-already-satisfied")
+        reasons.append(f"non_work_lane:{task.lane}")
+    else:
+        task_class = allowed(default_class)
+        reasons.append("profile_default_classification")
+
+    risk_tier = "T1"
+    if task_class in {"fullstack-integrated", "backend-owned", "cross-cutting-infrastructure", "release-sync"} or money_or_security:
+        risk_tier = "T3"
+    elif task_class in {"prototype-asset-dependent", "frontend-only"}:
+        risk_tier = "T2"
+    if task.priority == "P0" and risk_tier in {"T1", "T2"} and money_or_security:
+        risk_tier = "T3"
+    labels = list(contract.get("required_evidence_labels") or [])
+    if prototype and "prototype_checked_when_referenced" not in labels:
+        warnings.append("profile_missing_prototype_closeout_label")
+    if not labels:
+        warnings.append("profile_missing_required_evidence_labels")
+    return {
+        "schema": "semantic_task_classification_v1",
+        "task_id": task.id,
+        "task_path": str(task.path),
+        "project": task.project,
+        "lane": task.lane,
+        "priority": task.priority,
+        "task_class": task_class,
+        "risk_tier": risk_tier,
+        "required_evidence_labels": labels,
+        "runtime_consumers": list(contract.get("runtime_consumers") or PROFILE_POLICY_RUNTIME_CONSUMERS),
+        "enforcement": "warn_only",
+        "certification_authority": "advisory_only_until_target_bound_T3_pass" if risk_tier != "T3" else "requires_target_bound_T3_for_closeout_when_used_as_done_authority",
+        "reasons": reasons,
+        "warnings": warnings,
+    }
+
+
+def semantic_control_plane_report(*, task_id: str = "", project: str = "", max_tasks: int = 20) -> dict[str, Any]:
+    tasks = iter_tasks()
+    selected: list[Task] = []
+    if task_id:
+        selected = [find_task(task_id)]
+    else:
+        for t in sorted_tasks(include_done=False):
+            if project and t.project != project:
+                continue
+            selected.append(t)
+            if len(selected) >= max_tasks:
+                break
+    profile_project = project or (selected[0].project if selected else "")
+    contract = profile_policy_contract(profile_project) if profile_project else {}
+    classifications = [classify_task_with_profile_policy(t, profile_policy_contract(t.project)) for t in selected]
+    warnings = []
+    if contract:
+        warnings.extend(contract.get("warnings") or [])
+    for row in classifications:
+        warnings.extend(row.get("warnings") or [])
+    return {
+        "status": "OK",
+        "schema": "semantic_control_plane_dry_run_v1",
+        "generated_at": iso(),
+        "read_only": True,
+        "project": profile_project,
+        "contract": contract,
+        "classifications": classifications,
+        "classification_count": len(classifications),
+        "warnings": sorted(set(str(w) for w in warnings if w)),
+        "safety": "advisory soft-launch only; does not claim, mutate, complete, or fail-close tasks",
+    }
+
+
+def semantic_control_plane_selfcheck() -> dict[str, Any]:
+    projects = sorted({t.project for t in iter_tasks() if t.project})
+    contracts = [profile_policy_contract(project) for project in projects]
+    warnings: list[str] = []
+    for contract in contracts:
+        for warning in contract.get("warnings") or []:
+            warnings.append(f"{contract.get('project')}:{warning}")
+    return {
+        "status": "WARN" if warnings else "OK",
+        "schema": "semantic_control_plane_selfcheck_v1",
+        "read_only": True,
+        "project_count": len(projects),
+        "contracts_checked": len(contracts),
+        "warnings": sorted(set(warnings)),
+        "policy": "WARN-only soft gate; missing semantic linkage must not fail closed without fresh ratification and rollout",
+    }
 
 
 def split_frontmatter(text: str) -> tuple[dict[str, Any], str]:
@@ -281,12 +874,23 @@ def yaml_scalar(v: Any) -> str:
 
 def render_frontmatter(fm: dict[str, Any]) -> str:
     preferred = [
-        "type", "lane", "layer", "status", "priority", "created", "updated", "expires_at", "project",
+        "type", "lane", "layer", "status", "priority", "priority_layer", "dependency_order", "created", "updated", "expires_at", "project",
         "architecture_target", "capability_delta", "anti_drift_check", "acceptance_evidence", "workflow_contract",
+        "requires_multimodel", "multimodel_reason", "expected_participants", "truth_gate", "evidence_bundle",
+        "required_authority", "max_authority", "permission_tier", "write_surfaces", "completion_gate", "lane_semantics",
         "mission_schema_version", "mission_id", "mission_title", "mission_objective", "mission_constraints",
         "red_lines", "non_goals", "evidence_refs", "acceptance_criteria", "dag_nodes", "checkpoint_states",
         "permission_gates", "handoff_artifacts", "proof_artifacts", "rollback_signal", "certification_status",
-        "ratification_artifact", "mission_node_id", "mission_node_depends_on", "mission_node_kind",
+        "ratification_artifact", "multimodel_triage_result", "multimodel_status", "multimodel_ratification_artifact",
+        "multimodel_last_checked_at", "multimodel_round_status", "multimodel_last_gate_status",
+        "multimodel_last_decision", "multimodel_last_discussion_artifact", "multimodel_last_state_path",
+        "multimodel_last_failures", "multimodel_failure_taxonomy", "multimodel_recommended_axes", "multimodel_axis_rationale",
+        "mission_node_id", "mission_node_depends_on", "mission_node_kind",
+        "auto_subtask_parent", "auto_subtask_kind", "auto_subtask_axis", "auto_subtask_trigger",
+        "auto_subtask_issue_ids", "auto_subtask_parent_artifact", "auto_subtask_children",
+        "auto_subtask_open_children", "auto_subtask_ready_for_parent", "auto_subtask_taxonomy_axes", "auto_subtask_axis_rationale",
+        "blocked_resolve_last_checked_at", "blocked_resolve_multimodel_required", "blocked_resolve_reasons",
+        "blocked_resolve_taxonomy_axes", "blocked_resolve_axis_rationale", "blocked_resolve_last_action", "blocked_resolve_reason",
         "claimed_by", "claim_expires_at", "run_id", "retry_count", "next_attempt_at", "workspace", "parallel_boundary",
         "allowed_globs", "forbidden_globs", "loc_budget", "conflict_group", "parallel_group",
         "workspace_isolation", "merge_gate", "evidence", "concepts"
@@ -317,6 +921,43 @@ def atomic_write(path: Path, text: str) -> None:
     finally:
         if os.path.exists(tmp):
             os.unlink(tmp)
+
+
+def normalize_taskpool_priority_mode(raw: str | None) -> str:
+    mode = str(raw or "").strip().lower().replace("_", "-")
+    aliases = {
+        "work": "work-first",
+        "work-first": "work-first",
+        "product-first": "work-first",
+        "default": "work-first",
+        "evolution": "evolution-first",
+        "evolution-first": "evolution-first",
+        "self-evolution": "evolution-first",
+        "self-optimization": "evolution-first",
+        "self-optimisation": "evolution-first",
+    }
+    return aliases.get(mode, DEFAULT_TASKPOOL_PRIORITY_MODE)
+
+
+def taskpool_priority_mode() -> str:
+    env_mode = os.environ.get("HERMES_TASKPOOL_PRIORITY_MODE")
+    if env_mode:
+        return normalize_taskpool_priority_mode(env_mode)
+    try:
+        data = json.loads(TASKPOOL_PRIORITY_MODE_FILE.read_text(encoding="utf-8"))
+        if isinstance(data, dict):
+            return normalize_taskpool_priority_mode(str(data.get("mode") or ""))
+        if isinstance(data, str):
+            return normalize_taskpool_priority_mode(data)
+    except FileNotFoundError:
+        pass
+    except Exception:
+        return DEFAULT_TASKPOOL_PRIORITY_MODE
+    return DEFAULT_TASKPOOL_PRIORITY_MODE
+
+
+def lane_sort_weight() -> dict[str, int]:
+    return LANE_SORT_WEIGHT_BY_MODE.get(taskpool_priority_mode(), LANE_SORT_WEIGHT_BY_MODE[DEFAULT_TASKPOOL_PRIORITY_MODE])
 
 
 VALID_WORKSPACE_ISOLATION = {"none", "readonly", "copy", "worktree"}
@@ -420,6 +1061,24 @@ def architecture_aligned(fm: dict[str, Any]) -> bool:
     return not architecture_alignment_missing(fm)
 
 
+def task_permission_contract_for_fm(fm: dict[str, Any]) -> dict[str, Any]:
+    return taxonomy.task_permission_contract(fm, infer_lane(fm))
+
+
+def permission_validation_failures(fm: dict[str, Any]) -> list[str]:
+    return task_permission_contract_for_fm(fm).get("validation_failures", [])
+
+
+def apply_permission_defaults(fm: dict[str, Any]) -> dict[str, Any]:
+    contract = task_permission_contract_for_fm(fm)
+    for key in ("required_authority", "max_authority", "write_surfaces", "completion_gate", "lane_semantics"):
+        if fm.get(key) in (None, "", []):
+            fm[key] = contract.get(key)
+    if fm.get("permission_tier") in (None, "", []):
+        fm["permission_tier"] = fm.get("required_authority")
+    return fm
+
+
 def is_mission_envelope_fm(fm: dict[str, Any]) -> bool:
     concepts = {x.lower() for x in list_value(fm.get("concepts"))}
     if "mission-envelope" in concepts:
@@ -430,7 +1089,7 @@ def is_mission_envelope_fm(fm: dict[str, Any]) -> bool:
         "mission_schema_version", "mission_title", "mission_objective",
         "red_lines", "non_goals", "acceptance_criteria", "dag_nodes",
         "checkpoint_states", "handoff_artifacts", "proof_artifacts",
-        "rollback_signal", "certification_status", "ratification_artifact",
+        "rollback_signal", "ratification_artifact",
     }
     return any(str(fm.get(field) or "").strip() for field in envelope_markers)
 
@@ -626,6 +1285,27 @@ def has_any_keyword(text: str, keywords: set[str]) -> bool:
     return any(k.lower() in text for k in keywords)
 
 
+def truthy_frontmatter_value(value: Any) -> bool:
+    if isinstance(value, bool):
+        return value
+    if value is None:
+        return False
+    text = str(value).strip().lower()
+    return text in {"1", "true", "yes", "y", "on", "required", "require", "must"}
+
+
+def split_csv_frontmatter_value(value: Any) -> list[str]:
+    if isinstance(value, list):
+        raw = value
+    else:
+        raw = str(value or "").split(",")
+    return [str(x).strip() for x in raw if str(x).strip()]
+
+
+def task_requires_multimodel_contract(task: "Task") -> bool:
+    return truthy_frontmatter_value(task.fm.get("requires_multimodel") or task.fm.get("multimodel_required"))
+
+
 def task_multimodel_status(task: "Task") -> str:
     return str(
         task.fm.get("multimodel_status")
@@ -674,6 +1354,34 @@ def task_multimodel_passed(task: "Task") -> bool:
         return False
     gate = ratification_gate_result(discussion, expected_task=task)
     return gate.get("status") == "PASS" and gate.get("decision") == "LOOP_DONE"
+
+
+def _frontmatter_bool(value: Any) -> bool:
+    if isinstance(value, bool):
+        return value
+    return str(value or "").strip().lower() in {"1", "true", "yes", "y", "on"}
+
+
+def task_multimodel_advisory_completed(task: "Task") -> bool:
+    """Return True when an advisory-only multimodel round already consumed weak triggers.
+
+    Advisory rounds are deliberately not certification authority: they must not set
+    ``multimodel_passed`` or close a task.  But once the advisory gate itself passed
+    and was recorded as PASS_ADVISORY_ONLY, rerunning the same weak advisory trigger
+    every tick is pure scheduler churn.  Strong certification triggers (stale claim,
+    P0 evolution blast radius, retry non-convergence) are handled separately and can
+    still preempt this consumed-advisory state.
+    """
+    status = task_multimodel_status(task)
+    gate_status = str(task.fm.get("multimodel_last_gate_status") or "").strip().upper()
+    advisory_only = _frontmatter_bool(task.fm.get("multimodel_advisory_only"))
+    discussion_artifact = str(task.fm.get("multimodel_last_discussion_artifact") or "").strip()
+    return (
+        status in {"advisory_completed", "not_certified"}
+        and gate_status == "PASS_ADVISORY_ONLY"
+        and advisory_only
+        and bool(discussion_artifact)
+    )
 
 
 def multimodel_convergence_stats(tasks: list["Task"] | None = None) -> dict[str, Any]:
@@ -743,6 +1451,8 @@ def load_cron_jobs_snapshot(names: list[str] | None = None) -> dict[str, Any]:
             "last_status": job.get("last_status"),
             "last_error_tail": redact_for_evidence(last_error),
             "last_delivery_error_tail": redact_for_evidence(last_delivery_error),
+            "_last_error_raw": last_error,
+            "_last_delivery_error_raw": last_delivery_error,
             "delivery_configured": bool(job.get("deliver")),
             "script_configured": bool(job.get("script")),
             "no_agent": job.get("no_agent"),
@@ -776,11 +1486,11 @@ def multimodel_failure_taxonomy(discussion: dict[str, Any] | None, failures: lis
             add("evidence_missing", f)
         if f.startswith("non_approve_vote") or f.startswith("status_not_passed"):
             add("vote_reject", f)
-        if f.startswith("agreement_below_threshold"):
+        if f.startswith("agreement_below_threshold") or ("agreement" in f and "low" in f):
             add("agreement_low", f)
         if f.startswith("missing_required_model_vote") or f.startswith("duplicate_vote_model") or f.startswith("unexpected_vote_model"):
             add("model_vote_missing", f)
-        if f.startswith("best_within_constraints_missing") or "criterion_missing" in f or "one_shot_plan_missing" in f:
+        if f.startswith("best_within_constraints_missing") or "criterion_missing" in f or "one_shot_plan_missing" in f or "loop_non_convergence" in f:
             add("criteria_missing", f)
         if f.startswith("final_design") or f == "final_design_missing":
             add("final_design_missing", f)
@@ -817,60 +1527,215 @@ def multimodel_failure_taxonomy(discussion: dict[str, Any] | None, failures: lis
                     add("unsupported_claims", str(cid))
                 elif ts in {"needs_link_review", ""}:
                     add("evidence_missing", f"{cid}:{ts or 'missing_truth_status'}")
-    return {
+    taxonomy_result = {
         "schema": "local_brain_multimodel_failure_taxonomy_v1",
         "categories": categories,
         "active_categories": {k: v for k, v in categories.items() if v},
         "summary": [f"{k}:{len(v)}" for k, v in categories.items() if v],
     }
+    taxonomy_result.update(multimodel_failure_taxonomy_axis_hints(taxonomy_result))
+    return taxonomy_result
+
+
+def multimodel_failure_taxonomy_axis_hints(taxonomy_result: dict[str, Any] | None) -> dict[str, Any]:
+    active = taxonomy_result.get("active_categories") if isinstance(taxonomy_result, dict) else {}
+    if not isinstance(active, dict):
+        active = {}
+    category_to_axes = {
+        "quota_unobservable": ["quota_observability"],
+        "evidence_missing": ["quota_observability", "framing"],
+        "no_claims": ["quota_observability", "framing"],
+        "unsupported_claims": ["framing"],
+        "agreement_low": ["relay_ordering"],
+        "criteria_missing": ["fallback_threshold"],
+        "final_design_missing": ["patch_normalization"],
+        "provider_parse_error": ["patch_normalization", "framing"],
+        "model_vote_missing": ["framing"],
+        "vote_reject": ["framing"],
+    }
+    axis_to_categories: dict[str, list[str]] = {axis: [] for axis in AUTO_SUBTASK_AXIS_ORDER}
+    for category, reasons in active.items():
+        if not reasons:
+            continue
+        for axis in category_to_axes.get(str(category), []):
+            if axis in axis_to_categories and category not in axis_to_categories[axis]:
+                axis_to_categories[axis].append(str(category))
+    recommended_axes = [axis for axis in AUTO_SUBTASK_AXIS_ORDER if axis_to_categories.get(axis)]
+    return {
+        "recommended_axes": recommended_axes,
+        "axis_rationale": {axis: cats for axis, cats in axis_to_categories.items() if cats},
+    }
+
+
+def extract_discussion_result_path_from_stdout(stdout: str) -> str:
+    """Extract consult_models.py discussion_result.json path from captured output.
+
+    Parallel intervention workers each own a subprocess stdout/stderr stream; using
+    that exact receipt avoids races when several tick-* dirs are created at once.
+    """
+    text = stdout or ""
+    if not text:
+        return ""
+
+    def _walk(obj: Any) -> str:
+        if isinstance(obj, dict):
+            value = obj.get("result_file")
+            if isinstance(value, str) and value.endswith("discussion_result.json"):
+                return value
+            for child in obj.values():
+                found = _walk(child)
+                if found:
+                    return found
+        elif isinstance(obj, list):
+            for child in obj:
+                found = _walk(child)
+                if found:
+                    return found
+        return ""
+
+    try:
+        parsed = json.loads(text)
+        found = _walk(parsed)
+        if found:
+            return found
+    except Exception:
+        pass
+
+    start = text.find("{")
+    end = text.rfind("}")
+    if 0 <= start < end:
+        try:
+            parsed = json.loads(text[start : end + 1])
+            found = _walk(parsed)
+            if found:
+                return found
+        except Exception:
+            pass
+
+    match = re.search(r'"result_file"\s*:\s*"([^"]*discussion_result\.json)"', text)
+    if match:
+        return match.group(1)
+
+    artifact_match = re.search(r"Artifacts in\s+([^\s]+tick-[^\s/]+/?)(?:\s|$)", text)
+    if artifact_match:
+        return str(Path(artifact_match.group(1)).expanduser() / "discussion_result.json")
+    return ""
 
 
 def write_multimodel_result_to_task(task: "Task", gate_result: dict[str, Any], discussion_path: str, state_path: str) -> dict[str, Any]:
-    """Write multimodel ratification result to task frontmatter.
+    """Write every PUA-loop multi-model round result back to the task note.
 
-    Called when ratification_gate returns PASS/LOOP_DONE. Updates:
-    - multimodel_status: certified / not_certified
-    - multimodel_ratification_artifact: path to discussion result
+    PASS/LOOP_DONE certifies the task and stores the ratification artifact.  Any
+    non-pass round is still recorded as the latest round state so cron/humans do
+    not see a silent no-op.  The gate remains fail-closed: non-pass never sets a
+    pass artifact and never suppresses future intervention.
     """
-    passed = gate_result.get("status") == "PASS" and gate_result.get("decision") == "LOOP_DONE"
-    status_value = "certified" if passed else "not_certified"
+    gate_status = str(gate_result.get("status") or "SKIP").upper()
+    decision = str(gate_result.get("decision") or "").upper()
+    passed = gate_status == "PASS" and decision == "LOOP_DONE"
+    advisory_completed = gate_status == "PASS_ADVISORY_ONLY"
+    if not decision:
+        decision = "LOOP_DONE" if passed else "CONTINUE_LOOP"
+    failures = gate_result.get("failures") if isinstance(gate_result.get("failures"), list) else []
+    failure_summary = [str(f) for f in failures[:8]]
+    if not failure_summary and gate_result.get("reason"):
+        failure_summary = [str(gate_result.get("reason"))]
+    failure_taxonomy = gate_result.get("failure_taxonomy") if isinstance(gate_result.get("failure_taxonomy"), dict) else multimodel_failure_taxonomy({}, failure_summary)
+    taxonomy_axes = [axis for axis in failure_taxonomy.get("recommended_axes", []) if axis in AUTO_SUBTASK_AXIS_ORDER]
+    axis_rationale = failure_taxonomy.get("axis_rationale") or {}
+    if passed:
+        round_status = "passed"
+    elif advisory_completed:
+        round_status = "advisory_passed"
+    else:
+        round_status = "failed" if gate_status == "FAIL" else "skipped"
+
+    advisory_reasons = task_multimodel_advisory_reasons(task)
+    cert_reasons = task_multimodel_certification_reasons(task)
+    is_advisory_only = advisory_completed or (not passed and not cert_reasons and bool(advisory_reasons))
+    multimodel_status = "certified" if passed else ("advisory_completed" if advisory_completed else "not_certified")
+
     updates = {
-        "multimodel_status": status_value,
-        "multimodel_ratification_artifact": discussion_path,
+        "multimodel_status": multimodel_status,
+        "multimodel_last_checked_at": iso(),
+        "multimodel_round_status": round_status,
+        "multimodel_last_gate_status": gate_status,
+        "multimodel_last_decision": decision,
+        "multimodel_last_discussion_artifact": discussion_path,
+        "multimodel_last_state_path": state_path,
+        "multimodel_last_failures": failure_summary,
+        "multimodel_advisory_only": is_advisory_only,
+        "multimodel_certification_authority": bool(cert_reasons) or passed,
+        "multimodel_advisory_reasons": advisory_reasons,
+        "multimodel_certification_reasons": cert_reasons,
+        "multimodel_failure_taxonomy": sorted((failure_taxonomy.get("active_categories") or {}).keys()),
+        "multimodel_recommended_axes": taxonomy_axes,
+        "multimodel_axis_rationale": axis_rationale,
     }
-    updates["certification_status"] = status_value
+    mission_envelope = is_mission_envelope_fm(task.fm)
+    if mission_envelope:
+        updates["certification_status"] = "certified" if passed else "not_certified"
+    if passed:
+        updates["multimodel_ratification_artifact"] = discussion_path
 
-    path = Path(task.path)
-    content = path.read_text(encoding="utf-8")
-    lines = content.split("\n")
+    task.fm.update(updates)
+    if not mission_envelope:
+        task.fm.pop("certification_status", None)
+    if not passed:
+        # A later failed/skipped round must invalidate any stale PASS artifact as
+        # current proof. Historical artifacts remain in the Proof Log/body, but
+        # frontmatter must reflect the latest fail-closed certification state.
+        task.fm.pop("multimodel_ratification_artifact", None)
+    task.body += (
+        f"\n- {iso()}: Multimodel PUA-loop round `{round_status}`. "
+        f"Gate `{gate_status}`, decision `{decision}`. "
+        f"Discussion `{discussion_path or 'missing'}`. "
+        f"Failures: {json.dumps(failure_summary, ensure_ascii=False)}. "
+        f"Recommended axes: {json.dumps(taxonomy_axes, ensure_ascii=False)}. "
+        f"Axis rationale: {json.dumps(axis_rationale, ensure_ascii=False)}\n"
+    )
+    save_task(task)
+    derived_refresh = refresh_derived_task_views("multimodel-round")
+    return {"status": "OK", "task_id": task.id, "updates": updates, "passed": passed, "derived_refresh": derived_refresh}
 
-    if not lines or lines[0].strip() != "---":
-        return {"status": "SKIP", "reason": "no_frontmatter", "task_id": task.id}
-    end_idx = None
-    for i in range(1, len(lines)):
-        if lines[i].strip() == "---":
-            end_idx = i
-            break
-    if end_idx is None:
-        return {"status": "SKIP", "reason": "unclosed_frontmatter", "task_id": task.id}
 
-    fm_lines = lines[1:end_idx]
-    body_lines = lines[end_idx + 1:]
+def load_governance_adjustments() -> dict[str, Any]:
+    """Load latest governance ratchet output for threshold tuning."""
+    if not GOVERNANCE_RATCHET_PATH.exists():
+        return {}
+    try:
+        return json.loads(GOVERNANCE_RATCHET_PATH.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
 
-    existing_keys: set[str] = set()
-    for i, line in enumerate(fm_lines):
-        for key, value in updates.items():
-            if line.startswith(f"{key}:"):
-                fm_lines[i] = f"{key}: {value}"
-                existing_keys.add(key)
 
-    for key, value in updates.items():
-        if key not in existing_keys:
-            fm_lines.append(f"{key}: {value}")
+def task_multimodel_round_count(task: "Task") -> int:
+    """Count how many multimodel rounds this task has been through."""
+    body = task.body or ""
+    return body.count("Multimodel PUA-loop round")
 
-    new_content = "\n".join(["---"] + fm_lines + ["---"] + body_lines)
-    path.write_text(new_content, encoding="utf-8")
-    return {"status": "OK", "task_id": task.id, "updates": updates, "passed": passed}
+
+def task_multimodel_economy_gate(task: "Task") -> dict[str, Any]:
+    """Apply loop economy rules: throttle or pause tasks with too many failed rounds."""
+    rounds = task_multimodel_round_count(task)
+    last_status = str(task.fm.get("multimodel_round_status") or "")
+    last_decision = str(task.fm.get("multimodel_last_decision") or "").upper()
+
+    if rounds >= MAX_T3_ROUNDS_BEFORE_PAUSE and last_status == "failed":
+        return {
+            "action": "pause",
+            "reason": f"task has {rounds} failed T3 rounds (max={MAX_T3_ROUNDS_BEFORE_PAUSE}); requires human review or targeted evidence fix",
+            "allowed_tier": "none",
+            "rounds": rounds,
+        }
+    if rounds >= MAX_T3_ROUNDS_BEFORE_THROTTLE and last_status == "failed":
+        return {
+            "action": "throttle",
+            "reason": f"task has {rounds} failed T3 rounds (throttle={MAX_T3_ROUNDS_BEFORE_THROTTLE}); downgrading to T2 advisory",
+            "allowed_tier": "T2_advisory",
+            "rounds": rounds,
+        }
+    return {"action": "allow", "allowed_tier": "any", "rounds": rounds}
 
 
 def task_multimodel_intervention_reasons(task: "Task") -> list[str]:
@@ -880,8 +1745,9 @@ def task_multimodel_intervention_reasons(task: "Task") -> list[str]:
     never treated as evidence here. The command surfaces when to invoke the live
     consult_models.py PUA-loop gate; it does not mutate task state or execute hooks.
 
-    Trigger strategy: structural-first, keyword-supplemented.
+    Trigger strategy: structural-first, keyword-supplemented, signal-consumed.
     - Strong structural triggers fire immediately (P0+evolution, retry>=2).
+    - Budget signals from doctor --emit-signal upgrade weak signals to T1/T2.
     - Keywords only add reasons when at least one structural reason exists.
     - Requires >= 2 reasons to fire (prevents noise from single weak signals).
     - Keyword search uses title + concepts only (not body/metadata).
@@ -890,6 +1756,18 @@ def task_multimodel_intervention_reasons(task: "Task") -> list[str]:
         return []
     reasons: list[str] = []
 
+    # --- Explicit contract triggers (native task/intake contract, not heuristic) ---
+    if task_requires_multimodel_contract(task):
+        reasons.append("explicit_requires_multimodel")
+    if str(task.fm.get("multimodel_reason") or "").strip():
+        reasons.append("explicit_multimodel_reason")
+    if split_csv_frontmatter_value(task.fm.get("expected_participants")):
+        reasons.append("expected_participants_contract")
+    if str(task.fm.get("truth_gate") or "").strip():
+        reasons.append("truth_gate_contract")
+    if str(task.fm.get("evidence_bundle") or "").strip():
+        reasons.append("evidence_bundle_contract")
+
     # --- Strong structural triggers (fire immediately) ---
     if task.priority == "P0" and task.lane == "evolution":
         reasons.append("p0_evolution_blast_radius")
@@ -897,6 +1775,11 @@ def task_multimodel_intervention_reasons(task: "Task") -> list[str]:
         reasons.append("loop_non_convergence")
     if task.is_stale_claim():
         reasons.append("stale_claim")
+
+    # Advisory-only PASS consumes weak advisory triggers, but never masks strong
+    # certification triggers above.
+    if task_multimodel_advisory_completed(task) and not reasons and task.status not in {"running", "review"}:
+        return []
 
     # --- Structural signals (need keyword or another signal to fire) ---
     if task.status in {"running", "review"}:
@@ -924,8 +1807,21 @@ def task_multimodel_intervention_reasons(task: "Task") -> list[str]:
             reasons.append("one_shot_keyword")
 
     unique = sorted(set(reasons))
+    strong = {"explicit_requires_multimodel", "p0_evolution_blast_radius", "loop_non_convergence", "stale_claim"}
+    # Budget signal upgrade: if doctor emitted recent high-severity signals,
+    # boost any weak trigger to T2 advisory level.
+    if not (strong & set(unique)) and BUDGET_SIGNALS_PATH.exists():
+        try:
+            lines = BUDGET_SIGNALS_PATH.read_text(encoding="utf-8").splitlines()[-20:]
+            for raw in reversed(lines):
+                sig = json.loads(raw)
+                if sig.get("severity") in ("high", "critical") and sig.get("recommended_tier") in ("T2_advisory", "T3_advisory"):
+                    if "iteration_budget_signal" not in unique:
+                        unique.append("iteration_budget_signal")
+                        break
+        except Exception:
+            pass
     # Strong triggers fire alone; everything else needs >= 2 signals.
-    strong = {"p0_evolution_blast_radius", "loop_non_convergence", "stale_claim"}
     if strong & set(unique):
         return unique
     if len(unique) >= 2:
@@ -935,6 +1831,18 @@ def task_multimodel_intervention_reasons(task: "Task") -> list[str]:
 
 def task_multimodel_intervention_required(task: "Task") -> bool:
     return bool(task_multimodel_intervention_reasons(task))
+
+
+def task_multimodel_advisory_reasons(task: "Task") -> list[str]:
+    reasons = task_multimodel_intervention_reasons(task)
+    strong_certification = {"p0_evolution_blast_radius", "loop_non_convergence", "stale_claim", "closeout_ratification"}
+    return sorted([r for r in reasons if r not in strong_certification])
+
+
+def task_multimodel_certification_reasons(task: "Task") -> list[str]:
+    reasons = task_multimodel_intervention_reasons(task)
+    strong_certification = {"p0_evolution_blast_radius", "loop_non_convergence", "stale_claim", "closeout_ratification"}
+    return sorted([r for r in reasons if r in strong_certification])
 
 
 @dataclasses.dataclass
@@ -1042,6 +1950,8 @@ class Task:
             return False
         if self.lane == "evolution" and not self.architecture_aligned():
             return False
+        if project_profile_failures(self):
+            return False
         if is_mission_envelope_fm(self.fm) and not mission_envelope_valid(self.fm):
             return False
         if not ignore_mission_node and mission_node_blockers(self):
@@ -1049,6 +1959,7 @@ class Task:
         return True
 
     def row(self) -> dict[str, Any]:
+        project_profile = load_project_profile(self.project)
         return {
             "id": self.id,
             "title": self.title,
@@ -1058,6 +1969,13 @@ class Task:
             "lane": self.lane,
             "architecture_target": self.architecture_target,
             "architecture_aligned": self.architecture_aligned(),
+            "required_authority": task_permission_contract_for_fm(self.fm).get("required_authority"),
+            "max_authority": task_permission_contract_for_fm(self.fm).get("max_authority"),
+            "permission_tier": task_permission_contract_for_fm(self.fm).get("permission_tier"),
+            "write_surfaces": task_permission_contract_for_fm(self.fm).get("write_surfaces"),
+            "completion_gate": task_permission_contract_for_fm(self.fm).get("completion_gate"),
+            "lane_semantics": task_permission_contract_for_fm(self.fm).get("lane_semantics"),
+            "permission_validation_failures": permission_validation_failures(self.fm),
             "mission_id": str(self.fm.get("mission_id") or ""),
             "mission_node_id": mission_node_id(self) if is_mission_node(self) else "",
             "mission_node_depends_on": list_value(self.fm.get("mission_node_depends_on")),
@@ -1068,12 +1986,26 @@ class Task:
             "mission_envelope_missing": mission_envelope_missing(self.fm),
             "multimodel_intervention_required": task_multimodel_intervention_required(self),
             "multimodel_intervention_reasons": task_multimodel_intervention_reasons(self),
+            "requires_multimodel": task_requires_multimodel_contract(self),
+            "multimodel_reason": str(self.fm.get("multimodel_reason") or ""),
+            "expected_participants": split_csv_frontmatter_value(self.fm.get("expected_participants")),
+            "truth_gate": str(self.fm.get("truth_gate") or ""),
+            "evidence_bundle": str(self.fm.get("evidence_bundle") or ""),
             "multimodel_status": task_multimodel_status(self),
             "multimodel_ratification_artifact": task_multimodel_artifact(self),
             "multimodel_passed": task_multimodel_passed(self),
+            "multimodel_round_status": str(self.fm.get("multimodel_round_status") or ""),
+            "multimodel_last_gate_status": str(self.fm.get("multimodel_last_gate_status") or ""),
+            "multimodel_last_decision": str(self.fm.get("multimodel_last_decision") or ""),
+            "multimodel_last_failures": list_value(self.fm.get("multimodel_last_failures")),
             "project": self.project,
+            "project_profile_status": str(project_profile.get("status") or "missing"),
+            "project_profile_missing": bool(project_profile.get("missing")),
+            "project_profile_path": str(project_profile.get("path") or ""),
+            "project_profile_error": str(project_profile.get("error") or ""),
             "claimed_by": self.fm.get("claimed_by") or "",
             "claim_expires_at": self.fm.get("claim_expires_at") or "",
+            "run_id": self.fm.get("run_id") or "",
             "retry_count": self.fm.get("retry_count") or 0,
             "next_attempt_at": self.fm.get("next_attempt_at") or "",
             "expires_at": self.fm.get("expires_at") or "",
@@ -1093,6 +2025,11 @@ class Task:
 def obsidian_link(path: Path) -> str:
     rel = path.relative_to(VAULT).with_suffix("")
     return "[[" + str(rel) + "]]"
+
+
+def markdown_table_cell(value: Any, limit: int | None = None) -> str:
+    text = str(value or "-").replace("\r", " ").replace("\n", " ").replace("|", "\\|")
+    return text[:limit] if limit else text
 
 
 def iter_tasks(include_generated: bool = False) -> list[Task]:
@@ -1126,13 +2063,838 @@ def save_task(task: Task) -> None:
     atomic_write(task.path, render_frontmatter(task.fm) + "\n" + task.body.lstrip("\n"))
 
 
+def create_task_note(
+    *,
+    title: str,
+    priority: str = "P2",
+    project: str = "inbox",
+    status: str = "pending",
+    expires_at: str = "",
+    expires_days: int = 30,
+    concepts: list[str] | None = None,
+    lane: str = "auto",
+    architecture_target: str = "",
+    capability_delta: str = "",
+    anti_drift_check: str = "",
+    acceptance_evidence: str = "",
+    priority_layer: str = "",
+    dependency_order: list[str] | None = None,
+    multimodel_triage_result: str = "",
+    layer: str = "L3",
+    workflow_contract: str = DEFAULT_WORKFLOW,
+    workspace: str = "",
+    parallel_boundary: str = "",
+    objective: str = "",
+    accept: str = "",
+    extra_frontmatter: dict[str, Any] | None = None,
+    extra_body_sections: str = "",
+) -> dict[str, Any]:
+    if status not in INITIAL_TASK_STATUSES:
+        raise SystemExit(f"add can only create initial statuses {sorted(INITIAL_TASK_STATUSES)}; use transition/reconcile for lifecycle changes")
+    lane_arg = (lane or "auto").strip().lower()
+    if lane_arg != "auto" and lane_arg not in VALID_LANES:
+        raise SystemExit(f"lane must be one of {['auto', *VALID_LANES]}")
+    title = title.strip()
+    concept_list = [x.strip() for x in (concepts or ["task"]) if str(x).strip()]
+    normalized_priority_layer = (priority_layer or "").strip()
+    normalized_dependency_order = [x.strip() for x in (dependency_order or []) if str(x).strip()]
+    normalized_multimodel_triage_result = (multimodel_triage_result or "").strip()
+    missing_required_fields: list[str] = []
+    if not normalized_priority_layer:
+        missing_required_fields.append("priority_layer")
+    if not normalized_dependency_order:
+        missing_required_fields.append("dependency_order")
+    if not normalized_multimodel_triage_result:
+        missing_required_fields.append("multimodel_triage_result")
+    if missing_required_fields:
+        raise SystemExit(
+            "task creation requires explicit priority/dependency/triage metadata; "
+            f"missing={missing_required_fields}"
+        )
+    validate_clean_values(
+        title=title,
+        layer=layer,
+        status=status,
+        priority=priority,
+        priority_layer=normalized_priority_layer,
+        project=project,
+        workflow_contract=workflow_contract,
+        workspace=workspace or "",
+        parallel_boundary=parallel_boundary or "",
+        concepts=",".join(concept_list),
+        lane=lane_arg,
+        architecture_target=architecture_target,
+        capability_delta=capability_delta,
+        anti_drift_check=anti_drift_check,
+        acceptance_evidence=acceptance_evidence,
+        dependency_order=",".join(normalized_dependency_order),
+        multimodel_triage_result=normalized_multimodel_triage_result,
+    )
+    created = now()
+    expires = parse_dt(expires_at) if expires_at else created + timedelta(days=expires_days)
+    slug = slugify(title)
+    base = TASKS_DIR / f"{created.date().isoformat()}-{slug}.md"
+    path = base
+    i = 2
+    while path.exists():
+        path = TASKS_DIR / f"{created.date().isoformat()}-{slug}-{i}.md"
+        i += 1
+    preliminary = {"lane": "" if lane_arg == "auto" else lane_arg, "project": project, "concepts": concept_list, "type": "task"}
+    inferred_lane = infer_lane(preliminary)
+    fm = {
+        "type": "task",
+        "lane": inferred_lane,
+        "layer": layer,
+        "status": status,
+        "priority": priority,
+        "priority_layer": normalized_priority_layer,
+        "dependency_order": normalized_dependency_order,
+        "created": iso(created),
+        "updated": iso(created),
+        "expires_at": iso(expires) if expires else "",
+        "project": project,
+        "architecture_target": architecture_target or "",
+        "capability_delta": capability_delta or "",
+        "anti_drift_check": anti_drift_check or "",
+        "acceptance_evidence": acceptance_evidence or "",
+        "multimodel_triage_result": normalized_multimodel_triage_result,
+        "workflow_contract": workflow_contract,
+        "claimed_by": "",
+        "claim_expires_at": "",
+        "run_id": "",
+        "retry_count": 0,
+        "next_attempt_at": "",
+        "workspace": workspace or "",
+        "parallel_boundary": parallel_boundary or "",
+        "evidence": [],
+        "concepts": concept_list,
+    }
+    if extra_frontmatter:
+        fm.update(extra_frontmatter)
+    apply_permission_defaults(fm)
+    missing_alignment = architecture_alignment_missing(fm)
+    if missing_alignment:
+        raise SystemExit(f"evolution tasks require architecture alignment fields; missing/invalid={missing_alignment}")
+    sections = [
+        f"# Task - {title}",
+        "",
+        "## Objective",
+        "",
+        objective or title,
+        "",
+        "## Acceptance Criteria",
+        "",
+        f"- [ ] {accept or 'Observable result is recorded in Proof Log.'}",
+        "",
+        "## Plan / Workpad",
+        "",
+        "- [ ] Reconcile current state, dependency order, and architecture boundaries before execution.",
+        "- [ ] Advance the long-term maintainable mainline plan with the next bounded step and staged evidence.",
+        "- [ ] Record proof, status, and any next dependency or handoff required.",
+        "",
+    ]
+    if extra_body_sections.strip():
+        sections.extend([extra_body_sections.rstrip(), ""])
+    sections.extend([
+        "## Validation",
+        "",
+        "| Command / Check | Status | Evidence |",
+        "|---|---|---|",
+        "| brain_task_orchestrator list | pending | |",
+        "",
+        "## Proof Log",
+        "",
+        f"- {iso(created)}: Task created from local-brain control point.",
+        "",
+        "## Blockers / Confusions",
+        "",
+        "- None.",
+        "",
+        "## Final Handoff",
+        "",
+        "- Status:",
+        "- Evidence:",
+        "- Residual risk:",
+        "",
+    ])
+    body = "\n".join(sections)
+    atomic_write(path, render_frontmatter(fm) + "\n" + body)
+    return {"status": "OK", "created": str(path), "id": path.stem, "link": obsidian_link(path)}
+
+
+def replace_markdown_section(body: str, heading: str, content: str) -> str:
+    pattern = rf"(## {re.escape(heading)}\n\n)(.*?)(?=\n## |\Z)"
+    replacement = rf"\1{content.rstrip()}\n"
+    updated, count = re.subn(pattern, replacement, body, flags=re.S)
+    if count:
+        return updated
+    suffix = "" if body.endswith("\n") else "\n"
+    return body + f"{suffix}\n## {heading}\n\n{content.rstrip()}\n"
+
+
+def extract_markdown_section(body: str, heading: str) -> str:
+    pattern = rf"## {re.escape(heading)}\n\n(.*?)(?=\n## |\Z)"
+    match = re.search(pattern, body, flags=re.S)
+    return match.group(1).rstrip() if match else ""
+
+
+def append_markdown_section_lines_unique(body: str, heading: str, lines: list[str]) -> str:
+    existing = extract_markdown_section(body, heading)
+    current_lines = [line.rstrip() for line in existing.splitlines() if line.strip()]
+    for line in lines:
+        normalized = line.rstrip()
+        if normalized and normalized not in current_lines:
+            current_lines.append(normalized)
+    return replace_markdown_section(body, heading, "\n".join(current_lines))
+
+
+def load_discussion_artifact(task: Task) -> dict[str, Any]:
+    path = str(task.fm.get("multimodel_last_discussion_artifact") or "").strip()
+    if not path:
+        raise SystemExit(f"task {task.id} has no multimodel_last_discussion_artifact")
+    artifact = Path(path).expanduser()
+    if not artifact.exists():
+        raise SystemExit(f"discussion artifact missing: {artifact}")
+    try:
+        data = json.loads(artifact.read_text(encoding="utf-8"))
+    except Exception as exc:
+        raise SystemExit(f"failed to parse discussion artifact {artifact}: {exc}") from exc
+    if not isinstance(data, dict):
+        raise SystemExit(f"discussion artifact must be a JSON object: {artifact}")
+    return data
+
+
+AUTO_SUBTASK_AXIS_ORDER = [
+    "quota_observability",
+    "fallback_threshold",
+    "relay_ordering",
+    "patch_normalization",
+    "framing",
+]
+
+
+def _issue_text(issue: Any) -> str:
+    if isinstance(issue, dict):
+        parts = []
+        for key in ("id", "title", "summary", "description", "reason", "notes", "proposed_action", "cluster"):
+            value = issue.get(key)
+            if value:
+                parts.append(str(value))
+        return " ".join(parts).strip().lower()
+    return str(issue or "").strip().lower()
+
+
+def classify_non_convergence_issue_axis(issue: Any) -> str:
+    text = _issue_text(issue)
+    if any(token in text for token in ("quota", "observability", "unobservable", "confidence", "provider quota", "budget state")):
+        return "quota_observability"
+    if any(token in text for token in ("threshold", "noop", "downgrade", "fallback", "budget exhaustion", "policy gate")):
+        return "fallback_threshold"
+    if any(token in text for token in ("relay", "handoff", "continuation", "ordering", "packet timing", "re-entry")):
+        return "relay_ordering"
+    if any(token in text for token in ("patch", "normalize", "normalization", "merge", "certifiable slice", "minority patch")):
+        return "patch_normalization"
+    return "framing"
+
+
+def build_non_convergence_spec(task: Task, *, axis: str, issue_ids: list[str], artifact_path: str) -> dict[str, Any]:
+    shared_prefix = f"Auto-generated convergence slice for parent `{task.id}`. Do not change the parent objective."
+    artifact_note = artifact_path or str(task.fm.get("multimodel_last_discussion_artifact") or "")
+    issue_note = ", ".join(issue_ids) if issue_ids else "none tagged"
+    parent_objective = extract_markdown_section(task.body, "Objective") or "Objective missing in parent task."
+    spec_map: dict[str, dict[str, Any]] = {
+        "quota_observability": {
+            "title": f"为 {task.id} 细化 quota observability 收敛前置任务",
+            "objective": f"{shared_prefix} Define quota_state source, confidence, staleness, and fail-closed semantics so future ratification can decide whether quota-aware change is required.",
+            "accept": "Produce a narrowed brief covering quota_state source, confidence, unknown/unobservable handling, and file-backed evidence locations.",
+            "concepts": ["task", "auto-subtask", "non-convergence", "quota-observability"],
+            "capability_delta": "quota observability narrowed brief",
+            "anti_drift_check": "keep parent objective unchanged while proving quota_state semantics",
+            "acceptance_evidence": "proof log cites source evidence for quota_state confidence and unknown handling",
+            "narrowed_scope": [
+                "Only resolve quota observability and evidence gaps.",
+                "Do not decide relay ordering or broader fallback policy here.",
+            ],
+        },
+        "fallback_threshold": {
+            "title": f"为 {task.id} 细化 fallback threshold 收敛前置任务",
+            "objective": f"{shared_prefix} Define fallback thresholds, downgrade policy, and the minimum evidence required to justify noop vs change on budget exhaustion behavior.",
+            "accept": "Produce a narrowed brief covering trigger thresholds, allowed fallback actions, and explicit noop-vs-change decision criteria.",
+            "concepts": ["task", "auto-subtask", "non-convergence", "fallback-thresholds"],
+            "capability_delta": "fallback threshold narrowed brief",
+            "anti_drift_check": "separate threshold policy from relay implementation so the parent scope does not drift",
+            "acceptance_evidence": "proof log states threshold semantics and the evidence gate for noop-vs-change",
+            "narrowed_scope": [
+                "Only resolve threshold semantics and noop-vs-change decision criteria.",
+                "Do not redesign the full handoff workflow here.",
+            ],
+        },
+        "relay_ordering": {
+            "title": f"为 {task.id} 细化 relay ordering 收敛前置任务",
+            "objective": f"{shared_prefix} Define continuation packet / relay ordering after quota and threshold semantics are known, without reopening the parent mission objective.",
+            "accept": "Produce a narrowed brief covering continuation packet timing, relay ordering, and parent handoff integration points.",
+            "concepts": ["task", "auto-subtask", "non-convergence", "relay-ordering"],
+            "capability_delta": "relay ordering narrowed brief",
+            "anti_drift_check": "relay ordering must stay downstream of quota and threshold decisions",
+            "acceptance_evidence": "proof log names continuation packet timing and parent re-entry points",
+            "narrowed_scope": [
+                "Only resolve relay ordering and continuation packet timing.",
+                "Assume quota/threshold semantics are separate prerequisites.",
+            ],
+        },
+        "patch_normalization": {
+            "title": f"为 {task.id} 细化 patch normalization 收敛前置任务",
+            "objective": f"{shared_prefix} Normalize surfaced minority patches into a certifiable minimum patch set that preserves the parent objective and removes noop-vs-change ambiguity.",
+            "accept": "Produce a narrowed brief that maps surfaced patch candidates to one certifiable minimum patch set with clear inclusion/exclusion criteria.",
+            "concepts": ["task", "auto-subtask", "non-convergence", "patch-normalization"],
+            "capability_delta": "patch normalization narrowed brief",
+            "anti_drift_check": "keep implementation slicing smaller than the parent mission",
+            "acceptance_evidence": "proof log explains why each candidate patch is included, excluded, or deferred",
+            "narrowed_scope": [
+                "Only normalize surfaced patch candidates and their inclusion criteria.",
+                "Do not expand into end-to-end implementation here.",
+            ],
+        },
+        "framing": {
+            "title": f"为 {task.id} 细化 framing 收敛前置任务",
+            "objective": f"{shared_prefix} Extract the minimum narrowed brief needed to resolve the current non-convergence without changing the parent objective.",
+            "accept": "Produce a narrowed brief that maps unresolved issues to one concrete evidence or design question each.",
+            "concepts": ["task", "auto-subtask", "non-convergence", "framing"],
+            "capability_delta": "framing narrowed brief",
+            "anti_drift_check": "parent objective remains canonical",
+            "acceptance_evidence": "proof log maps each unresolved issue to one narrowed question",
+            "narrowed_scope": [
+                "Resolve only the highest-leverage unresolved issue cluster first.",
+            ],
+        },
+    }
+    spec = dict(spec_map.get(axis, spec_map["framing"]))
+    scope_lines = "\n".join(f"- {line}" for line in spec.pop("narrowed_scope"))
+    spec["axis"] = axis
+    spec["issue_ids"] = issue_ids
+    spec["trigger"] = f"auto_subtask_on_non_convergence:{axis}"
+    spec["extra_body_sections"] = (
+        f"## Parent Link\n\n"
+        f"- Parent task: {task.id}\n"
+        f"- Discussion artifact: {artifact_note or '[missing]'}\n"
+        f"- Trigger axis: {axis}\n"
+        f"- Issue IDs: {issue_note}\n\n"
+        f"## Parent Objective Snapshot\n\n"
+        f"{parent_objective}\n\n"
+        f"## Narrowed Scope\n\n{scope_lines}"
+    )
+    return spec
+
+
+def build_non_convergence_subtask_specs(task: Task, discussion: dict[str, Any]) -> list[dict[str, Any]]:
+    final_design = discussion.get("final_design") if isinstance(discussion.get("final_design"), dict) else {}
+    agreement = discussion.get("agreement_matrix") if isinstance(discussion.get("agreement_matrix"), dict) else {}
+    patch_summary = final_design.get("planner_patch_summary") if isinstance(final_design.get("planner_patch_summary"), dict) else (discussion.get("planner_patch_summary") if isinstance(discussion.get("planner_patch_summary"), dict) else {})
+    merge_info = final_design.get("merge_info") if isinstance(final_design.get("merge_info"), dict) else (discussion.get("merge_info") if isinstance(discussion.get("merge_info"), dict) else {})
+    quota_snapshot = final_design.get("quota_snapshot") if isinstance(final_design.get("quota_snapshot"), dict) else (discussion.get("quota_snapshot") if isinstance(discussion.get("quota_snapshot"), dict) else {})
+    issue_ledger = discussion.get("issue_ledger") if isinstance(discussion.get("issue_ledger"), list) else []
+    artifact_path = str(task.fm.get("multimodel_last_discussion_artifact") or "").strip()
+
+    axis_to_issue_ids: dict[str, list[str]] = {axis: [] for axis in AUTO_SUBTASK_AXIS_ORDER}
+    unresolved_seen = False
+    for item in issue_ledger:
+        if not isinstance(item, dict):
+            continue
+        if str(item.get("status") or "").lower() != "unresolved":
+            continue
+        unresolved_seen = True
+        axis = classify_non_convergence_issue_axis(item)
+        issue_id = str(item.get("id") or "").strip()
+        if issue_id and issue_id not in axis_to_issue_ids[axis]:
+            axis_to_issue_ids[axis].append(issue_id)
+
+    minority_patches = [str(x) for x in list_value(merge_info.get("minority_patches"))]
+    patch_blob = " ".join(minority_patches).lower()
+    intent = str(patch_summary.get("certification_intent") or "").lower()
+    low_quota_conf = False
+    if quota_snapshot:
+        for value in quota_snapshot.values():
+            if not isinstance(value, dict):
+                continue
+            if float(value.get("confidence") or 0) <= 0.25 or str(value.get("observability") or "").lower() in {"unknown", "unobservable", "missing"}:
+                low_quota_conf = True
+                break
+
+    requested_axes: list[str] = []
+    taxonomy_hints = multimodel_failure_taxonomy(discussion, [str(x) for x in list_value(task.fm.get("multimodel_last_failures"))])
+    taxonomy_axes = [axis for axis in taxonomy_hints.get("recommended_axes", []) if axis in AUTO_SUBTASK_AXIS_ORDER]
+    for axis in taxonomy_axes:
+        if axis not in requested_axes:
+            requested_axes.append(axis)
+    if axis_to_issue_ids["quota_observability"] or low_quota_conf or "quota" in patch_blob:
+        requested_axes.append("quota_observability")
+    if axis_to_issue_ids["fallback_threshold"] or "threshold" in patch_blob or intent == "unresolved_noop_vs_change":
+        requested_axes.append("fallback_threshold")
+    if axis_to_issue_ids["relay_ordering"] or "relay" in patch_blob or agreement.get("implementation_order", 1.0) < 0.85:
+        requested_axes.append("relay_ordering")
+    if axis_to_issue_ids["patch_normalization"] or minority_patches:
+        requested_axes.append("patch_normalization")
+    if not requested_axes:
+        requested_axes.append("framing")
+    if unresolved_seen and not any(axis_to_issue_ids[axis] for axis in requested_axes):
+        requested_axes.append("framing")
+
+    ordered_axes: list[str] = []
+    for axis in AUTO_SUBTASK_AXIS_ORDER:
+        if axis in requested_axes and axis not in ordered_axes:
+            ordered_axes.append(axis)
+
+    specs = [build_non_convergence_spec(task, axis=axis, issue_ids=axis_to_issue_ids.get(axis, []), artifact_path=artifact_path) for axis in ordered_axes]
+    return specs
+
+
+def auto_subtask_parent_ready_for_targeted_refresh(task: Task) -> bool:
+    if str(task.fm.get("auto_subtask_kind") or "") != "non_convergence_narrowing":
+        return False
+    child_ids = [str(x) for x in list_value(task.fm.get("auto_subtask_children"))]
+    if not child_ids:
+        return False
+    if task_multimodel_passed(task):
+        return False
+    children = auto_subtask_children(task)
+    if len(children) != len(child_ids):
+        return False
+    if any(child.status != "done" for child in children):
+        return False
+    cert_reasons = set(task_multimodel_certification_reasons(task))
+    return "loop_non_convergence" in cert_reasons
+
+
+def targeted_evidence_refresh_evidence_args(task: Task) -> str:
+    """Return consult_models.py state evidence args for blocked-parent targeted refresh."""
+    objective = extract_markdown_section(task.body, "Objective") or task.title
+    backfill = extract_markdown_section(task.body, "Auto-subtask Backfill") or ""
+    evidence: list[dict[str, Any]] = [
+        {
+            "id": "E-PARENT-CANONICAL",
+            "type": "file",
+            "path": str(task.path),
+            "summary": (
+                f"Canonical parent task note: id={task.id}; status={task.status}; priority={task.priority}; "
+                f"lane={task.lane}; project={task.project}; objective is frozen for ratification refresh."
+            ),
+            "supports": ["C-101", "C-102"],
+        },
+        {
+            "id": "E-PARENT-OBJECTIVE",
+            "type": "note",
+            "summary": f"Frozen parent objective snapshot: {objective[:600]}",
+            "supports": ["C-101"],
+        },
+    ]
+    if backfill:
+        evidence.append(
+            {
+                "id": "E-AUTO-SUBTASK-BACKFILL",
+                "type": "note",
+                "summary": f"Auto-subtask backfill for next parent ratification step: {backfill[:1200]}",
+                "supports": ["C-102", "C-103"],
+            }
+        )
+    prior_discussion = str(task.fm.get("multimodel_last_discussion_artifact") or "").strip()
+    if prior_discussion:
+        evidence.append(
+            {
+                "id": "E-PRIOR-DISCUSSION",
+                "type": "file",
+                "path": prior_discussion,
+                "summary": "Previous parent ratification artifact that failed and produced the active non-convergence taxonomy.",
+                "supports": ["C-103"],
+            }
+        )
+    for child in auto_subtask_children(task):
+        axis = str(child.fm.get("auto_subtask_axis") or "unknown")
+        evidence.append(
+            {
+                "id": f"E-CHILD-{child.id}",
+                "type": "file",
+                "path": str(child.path),
+                "summary": (
+                    f"Finished convergence child for axis={axis}; status={child.status}; "
+                    f"multimodel_gate={str(child.fm.get('multimodel_last_gate_status') or 'unknown')}."
+                ),
+                "supports": ["C-102", "C-103"],
+            }
+        )
+        child_artifact = str(child.fm.get("multimodel_ratification_artifact") or child.fm.get("multimodel_last_discussion_artifact") or "").strip()
+        if child_artifact:
+            evidence.append(
+                {
+                    "id": f"E-CHILD-ARTIFACT-{child.id}",
+                    "type": "file",
+                    "path": child_artifact,
+                    "summary": f"Ratification/discussion artifact for finished child axis={axis}.",
+                    "supports": ["C-102", "C-103"],
+                }
+            )
+    return " ".join("--evidence-json " + shlex.quote(json.dumps(e, ensure_ascii=False, sort_keys=True)) for e in evidence)
+
+
+def build_targeted_evidence_refresh_plan(task: Task) -> dict[str, Any] | None:
+    """Build a parent-ratification refresh plan once convergence subtasks are done."""
+    if not auto_subtask_parent_ready_for_targeted_refresh(task):
+        return None
+    state_dir = HERMES_HOME / "state" / "taskpool-multimodel"
+    state_path = state_dir / f"{task.id}-targeted-evidence-state.json"
+    objective = extract_markdown_section(task.body, "Objective") or task.title
+    backfill = extract_markdown_section(task.body, "Auto-subtask Backfill") or ""
+    child_rows = []
+    file_args: list[str] = []
+    for child in auto_subtask_children(task):
+        child_rows.append(
+            {
+                "task_id": child.id,
+                "path": str(child.path),
+                "axis": str(child.fm.get("auto_subtask_axis") or "unknown"),
+                "status": child.status,
+                "multimodel_status": str(child.fm.get("multimodel_status") or "unknown"),
+                "multimodel_gate": str(child.fm.get("multimodel_last_gate_status") or "unknown"),
+            }
+        )
+        file_args.append(f"--file {shlex.quote(str(child.path))}")
+    file_args.insert(0, f"--file {shlex.quote(str(task.path))}")
+    taxonomy_axes = [
+        axis for axis in list_value(task.fm.get("multimodel_recommended_axes"))
+        if axis in AUTO_SUBTASK_AXIS_ORDER
+    ] or [
+        axis for axis in list_value(task.fm.get("blocked_resolve_taxonomy_axes"))
+        if axis in AUTO_SUBTASK_AXIS_ORDER
+    ]
+    context = {
+        "task_id": task.id,
+        "task_path": str(task.path),
+        "title": task.title,
+        "lane": task.lane,
+        "priority": task.priority,
+        "project": task.project,
+        "status": task.status,
+        "architecture_target": task.architecture_target,
+        "refresh_mode": "blocked_parent_targeted_evidence",
+        "frozen_parent_objective": objective,
+        "auto_subtask_backfill": backfill,
+        "done_children": child_rows,
+        "prior_failures": list_value(task.fm.get("multimodel_last_failures")),
+        "taxonomy_axes": taxonomy_axes,
+        "axis_rationale": task.fm.get("multimodel_axis_rationale") or task.fm.get("blocked_resolve_axis_rationale") or {},
+        "source_of_truth": "Markdown task note frontmatter/body plus finished child task notes",
+    }
+    question = (
+        "Blocked parent ratification refresh: use the frozen parent objective plus finished convergence subtasks "
+        f"to re-evaluate task {task.id}. Either ratify a concrete next slice or name the remaining unresolved axis with evidence."
+    )
+    question_arg = shlex.quote(question)
+    context_arg = shlex.quote(json.dumps(context, ensure_ascii=False, sort_keys=True))
+    state_arg = shlex.quote(str(state_path))
+    evidence_args = targeted_evidence_refresh_evidence_args(task)
+    file_args_blob = " ".join(file_args)
+    return {
+        "schema": "local_brain_multimodel_intervention_v1",
+        "task": task.row(),
+        "criteria": {
+            "accuracy": "parent objective stays frozen and claims are grounded in child artifacts/backfill",
+            "long_term_goal": "refresh must preserve the parent scope and only unlock ratifiable next slices",
+            "one_shot_landing": "result must either ratify a concrete parent next slice or produce explicit residual axes",
+        },
+        "trigger_reasons": task_multimodel_intervention_reasons(task),
+        "advisory_reasons": task_multimodel_advisory_reasons(task),
+        "certification_reasons": task_multimodel_certification_reasons(task),
+        "advisory_only": False,
+        "recommended_tier": "T3_certification",
+        "intervention_required": True,
+        "economy_gate": task_multimodel_economy_gate(task),
+        "state_path": str(state_path),
+        "refresh_mode": "blocked_parent_targeted_evidence",
+        "build_state_command": (
+            f"mkdir -p {shlex.quote(str(state_dir))} && "
+            f"python3 ~/.hermes/scripts/consult_models.py state {question_arg} "
+            f"--context-json {context_arg} "
+            "--constraint 'preserve the frozen parent objective; do not broaden scope' "
+            "--constraint 'treat finished child subtasks as bounded evidence inputs, not permission to redefine the mission' "
+            "--constraint 'final answer must ratify a concrete next slice or name the exact remaining unresolved axis and why' "
+            "--accept 'discussion_result provides grounded claims and either LOOP_DONE-ready final_design or explicit unresolved axis evidence' "
+            "--claim 'C-101:Frozen parent objective is preserved during this refresh and is still the canonical target.' "
+            "--claim 'C-102:Finished convergence subtasks materially cover the previously split axes and were reintegrated into the parent evidence spine.' "
+            "--claim 'C-103:Any remaining failure after reintegration is explicitly attributable to one or more unresolved axes, not a missing parent evidence refresh.' "
+            f"{evidence_args} {file_args_blob} --out {state_arg}"
+        ),
+        "run_discussion_command": f"python3 ~/.hermes/scripts/consult_models.py run {state_arg} --tier T3 --quorum 4 --discussion --max-rounds 3 --keep",
+        "gate_command_template": f"python3 ~/.hermes/scripts/brain_task_orchestrator.py ratification-gate --task {shlex.quote(task.id)} --discussion-result DISCUSSION_RESULT_JSON --json",
+        "pua_loop": {
+            "mode": "blocked_parent_targeted_evidence_refresh",
+            "round_gate": "refresh targeted parent evidence -> consult_models.py --tier T3 --quorum 4 --discussion -> ratification-gate -> auto-split only if unresolved axes remain",
+            "completion_signal": "LOOP_DONE only after target-bound parent ratification PASS with child evidence reintegrated",
+        },
+        "safety": "bounded single-parent reratification using canonical task note plus finished child evidence",
+    }
+
+
+def auto_subtask_children(parent: Task) -> list[Task]:
+    child_ids = [str(x) for x in list_value(parent.fm.get("auto_subtask_children"))]
+    if not child_ids:
+        return []
+    task_map = {task.id: task for task in iter_tasks()}
+    return [task_map[cid] for cid in child_ids if cid in task_map]
+
+
+def build_auto_subtask_backfill(children: list[Task]) -> tuple[list[str], list[str]]:
+    lines = ["- Auto-backfilled child convergence evidence for the next parent ratification step:"]
+    evidence: list[str] = []
+    for child in sorted(children, key=lambda item: item.id):
+        axis = str(child.fm.get("auto_subtask_axis") or "unknown")
+        multimodel_status = str(child.fm.get("multimodel_status") or "unknown")
+        gate = str(child.fm.get("multimodel_last_gate_status") or "unknown")
+        lines.append(
+            f"- {obsidian_link(child.path)} axis={axis} status={child.status} multimodel={multimodel_status} gate={gate}"
+        )
+        evidence.extend([
+            f"artifact:{child.path}",
+            f"child-task:{child.id}:status:{child.status}",
+            f"child-axis:{axis}:{child.id}",
+        ])
+        ratification_artifact = str(child.fm.get("multimodel_ratification_artifact") or "").strip()
+        if ratification_artifact:
+            evidence.append(f"artifact:{ratification_artifact}")
+        discussion_artifact = str(child.fm.get("multimodel_last_discussion_artifact") or "").strip()
+        if discussion_artifact:
+            evidence.append(f"artifact:{discussion_artifact}")
+    return lines, evidence
+
+
+def sync_auto_subtask_parent(parent: Task, *, stamp: datetime | None = None, actor: str = "system", write: bool = False) -> dict[str, Any] | None:
+    if str(parent.fm.get("auto_subtask_kind") or "") != "non_convergence_narrowing":
+        return None
+    stamp = stamp or now()
+    child_ids = [str(x) for x in list_value(parent.fm.get("auto_subtask_children"))]
+    if not child_ids:
+        return None
+    children = auto_subtask_children(parent)
+    child_map = {child.id: child for child in children}
+    missing = [cid for cid in child_ids if cid not in child_map]
+    open_children = [child.id for child in children if child.status not in TERMINAL_STATUSES]
+    done_children = [child.id for child in children if child.status == "done"]
+    ready = not open_children and not missing and len(done_children) == len(child_ids)
+    previous_ready = bool(parent.fm.get("auto_subtask_ready_for_parent"))
+    previous_status = parent.status
+    previous_open_children = [str(x) for x in list_value(parent.fm.get("auto_subtask_open_children"))]
+    previous_missing_children = [str(x) for x in list_value(parent.fm.get("auto_subtask_missing_children"))]
+    economy_gate = task_multimodel_economy_gate(parent)
+    pause_reopen = ready and str(economy_gate.get("action") or "") == "pause"
+    backfill_lines, backfill_evidence = build_auto_subtask_backfill(children)
+    desired_backfill = "\n".join(backfill_lines).strip()
+    existing_backfill = extract_markdown_section(parent.body, "Auto-subtask Backfill").strip()
+    existing_evidence = list_value(parent.fm.get("evidence"))
+    missing_backfill = existing_backfill != desired_backfill
+    missing_backfill_evidence = any(item not in existing_evidence for item in backfill_evidence)
+    needs_pause_status_sync = pause_reopen and previous_status != "blocked"
+    if (
+        previous_ready == ready
+        and previous_open_children == open_children
+        and previous_missing_children == missing
+        and not missing_backfill
+        and not missing_backfill_evidence
+        and not needs_pause_status_sync
+    ):
+        return None
+
+    parent.fm["auto_subtask_open_children"] = open_children
+    parent.fm["auto_subtask_missing_children"] = missing
+    parent.fm["auto_subtask_ready_for_parent"] = ready
+    parent.fm["updated"] = iso(stamp)
+
+    blocker_lines = [
+        "- auto-generated convergence subtasks:",
+        *[f"  - {cid}" for cid in child_ids],
+    ]
+    if open_children:
+        blocker_lines.append("- Remaining open children before parent ratification resumes:")
+        blocker_lines.extend(f"  - {cid}" for cid in open_children)
+    elif missing:
+        blocker_lines.append("- Missing child task notes must be recovered before resuming the parent:")
+        blocker_lines.extend(f"  - {cid}" for cid in missing)
+    else:
+        blocker_lines.append("- All auto-generated convergence subtasks reached done; parent can re-enter ratification.")
+    blocker_lines.append("- Do not change the parent objective; narrowed subtasks only prepare the next parent ratification step.")
+    parent.body = replace_markdown_section(parent.body, "Blockers / Confusions", "\n".join(blocker_lines))
+
+    parent.body = replace_markdown_section(parent.body, "Auto-subtask Backfill", desired_backfill)
+    for item in backfill_evidence:
+        if item not in existing_evidence:
+            existing_evidence.append(item)
+    parent.fm["evidence"] = existing_evidence
+
+    proof_lines = [
+        f"- {iso(stamp)}: Auto-subtask sync -> done={len(done_children)}/{len(child_ids)}, open={len(open_children)}, missing={len(missing)}.",
+    ]
+    if pause_reopen:
+        proof_lines.append(
+            f"- {iso(stamp)}: Child evidence was backfilled, but parent stays `blocked` because multimodel economy gate is paused ({economy_gate.get('reason')})."
+        )
+    elif ready and (previous_status == "blocked" or not previous_ready):
+        proof_lines.append(f"- {iso(stamp)}: All auto-generated convergence subtasks reached done; parent reopened to `pending` for ratification rerun.")
+    parent.body = append_markdown_section_lines_unique(parent.body, "Proof Log", proof_lines)
+
+    action = "auto_subtask_progress_synced"
+    if pause_reopen:
+        parent.fm["status"] = "blocked"
+        parent.fm["blocked_resolve_last_action"] = "auto_subtask_backfill_paused"
+        parent.fm["blocked_resolve_reason"] = str(economy_gate.get("reason") or "multimodel economy gate paused after auto-subtask backfill")
+        action = "auto_subtask_parent_backfilled_paused"
+    elif ready and previous_status == "blocked":
+        parent.fm["status"] = "pending"
+        action = "auto_subtask_parent_reopened"
+
+    if write:
+        save_task(parent)
+    return {
+        "task": parent.id,
+        "action": action,
+        "write": bool(write),
+        "path": str(parent.path),
+        "ready": ready,
+        "open_children": open_children,
+        "missing_children": missing,
+    }
+
+
+def command_auto_split_non_convergence(args: argparse.Namespace) -> dict[str, Any]:
+    parent = find_task(args.task)
+    discussion = load_discussion_artifact(parent)
+    specs = build_non_convergence_subtask_specs(parent, discussion)
+    taxonomy_hints = multimodel_failure_taxonomy(discussion, [str(x) for x in list_value(parent.fm.get("multimodel_last_failures"))])
+    existing = [str(x) for x in list_value(parent.fm.get("auto_subtask_children"))]
+    existing_set = set(existing)
+    created: list[dict[str, Any]] = []
+
+    for spec in specs:
+        expected_slug = slugify(spec["title"])
+        expected_id = f"{now().date().isoformat()}-{expected_slug}"
+        if expected_id in existing_set:
+            continue
+        result = create_task_note(
+            title=spec["title"],
+            priority=parent.priority,
+            project=parent.project,
+            status="pending",
+            expires_at=str(parent.fm.get("expires_at") or ""),
+            concepts=spec["concepts"],
+            lane=parent.lane,
+            architecture_target=parent.architecture_target,
+            capability_delta=spec["capability_delta"],
+            anti_drift_check=spec["anti_drift_check"],
+            acceptance_evidence=spec["acceptance_evidence"],
+            priority_layer=str(parent.fm.get("priority_layer") or parent.priority),
+            dependency_order=[str(parent.fm.get("dependency_order") or "1")],
+            multimodel_triage_result=str(parent.fm.get("multimodel_triage_result") or task_multimodel_status(parent) or "P2"),
+            layer=str(parent.fm.get("layer") or "L3"),
+            workflow_contract=str(parent.fm.get("workflow_contract") or DEFAULT_WORKFLOW),
+            workspace=str(parent.fm.get("workspace") or ""),
+            parallel_boundary=str(parent.fm.get("parallel_boundary") or ""),
+            objective=spec["objective"],
+            accept=spec["accept"],
+            extra_frontmatter={
+                "auto_subtask_parent": parent.id,
+                "auto_subtask_kind": "non_convergence_narrowing",
+                "auto_subtask_axis": spec.get("axis") or "framing",
+                "auto_subtask_trigger": spec.get("trigger") or "auto_subtask_on_non_convergence:framing",
+                "auto_subtask_issue_ids": spec.get("issue_ids") or [],
+                "auto_subtask_parent_artifact": str(parent.fm.get("multimodel_last_discussion_artifact") or ""),
+            },
+            extra_body_sections=spec["extra_body_sections"],
+        )
+        created.append(result)
+        existing_set.add(result["id"])
+
+    child_ids = sorted(existing_set)
+    child_links = [item["link"] for item in created]
+    parent.fm["auto_subtask_children"] = child_ids
+    parent.fm["auto_subtask_kind"] = "non_convergence_narrowing"
+    parent.fm["auto_subtask_taxonomy_axes"] = [axis for axis in taxonomy_hints.get("recommended_axes", []) if axis in AUTO_SUBTASK_AXIS_ORDER]
+    parent.fm["auto_subtask_axis_rationale"] = taxonomy_hints.get("axis_rationale") or {}
+    parent.fm["auto_subtask_open_children"] = child_ids
+    parent.fm["auto_subtask_ready_for_parent"] = False
+    blocker_lines = [
+        "- auto-generated convergence subtasks:",
+        *[f"  - {cid}" for cid in child_ids],
+        "- Do not change the parent objective; complete narrowed subtasks first, then re-run parent ratification.",
+    ]
+    proof_lines = [
+        f"- {iso()}: Auto-generated convergence subtasks created for unresolved non-convergence.",
+        *[f"  - child: {link}" for link in child_links],
+    ]
+    if not created:
+        proof_lines.append("  - no-op: required convergence subtasks already existed.")
+    parent.body = replace_markdown_section(parent.body, "Blockers / Confusions", "\n".join(blocker_lines))
+    parent.body = append_markdown_section_lines_unique(parent.body, "Proof Log", proof_lines)
+    save_task(parent)
+    derived_refresh = refresh_derived_task_views("auto-split-non-convergence")
+    return {
+        "status": "OK",
+        "parent_task": parent.id,
+        "created_count": len(created),
+        "created": created,
+        "existing_children": existing,
+        "all_children": child_ids,
+        "taxonomy_axes": [axis for axis in taxonomy_hints.get("recommended_axes", []) if axis in AUTO_SUBTASK_AXIS_ORDER],
+        "axis_rationale": taxonomy_hints.get("axis_rationale") or {},
+        "derived_refresh": derived_refresh,
+        "safety": "parent objective preserved; generated subtasks are narrowing prerequisites only",
+    }
+
+
+def command_auto_subtask_sync(args: argparse.Namespace) -> dict[str, Any]:
+    stamp = now()
+    tasks = [find_task(args.task)] if getattr(args, "task", "") else [t for t in iter_tasks() if str(t.fm.get("auto_subtask_kind") or "") == "non_convergence_narrowing"]
+    actions: list[dict[str, Any]] = []
+    for task in tasks:
+        action = sync_auto_subtask_parent(task, stamp=stamp, actor=getattr(args, "actor", "hermes-auto-subtask-sync"), write=getattr(args, "write", False))
+        if action:
+            actions.append(action)
+    derived_refresh = refresh_derived_task_views("auto-subtask-sync") if getattr(args, "write", False) and actions else None
+    return {
+        "status": "OK",
+        "write": bool(getattr(args, "write", False)),
+        "action_count": len(actions),
+        "actions": actions,
+        "derived_refresh": derived_refresh,
+    }
+
+
+def refresh_derived_task_views(reason: str = "task_mutation") -> dict[str, Any]:
+    """Regenerate taskpool derived views after a canonical task-note mutation.
+
+    Markdown task notes remain the source of truth, but stale dashboard/sorted
+    pool files break the human/cron control loop.  Mutating commands therefore
+    refresh derived views in the same process after the canonical write commits.
+    """
+    ensure_inbox()
+    dashboard, pool = render_dashboard()
+    control = render_control_center()
+    atomic_write(DASHBOARD, dashboard)
+    atomic_write(SORTED_POOL, pool)
+    atomic_write(CONTROL_CENTER, control)
+    return {
+        "status": "OK",
+        "reason": reason,
+        "dashboard": str(DASHBOARD),
+        "sorted_pool": str(SORTED_POOL),
+        "control_center": str(CONTROL_CENTER),
+        "generated_at": iso(),
+    }
+
+
 def sorted_tasks(include_done: bool = False) -> list[Task]:
     rows = [t for t in iter_tasks() if include_done or t.status not in TERMINAL_STATUSES]
     return sorted(rows, key=lambda t: (-t.score(), t.expires_at() or datetime.max.replace(tzinfo=TZ), t.priority, t.id))
 
 
 def dispatch_sort_key(t: Task) -> tuple[int, int, datetime, str, str]:
-    return (LANE_SORT_WEIGHT.get(t.lane, 1), -t.score(), t.expires_at() or datetime.max.replace(tzinfo=TZ), t.priority, t.id)
+    weights = lane_sort_weight()
+    return (weights.get(t.lane, 1), -t.score(), t.expires_at() or datetime.max.replace(tzinfo=TZ), t.priority, t.id)
 
 
 def dispatchable_tasks() -> list[Task]:
@@ -1144,11 +2906,65 @@ def evidence_is_structured(e: str) -> bool:
     e = (e or "").strip()
     if not e:
         return False
-    prefixes = ("command:", "file:", "search:", "brainctl:", "url:", "artifact:", "proof:")
+    prefixes = (
+        "command:", "file:", "search:", "brainctl:", "url:", "artifact:", "proof:",
+        "live_lark_snapshot:", "classification:",
+    )
     if e.startswith(prefixes):
         return True
     p = Path(os.path.expanduser(e))
     return p.is_absolute() and p.exists()
+
+
+def _evidence_blob(evidence: list[str]) -> str:
+    return "\n".join(str(e or "").strip().lower() for e in evidence)
+
+
+def completion_gate_failures(task: "Task", evidence: list[str]) -> list[str]:
+    """Validate lane-specific done evidence beyond generic structured evidence.
+
+    Authority such as --yolo may approve execution, but task completion is a
+    different lifecycle operation.  Work/Lark tasks need project evidence;
+    self-evolution needs ratification/selfcheck proof; advisory tasks need a
+    deposited evidence/report artifact.  This prevents one lane's lightest proof
+    from closing another lane's work.
+    """
+    contract = task_permission_contract_for_fm(task.fm)
+    lane = task.lane
+    gate = str(contract.get("completion_gate") or "").strip()
+    blob = _evidence_blob(evidence)
+    failures: list[str] = []
+
+    def has_any(tokens: tuple[str, ...]) -> bool:
+        return any(token in blob for token in tokens)
+
+    if not gate:
+        return ["completion_gate:missing"]
+    if gate == "project-evidence-review-done":
+        if lane != "work":
+            failures.append(f"completion_gate_lane_mismatch:{lane}!={gate}")
+        if not has_any(("test", "build", "lint", "playwright", "browser", "curl", "mvn", "pytest", "vitest", "npm", "pnpm", "yarn", "railway", "git diff --check", "commit", "project evidence", "verification")):
+            failures.append("project-evidence-review-done requires test/build/browser/curl/commit/project-verification evidence")
+    elif gate == "project-evidence-real-api-review-done":
+        if lane != "work":
+            failures.append(f"completion_gate_lane_mismatch:{lane}!={gate}")
+        if not has_any(("test", "build", "lint", "playwright", "browser", "curl", "mvn", "pytest", "vitest", "npm", "pnpm", "yarn", "railway", "git diff --check", "commit", "verification")):
+            failures.append("project-evidence-real-api-review-done requires test/build/browser/curl/commit verification evidence")
+        if not has_any(("real-api", "real api", "真实接口", "backend", "frontend", "fe-be", "curl", "mvn")):
+            failures.append("project-evidence-real-api-review-done requires real-api/backend/frontend contract evidence")
+    elif gate == "ratification-or-selfcheck-review-done":
+        if lane != "evolution":
+            failures.append(f"completion_gate_lane_mismatch:{lane}!={gate}")
+        if not has_any(("ratification", "discussion_result", "certification_manifest", "selfcheck", "proof", "proof-check", "evidence-spine", "usage-score", "p10-health", "proof:sha256:")):
+            failures.append("ratification-or-selfcheck-review-done requires ratification artifact or deterministic selfcheck/proof evidence")
+    elif gate == "advisory-evidence-review-done":
+        if lane != "advisory":
+            failures.append(f"completion_gate_lane_mismatch:{lane}!={gate}")
+        if not has_any(("advisory", "report", "analysis", "evidence", "artifact:", "file:", "url:")):
+            failures.append("advisory-evidence-review-done requires deposited advisory evidence/report artifact")
+    else:
+        failures.append(f"completion_gate:unknown:{gate}")
+    return failures
 
 
 def canonical_json(data: dict[str, Any]) -> str:
@@ -1312,7 +3128,7 @@ def has_active_claim(task: Task, at: datetime | None = None) -> bool:
     return bool(task.fm.get("claimed_by") and task.fm.get("run_id") and lease and lease >= at)
 
 
-def lifecycle_gate(task: Task, to_status: str, actor: str, evidence: list[str] | None = None, reason: str = "", force: bool = False) -> tuple[list[str], list[str]]:
+def lifecycle_gate(task: Task, to_status: str, actor: str, evidence: list[str] | None = None, reason: str = "", force: bool = False, authority: str = "") -> tuple[list[str], list[str]]:
     """Return (failures, warnings) for a proposed lifecycle transition."""
     evidence = evidence or []
     reason = (reason or "").strip()
@@ -1328,10 +3144,13 @@ def lifecycle_gate(task: Task, to_status: str, actor: str, evidence: list[str] |
         failures.append(f"invalid current status {from_status}: {task.id}")
         return failures, warnings
     missing_alignment = architecture_alignment_missing(task.fm)
-    if missing_alignment and to_status in (CLAIM_BOUND_STATUSES | {"done"}) and not force:
+    if missing_alignment and to_status in PROFILE_GATED_STATUSES and not force:
         failures.append(f"evolution_architecture_alignment_missing: {missing_alignment}")
+    missing_profile = project_profile_failures(task)
+    if missing_profile and to_status in PROFILE_GATED_STATUSES and not force:
+        failures.extend(missing_profile)
     missing_mission = mission_envelope_missing(task.fm)
-    if missing_mission and to_status in (CLAIM_BOUND_STATUSES | {"done"}) and not force:
+    if missing_mission and to_status in PROFILE_GATED_STATUSES and not force:
         failures.append(f"mission envelope missing {missing_mission}: {task.id}")
     if force and reason.lower() in {"", "not specified", "none"}:
         failures.append("--force requires --reason so manual overrides are auditable")
@@ -1355,11 +3174,15 @@ def lifecycle_gate(task: Task, to_status: str, actor: str, evidence: list[str] |
         failures.append("running must be entered from claimed so lease ownership is explicit")
     if to_status in REASON_REQUIRED_TO and reason.lower() in {"", "not specified", "none"}:
         failures.append(f"transition to {to_status} requires --reason")
+    if to_status == "done" and taxonomy.normalize_authority(authority) == "yolo-execution":
+        failures.append("yolo-execution cannot complete task; requires_lifecycle_gate review_to_done with normal proof-gated done authority")
     if to_status in EVIDENCE_REQUIRED_TO and not evidence:
         failures.append(f"transition to {to_status} requires structured --evidence")
     invalid_evidence = [e for e in evidence if not evidence_is_structured(str(e))]
     if invalid_evidence:
         failures.append(f"invalid evidence shape: {invalid_evidence}; use command:/file:/search:/brainctl:/artifact:/url:/proof: prefixes or an existing absolute path")
+    if to_status == "done" and evidence:
+        failures.extend(completion_gate_failures(task, evidence))
     if to_status == "done" and is_autorun_context(task, actor):
         proof_hashes = [str(e)[len("proof:") :] for e in evidence if str(e).startswith("proof:sha256:")]
         if not proof_hashes:
@@ -1418,7 +3241,8 @@ def body_has_legacy_proof(body: str) -> bool:
 
 def command_list(args: argparse.Namespace) -> dict[str, Any]:
     rows = [t.row() for t in sorted_tasks(include_done=args.include_done)]
-    return {"status": "OK", "generated_at": iso(), "task_count": len(rows), "rows": rows}
+    # Keep both names: rows is the canonical compact table; tasks preserves older JSON callers/tests.
+    return {"status": "OK", "generated_at": iso(), "task_count": len(rows), "rows": rows, "tasks": rows}
 
 
 def command_add(args: argparse.Namespace) -> dict[str, Any]:
@@ -1428,7 +3252,22 @@ def command_add(args: argparse.Namespace) -> dict[str, Any]:
     lane_arg = (getattr(args, "lane", "auto") or "auto").strip().lower()
     if lane_arg != "auto" and lane_arg not in VALID_LANES:
         raise SystemExit(f"lane must be one of {['auto', *VALID_LANES]}")
-    validate_clean_values(title=title, layer=args.layer, status=args.status, priority=args.priority, project=args.project, workflow_contract=args.workflow_contract, workspace=args.workspace or "", parallel_boundary=getattr(args, "parallel_boundary", "") or "", concepts=args.concepts or "task", lane=lane_arg, architecture_target=getattr(args, "architecture_target", ""), capability_delta=getattr(args, "capability_delta", ""), anti_drift_check=getattr(args, "anti_drift_check", ""), acceptance_evidence=getattr(args, "acceptance_evidence", ""))
+    normalized_priority_layer = (getattr(args, "priority_layer", "") or "").strip()
+    dependency_order = [x.strip() for x in (getattr(args, "dependency_order", "") or "").split(",") if x.strip()]
+    normalized_multimodel_triage_result = (getattr(args, "multimodel_triage_result", "") or "").strip()
+    missing_required_fields: list[str] = []
+    if not normalized_priority_layer:
+        missing_required_fields.append("priority_layer")
+    if not dependency_order:
+        missing_required_fields.append("dependency_order")
+    if not normalized_multimodel_triage_result:
+        missing_required_fields.append("multimodel_triage_result")
+    if missing_required_fields:
+        raise SystemExit(
+            "task creation requires explicit priority/dependency/triage metadata; "
+            f"missing={missing_required_fields}"
+        )
+    validate_clean_values(title=title, layer=args.layer, status=args.status, priority=args.priority, priority_layer=normalized_priority_layer, project=args.project, workflow_contract=args.workflow_contract, workspace=args.workspace or "", parallel_boundary=getattr(args, "parallel_boundary", "") or "", concepts=args.concepts or "task", lane=lane_arg, architecture_target=getattr(args, "architecture_target", ""), capability_delta=getattr(args, "capability_delta", ""), anti_drift_check=getattr(args, "anti_drift_check", ""), acceptance_evidence=getattr(args, "acceptance_evidence", ""), dependency_order=",".join(dependency_order), multimodel_triage_result=normalized_multimodel_triage_result, multimodel_reason=getattr(args, "multimodel_reason", ""), expected_participants=getattr(args, "expected_participants", ""), truth_gate=getattr(args, "truth_gate", ""), evidence_bundle=getattr(args, "evidence_bundle", ""))
     created = now()
     expires = parse_dt(args.expires_at) if args.expires_at else created + timedelta(days=args.expires_days)
     slug = slugify(title)
@@ -1447,6 +3286,8 @@ def command_add(args: argparse.Namespace) -> dict[str, Any]:
         "layer": args.layer,
         "status": args.status,
         "priority": args.priority,
+        "priority_layer": normalized_priority_layer,
+        "dependency_order": dependency_order,
         "created": iso(created),
         "updated": iso(created),
         "expires_at": iso(expires) if expires else "",
@@ -1455,7 +3296,13 @@ def command_add(args: argparse.Namespace) -> dict[str, Any]:
         "capability_delta": getattr(args, "capability_delta", "") or "",
         "anti_drift_check": getattr(args, "anti_drift_check", "") or "",
         "acceptance_evidence": getattr(args, "acceptance_evidence", "") or "",
+        "multimodel_triage_result": normalized_multimodel_triage_result,
         "workflow_contract": args.workflow_contract,
+        "requires_multimodel": "true" if getattr(args, "requires_multimodel", False) else "",
+        "multimodel_reason": getattr(args, "multimodel_reason", "") or "",
+        "expected_participants": split_csv_frontmatter_value(getattr(args, "expected_participants", "")),
+        "truth_gate": getattr(args, "truth_gate", "") or "",
+        "evidence_bundle": getattr(args, "evidence_bundle", "") or "",
         "claimed_by": "",
         "claim_expires_at": "",
         "run_id": "",
@@ -1466,12 +3313,15 @@ def command_add(args: argparse.Namespace) -> dict[str, Any]:
         "evidence": [],
         "concepts": concepts,
     }
+    apply_permission_defaults(fm)
     missing_alignment = architecture_alignment_missing(fm)
     if missing_alignment:
         raise SystemExit(f"evolution tasks require architecture alignment fields; missing/invalid={missing_alignment}")
-    body = f"# Task - {title}\n\n## Objective\n\n{args.objective or title}\n\n## Acceptance Criteria\n\n- [ ] {args.accept or 'Observable result is recorded in Proof Log.'}\n\n## Plan / Workpad\n\n- [ ] Reconcile current state before execution.\n- [ ] Execute the smallest verifiable slice.\n- [ ] Record proof and update status.\n\n## Validation\n\n| Command / Check | Status | Evidence |\n|---|---|---|\n| brain_task_orchestrator list | pending | |\n\n## Proof Log\n\n- {iso(created)}: Task created from local-brain control point.\n\n## Blockers / Confusions\n\n- None.\n\n## Final Handoff\n\n- Status:\n- Evidence:\n- Residual risk:\n"
+    body = f"# Task - {title}\n\n## Objective\n\n{args.objective or title}\n\n## Acceptance Criteria\n\n- [ ] {args.accept or 'Observable result is recorded in Proof Log.'}\n\n## Plan / Workpad\n\n- [ ] Reconcile current state, dependency order, and architecture boundaries before execution.\n- [ ] Advance the long-term maintainable mainline plan with the next bounded step and staged evidence.\n- [ ] Record proof, status, and any next dependency or handoff required.\n\n## Validation\n\n| Command / Check | Status | Evidence |\n|---|---|---|\n| brain_task_orchestrator list | pending | |\n\n## Proof Log\n\n- {iso(created)}: Task created from local-brain control point.\n\n## Blockers / Confusions\n\n- None.\n\n## Final Handoff\n\n- Status:\n- Evidence:\n- Residual risk:\n"
     atomic_write(path, render_frontmatter(fm) + "\n" + body)
-    return {"status": "OK", "created": str(path), "id": path.stem, "link": obsidian_link(path)}
+    derived_refresh = refresh_derived_task_views("add")
+    event_hook = maybe_fire_taskpool_event_hook("task_added", task_id=path.stem, reason="command_add")
+    return {"status": "OK", "created": str(path), "id": path.stem, "link": obsidian_link(path), "derived_refresh": derived_refresh, "event_hook": event_hook}
 
 
 def parse_inbox_line(line: str) -> dict[str, Any] | None:
@@ -1490,7 +3340,7 @@ def parse_inbox_line(line: str) -> dict[str, Any] | None:
         k, v = p.split(":", 1)
         k = k.strip().lower()
         v = v.strip()
-        if k in {"priority", "project", "concepts", "expires_at", "objective", "lane", "architecture_target", "capability_delta", "anti_drift_check", "acceptance_evidence", "parallel_boundary"}:
+        if k in {"priority", "project", "concepts", "expires_at", "objective", "lane", "architecture_target", "capability_delta", "anti_drift_check", "acceptance_evidence", "parallel_boundary", "priority_layer", "dependency_order", "multimodel_triage_result", "requires_multimodel", "multimodel_reason", "expected_participants", "truth_gate", "evidence_bundle"}:
             meta[k] = v
         elif k in {"expires", "due"}:
             meta["expires_at"] = v
@@ -1575,15 +3425,70 @@ def command_ingest_inbox(args: argparse.Namespace) -> dict[str, Any]:
             title=meta["title"], priority=meta.get("priority", "P2"), project=meta.get("project", "inbox"), status="pending",
             expires_at=meta.get("expires_at") or "", expires_days=args.expires_days, concepts=meta.get("concepts", "task,inbox"),
             lane=meta.get("lane", "auto"), architecture_target=meta.get("architecture_target", ""), capability_delta=meta.get("capability_delta", ""), anti_drift_check=meta.get("anti_drift_check", ""), acceptance_evidence=meta.get("acceptance_evidence", ""), parallel_boundary=meta.get("parallel_boundary", ""),
+            priority_layer=meta.get("priority_layer", "P2"), dependency_order=meta.get("dependency_order", "1"), multimodel_triage_result=meta.get("multimodel_triage_result", "P3"),
+            requires_multimodel=truthy_frontmatter_value(meta.get("requires_multimodel")), multimodel_reason=meta.get("multimodel_reason", ""), expected_participants=meta.get("expected_participants", ""), truth_gate=meta.get("truth_gate", ""), evidence_bundle=meta.get("evidence_bundle", ""),
             layer="L3", workflow_contract=DEFAULT_WORKFLOW, workspace="", objective=meta.get("objective") or meta["title"], accept="Task has proof log and terminal status."
         )
         result = command_add(ns) if args.write else {"id": slugify(meta["title"]), "link": "dry-run"}
         created.append(result)
         suffix = f" <!-- ingested: {result.get('link', result.get('id'))} -->"
         new_lines.append(line.replace("- [ ]", "- [x]", 1) + suffix if args.write else line)
+    derived_refresh = None
     if args.write and created:
         atomic_write(INBOX, "\n".join(new_lines) + "\n")
-    return {"status": "OK", "write": bool(args.write), "created_count": len(created), "created": created, "inbox": str(INBOX)}
+        derived_refresh = refresh_derived_task_views("ingest-inbox")
+    return {"status": "OK", "write": bool(args.write), "created_count": len(created), "created": created, "inbox": str(INBOX), "derived_refresh": derived_refresh}
+
+
+def maybe_stream_multimodel_intervention(task: "Task") -> dict[str, Any]:
+    """Event-driven multimodel intervention: spawn immediately on lifecycle transition.
+
+    Called after claim/running transitions. If the task is triggered for
+    multimodel intervention and passes economy gate, spawns a background
+    worker to process it without waiting for the next cron tick.
+
+    Returns: status dict with action taken.
+    """
+    if not task_multimodel_intervention_required(task):
+        return {"action": "skip", "reason": "not_triggered"}
+
+    economy = task_multimodel_economy_gate(task)
+    if economy["action"] == "pause":
+        return {"action": "skip", "reason": "economy_pause", "economy": economy}
+
+    # Check if already being processed (has recent multimodel check)
+    last_checked = str(task.fm.get("multimodel_last_checked_at") or "")
+    if last_checked:
+        try:
+            from datetime import datetime, timezone, timedelta
+            checked_dt = datetime.fromisoformat(last_checked.replace("Z", "+00:00"))
+            if datetime.now(timezone.utc) - checked_dt < timedelta(minutes=30):
+                return {"action": "skip", "reason": "recently_checked", "last_checked": last_checked}
+        except Exception:
+            pass
+
+    # Spawn background worker for this single task
+    import subprocess as _sp
+    env = os.environ.copy()
+    env["HERMES_LOCAL_BRAIN_AUTORUN_MULTIMODEL"] = "1"
+    cmd = [
+        sys.executable, str(HERMES_HOME / "scripts" / "brain_task_orchestrator.py"),
+        "multimodel-intervention-step", "--task", task.id, "--json",
+    ]
+    log_path = HERMES_HOME / "logs" / "multimodel_streaming.jsonl"
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    logf = log_path.open("a", encoding="utf-8")
+    try:
+        proc = _sp.Popen(cmd, stdout=logf, stderr=_sp.STDOUT, text=True, start_new_session=True, env=env)
+        return {
+            "action": "spawned",
+            "pid": proc.pid,
+            "task_id": task.id,
+            "recommended_tier": economy.get("allowed_tier", "any"),
+            "economy": economy,
+        }
+    except Exception as exc:
+        return {"action": "spawn_failed", "error": str(exc)}
 
 
 def command_claim(args: argparse.Namespace) -> dict[str, Any]:
@@ -1600,7 +3505,12 @@ def command_claim(args: argparse.Namespace) -> dict[str, Any]:
     if run_id:
         t.fm["run_id"] = run_id
     save_task(t)
-    return {"status": "OK", "task": t.id, "claimed_by": args.actor, "claim_expires_at": t.fm["claim_expires_at"], "warnings": warnings, "path": str(t.path)}
+    derived_refresh = refresh_derived_task_views("claim")
+
+    # Event-driven streaming: immediately trigger multimodel if needed
+    streaming = maybe_stream_multimodel_intervention(t)
+
+    return {"status": "OK", "task": t.id, "claimed_by": args.actor, "claim_expires_at": t.fm["claim_expires_at"], "warnings": warnings, "path": str(t.path), "derived_refresh": derived_refresh, "multimodel_streaming": streaming}
 
 
 def command_release(args: argparse.Namespace) -> dict[str, Any]:
@@ -1613,21 +3523,522 @@ def command_release(args: argparse.Namespace) -> dict[str, Any]:
         raise SystemExit("; ".join(failures))
     apply_lifecycle_status(t, args.to_status, args.actor, reason=args.reason, force=args.force)
     save_task(t)
-    return {"status": "OK", "task": t.id, "to_status": args.to_status, "warnings": warnings, "path": str(t.path)}
+    derived_refresh = refresh_derived_task_views("release")
+    return {"status": "OK", "task": t.id, "to_status": args.to_status, "warnings": warnings, "path": str(t.path), "derived_refresh": derived_refresh}
 
 
 def command_done(args: argparse.Namespace) -> dict[str, Any]:
     t = find_task(args.task)
     if not args.evidence:
         raise SystemExit("done requires at least one structured --evidence entry, e.g. 'command: pytest PASS' or 'file:/path/to/proof.md'")
-    failures, warnings = lifecycle_gate(t, "done", args.actor, args.evidence, args.reason, args.force)
+    failures, warnings = lifecycle_gate(t, "done", args.actor, args.evidence, args.reason, args.force, getattr(args, "authority", ""))
     if failures:
         raise SystemExit("; ".join(failures))
     apply_lifecycle_status(t, "done", args.actor, evidence=args.evidence, reason=args.reason, force=args.force)
     save_task(t)
+    derived_refresh = refresh_derived_task_views("done")
     evidence = t.fm.get("evidence") if isinstance(t.fm.get("evidence"), list) else []
-    return {"status": "OK", "task": t.id, "path": str(t.path), "evidence_count": len(evidence), "warnings": warnings}
+    return {"status": "OK", "task": t.id, "path": str(t.path), "evidence_count": len(evidence), "warnings": warnings, "derived_refresh": derived_refresh}
 
+
+def _dedupe_evidence(items: list[str]) -> list[str]:
+    out: list[str] = []
+    seen: set[str] = set()
+    for item in items:
+        text = str(item or "").strip()
+        if not text or text in seen:
+            continue
+        seen.add(text)
+        out.append(text)
+    return out
+
+
+def auto_close_review_evidence(task: Task) -> list[str]:
+    """Build proof-gated evidence for automatic review -> done closeout.
+
+    The auto closer never invents task proof.  It can only reuse structured
+    evidence already deposited on the task and, for certified multi-model rounds,
+    land the ratification artifact as explicit completion evidence.
+    """
+    raw_value = task.fm.get("evidence")
+    raw_evidence = [str(e) for e in raw_value] if isinstance(raw_value, list) else []
+    # Historical task evidence may include legacy shorthand such as child-task:/child-axis:
+    # entries. Lifecycle transitions are deliberately stricter and only accept
+    # structured evidence prefixes, so auto-close/resolver evidence must filter legacy
+    # audit notes instead of letting them strand an otherwise certified blocked task.
+    evidence = [e for e in raw_evidence if evidence_is_structured(e)]
+    if task_multimodel_passed(task):
+        artifact = task_multimodel_artifact(task)
+        if artifact:
+            evidence.append(f"artifact:ratification multimodel certified {artifact}")
+    return _dedupe_evidence(evidence)
+
+
+def command_auto_close_review(args: argparse.Namespace) -> dict[str, Any]:
+    """Automatically close review tasks only when normal done gates pass.
+
+    This is the lifecycle counterpart to multimodel writeback: model consensus or
+    static runner output may put a task in review, but done still goes through the
+    same lane-specific completion_gate and autorun proof-hash checks as manual
+    closeout.
+    """
+    actor = args.actor
+    reason = args.reason or "auto-close review after proof-gated evidence"
+    max_tasks = max(1, int(args.max_tasks or 1))
+    candidates = [find_task(args.task)] if args.task else [t for t in sorted_tasks(include_done=False) if t.status == "review"]
+    candidates = candidates[:max_tasks]
+    closed: list[dict[str, Any]] = []
+    skipped: list[dict[str, Any]] = []
+    errors: list[dict[str, Any]] = []
+
+    for task in candidates:
+        def _cert_evidence(current_task: Task, certification: dict[str, Any] | None = None) -> list[str]:
+            ev = auto_close_review_evidence(current_task)
+            cert = certification or {}
+            gate = cert.get("gate") if isinstance(cert.get("gate"), dict) else {}
+            discussion_path = str(cert.get("discussion_path") or current_task.fm.get("multimodel_last_discussion_artifact") or current_task.fm.get("multimodel_ratification_artifact") or "").strip()
+            if discussion_path:
+                ev.append(f"artifact:{discussion_path}")
+            gate_status = str(gate.get("status") or current_task.fm.get("multimodel_last_gate_status") or "").upper()
+            gate_decision = str(gate.get("decision") or current_task.fm.get("multimodel_last_decision") or "").strip()
+            mm_status = str(current_task.fm.get("multimodel_status") or "").strip()
+            if gate_status:
+                ev.append(f"command:multimodel_gate {gate_status}")
+            if gate_decision:
+                ev.append(f"command:multimodel_decision {gate_decision}")
+            if mm_status:
+                ev.append(f"command:multimodel_status {mm_status}")
+            return ev
+
+        # Probe the normal done gate first. If a task already has sufficient
+        # deterministic/selfcheck or certified-artifact evidence, auto-close should
+        # close it directly instead of spawning an unrelated global certification
+        # worker that may report another task and cause a false mismatch.
+        base_evidence = auto_close_review_evidence(task)
+        base_failures, base_warnings = lifecycle_gate(task, "done", "hermes-auto-close-probe", base_evidence, reason, False, getattr(args, "authority", ""))
+
+        # Expanded safety boundary: only trigger a new multi-model certification round
+        # when the task still fails the normal done gate AND intervention is required.
+        # Advisory-only PASS_ADVISORY_ONLY rounds are intentionally not accepted here;
+        # task_multimodel_passed() requires a local JSON artifact whose ratification
+        # gate is PASS + LOOP_DONE.
+        should_trigger_certification = (
+            bool(base_failures)
+            and task_multimodel_intervention_required(task)
+            and not task_multimodel_passed(task)
+            and (
+                task.lane in {"evolution", "advisory"}
+                or is_mission_envelope_fm(task.fm)
+                or any("ratification" in str(f).lower() or "multimodel" in str(f).lower() for f in base_failures)
+            )
+        )
+        if should_trigger_certification:
+            def _return_certification_result(current_task: Task, outcome: str, certification: dict[str, Any] | None = None, failures: list[str] | None = None, uncertain: bool = False) -> dict[str, Any]:
+                failures = [str(x) for x in (failures or []) if str(x)]
+                ev = _cert_evidence(current_task, certification)
+                if outcome:
+                    ev.append(f"command:multimodel_auto_outcome {outcome}")
+                if uncertain:
+                    try:
+                        current_task.fm["multimodel_auto_uncertain_count"] = int(current_task.fm.get("multimodel_auto_uncertain_count") or 0) + 1
+                    except Exception:
+                        current_task.fm["multimodel_auto_uncertain_count"] = 1
+                else:
+                    current_task.fm["multimodel_auto_uncertain_count"] = 0
+                try:
+                    uncertain_count = int(current_task.fm.get("multimodel_auto_uncertain_count") or 0)
+                except Exception:
+                    uncertain_count = 0
+                next_retry_count = current_task.retry_count() + 1
+                should_block = outcome in {"certification_human_required", "certification_task_mismatch"} or next_retry_count > 3 or uncertain_count >= 3
+                to_status = "blocked" if should_block else "retry"
+                reason_text = f"multimodel closeout {outcome}; "
+                if to_status == "blocked":
+                    reason_text += "blocked to avoid unsafe/indefinite automation"
+                else:
+                    reason_text += "returned to retry for correction"
+                if failures:
+                    reason_text += ": " + "; ".join(failures[:6])
+                try:
+                    apply_lifecycle_status(current_task, to_status, str(getattr(args, "actor", "") or "hermes-auto-close-review"), evidence=ev, reason=reason_text, delay_minutes=0)
+                    save_task(current_task)
+                    return {
+                        "action": "block_after_certification" if to_status == "blocked" else "return_to_retry",
+                        "task_id": current_task.id,
+                        "title": current_task.title,
+                        "lane": current_task.lane,
+                        "failures": [outcome, *failures[:10]],
+                        "warnings": [],
+                        "evidence": ev,
+                        "certification": certification or {},
+                        "to_status": to_status,
+                        "uncertain_count": uncertain_count,
+                        "safety": "PASS/LOOP_DONE is required for done; certification did not pass, so automation moved the task to retry/blocked instead of auto-done",
+                    }
+                except Exception as exc:
+                    errors.append({"task_id": current_task.id, "error": str(exc), "phase": "multimodel_certification_flow"})
+                    return {
+                        "action": "certification_flow_error",
+                        "task_id": current_task.id,
+                        "title": current_task.title,
+                        "lane": current_task.lane,
+                        "failures": [outcome, str(exc)],
+                        "warnings": [],
+                        "evidence": ev,
+                        "certification": certification or {},
+                        "safety": "failed while moving non-certified task to retry/blocked; task was not auto-done",
+                    }
+
+            previous_gate_status = str(task.fm.get("multimodel_last_gate_status") or "").upper()
+            previous_mm_status = str(task.fm.get("multimodel_status") or "")
+            if previous_gate_status in {"FAIL", "ERROR"} or previous_mm_status in {"not_certified", "certification_failed"}:
+                skipped.append(_return_certification_result(task, "certification_failed", failures=["previous_multimodel_certification_failed"]))
+                continue
+
+            if os.environ.get("HERMES_AUTO_CLOSE_REVIEW_TRIGGER_CERT", "1") not in {"1", "true", "TRUE", "yes", "YES"}:
+                skipped.append({
+                    "action": "skip_certification_trigger_disabled",
+                    "task_id": task.id,
+                    "title": task.title,
+                    "lane": task.lane,
+                    "failures": ["multimodel_certification_required"],
+                    "warnings": [],
+                    "evidence": _cert_evidence(task),
+                    "safety": "auto-close-review did not spawn certification because HERMES_AUTO_CLOSE_REVIEW_TRIGGER_CERT is disabled; a separate multimodel-step may certify the task",
+                })
+                continue
+
+            certification = command_multimodel_intervention_step(argparse.Namespace(json=True))
+            refreshed = find_task(task.id) or task
+            if certification.get("status") == "OK" and certification.get("task_id") == task.id and task_multimodel_passed(refreshed):
+                refreshed.fm["multimodel_auto_uncertain_count"] = 0
+                save_task(refreshed)
+                task = refreshed
+            else:
+                gate = certification.get("gate") if isinstance(certification.get("gate"), dict) else {}
+                gate_status = str(gate.get("status") or certification.get("status") or "").upper()
+                gate_decision = str(gate.get("decision") or "")
+                failures = gate.get("failures") if isinstance(gate.get("failures"), list) else []
+                reason = str(gate.get("reason") or certification.get("reason") or "")
+                covered_current = certification.get("task_id") == task.id
+                if not covered_current:
+                    # The global certification worker selected or reported another task.
+                    # Do not mutate this task as failed; leave it in review with diagnostics so a later tick can target it.
+                    evidence = _cert_evidence(refreshed, certification)
+                    skipped.append({
+                        "action": "certification_triggered_skip",
+                        "task_id": task.id,
+                        "title": task.title,
+                        "lane": task.lane,
+                        "failures": ["certification_task_mismatch"],
+                        "warnings": [],
+                        "evidence": evidence,
+                        "certification": certification,
+                        "safety": "certification did not cover this task; leaving review instead of auto-done or incorrect retry",
+                    })
+                    continue
+                if gate_status in {"FAIL", "ERROR"} or certification.get("status") == "ERROR":
+                    skipped.append(_return_certification_result(refreshed, "certification_failed", certification, failures or [reason or gate_status]))
+                    continue
+                if gate_status in {"PASS_ADVISORY_ONLY", "SKIP", ""} or reason in {"no_discussion_result", ""}:
+                    skipped.append(_return_certification_result(refreshed, "certification_inconclusive", certification, failures or [reason or gate_status or "no_certification_result"], uncertain=True))
+                    continue
+                skipped.append(_return_certification_result(refreshed, "certification_not_passed", certification, failures or [reason or gate_status], uncertain=True))
+                continue
+        base_evidence = auto_close_review_evidence(task)
+        base_failures, base_warnings = lifecycle_gate(task, "done", "hermes-auto-close-probe", base_evidence, reason, False, getattr(args, "authority", ""))
+        if base_failures:
+            skipped.append({
+                "action": "skip",
+                "task_id": task.id,
+                "title": task.title,
+                "lane": task.lane,
+                "failures": base_failures,
+                "warnings": base_warnings,
+                "evidence": base_evidence,
+                "safety": "base evidence did not satisfy done gate; no autorun proof minted",
+            })
+            continue
+        proof_hash = append_autorun_proof_event({
+            "event": "auto_review_close_attempt",
+            "task": task.id,
+            "actor": actor,
+            "base_evidence": base_evidence,
+            "lane": task.lane,
+            "completion_gate": task_permission_contract_for_fm(task.fm).get("completion_gate", ""),
+            "safety": "review_to_done_only; normal lifecycle_gate enforced; proof is audit evidence not completion proof",
+        })
+        evidence = _dedupe_evidence([f"proof:{proof_hash}", *base_evidence])
+        failures, warnings = lifecycle_gate(task, "done", actor, evidence, reason, False, getattr(args, "authority", ""))
+        if failures:
+            skipped.append({
+                "action": "skip",
+                "task_id": task.id,
+                "title": task.title,
+                "lane": task.lane,
+                "failures": failures,
+                "proof_hash": proof_hash,
+                "evidence": evidence,
+            })
+            continue
+        try:
+            apply_lifecycle_status(task, "done", actor, evidence=evidence, reason=reason, force=False)
+            save_task(task)
+            closed.append({
+                "action": "closed",
+                "task_id": task.id,
+                "title": task.title,
+                "lane": task.lane,
+                "proof_hash": proof_hash,
+                "evidence": evidence,
+                "warnings": warnings,
+            })
+        except Exception as exc:
+            errors.append({"action": "error", "task_id": task.id, "error": str(exc), "proof_hash": proof_hash})
+
+    derived_refresh = refresh_derived_task_views("auto-close-review") if closed else None
+    status = "OK" if not errors else "ERROR"
+    return {
+        "status": status,
+        "schema": "local_brain_auto_close_review_v1",
+        "generated_at": iso(),
+        "actor": actor,
+        "closed_count": len(closed),
+        "skipped_count": len(skipped),
+        "error_count": len(errors),
+        "closed": closed,
+        "skipped": skipped,
+        "errors": errors,
+        "derived_refresh": derived_refresh,
+        "safety": "automated review->done uses normal lifecycle_gate, lane completion_gate, structured evidence, and autorun proof hash",
+    }
+
+
+
+def command_blocked_resolve_step(args: argparse.Namespace) -> dict[str, Any]:
+    """Re-evaluate blocked tasks and move resolved work back onto the normal closure path.
+
+    This command is deliberately model-free: it consumes evidence and certification
+    already written to the task. Expensive certification is handled by the separate
+    multimodel step, then this resolver can move PASSed tasks to review where
+    auto-close-review applies the normal done gates.
+    """
+    actor = args.actor
+    max_tasks = max(1, int(args.max_tasks or 1))
+    candidates = [find_task(args.task)] if args.task else [t for t in sorted_tasks(include_done=False) if t.status == "blocked"]
+    candidates = candidates[:max_tasks]
+    resolved: list[dict[str, Any]] = []
+    kept_blocked: list[dict[str, Any]] = []
+    errors: list[dict[str, Any]] = []
+
+    transient_gate_statuses = {"", "SKIP", "ERROR", "TIMEOUT", "UNKNOWN"}
+    transient_round_statuses = {"", "skipped", "error", "timeout"}
+
+    def _blocked_taxonomy_payload(current_task: Task) -> dict[str, Any]:
+        discussion: dict[str, Any] = {}
+        artifact_error = ""
+        try:
+            discussion = load_discussion_artifact(current_task)
+        except SystemExit as exc:
+            # Historical blocked tasks may reference pruned tick-* artifacts.
+            # Taxonomy enrichment is diagnostic only and must not abort the
+            # whole blocked-resolve step for unrelated dispatchable work.
+            artifact_error = str(exc)
+            discussion = {}
+        except Exception:
+            discussion = {}
+        taxonomy = multimodel_failure_taxonomy(
+            discussion,
+            [str(x) for x in list_value(current_task.fm.get("multimodel_last_failures"))],
+        )
+        payload = {
+            "taxonomy_axes": [axis for axis in taxonomy.get("recommended_axes", []) if axis in AUTO_SUBTASK_AXIS_ORDER],
+            "axis_rationale": taxonomy.get("axis_rationale") or {},
+        }
+        if artifact_error:
+            payload["taxonomy_warning"] = artifact_error
+        return payload
+
+    for task in candidates:
+        if task.status != "blocked":
+            kept_blocked.append({"task": task.id, "action": "skip_not_blocked", "status": task.status})
+            continue
+        try:
+            reasons = task_multimodel_intervention_reasons(task)
+            cert_reasons = task_multimodel_certification_reasons(task)
+            mm_required = bool(reasons)
+            mm_passed = task_multimodel_passed(task)
+            gate_status = str(task.fm.get("multimodel_last_gate_status") or "").upper()
+            round_status = str(task.fm.get("multimodel_round_status") or task.fm.get("multimodel_status") or "").lower()
+            decision = str(task.fm.get("multimodel_last_decision") or "").strip()
+            evidence = auto_close_review_evidence(task)
+            has_evidence = bool(evidence)
+            taxonomy_payload = _blocked_taxonomy_payload(task)
+
+            now_iso = iso()
+            task.fm["blocked_resolve_last_checked_at"] = now_iso
+            task.fm["blocked_resolve_multimodel_required"] = mm_required
+            task.fm["blocked_resolve_reasons"] = reasons
+            task.fm["blocked_resolve_taxonomy_axes"] = taxonomy_payload.get("taxonomy_axes") or []
+            task.fm["blocked_resolve_axis_rationale"] = taxonomy_payload.get("axis_rationale") or {}
+
+            auto_subtask_sync = None
+            if str(task.fm.get("auto_subtask_kind") or "") == "non_convergence_narrowing":
+                auto_subtask_sync = sync_auto_subtask_parent(task, actor=actor, write=False)
+                if auto_subtask_sync and auto_subtask_sync.get("action") == "auto_subtask_parent_reopened":
+                    task.fm["blocked_resolve_last_action"] = "auto_subtask_parent_reopened"
+                    task.fm["blocked_resolve_reason"] = "blocked resolver: all narrowed convergence subtasks are done; parent reopened for ratification rerun"
+                    task.fm["blocker_status"] = "resolved"
+                    save_task(task)
+                    resolved.append({
+                        "task": task.id,
+                        "action": "auto_subtask_parent_reopened",
+                        "to_status": task.status,
+                        "open_children": auto_subtask_sync.get("open_children") or [],
+                        "missing_children": auto_subtask_sync.get("missing_children") or [],
+                        **taxonomy_payload,
+                    })
+                    continue
+                if auto_subtask_sync and not auto_subtask_sync.get("ready"):
+                    keep_reason = "blocked resolver: awaiting narrowed convergence subtasks before parent ratification rerun"
+                    task.fm["blocked_resolve_last_action"] = "await_auto_subtasks"
+                    task.fm["blocked_resolve_reason"] = keep_reason
+                    task.fm["blocker_status"] = "unresolved"
+                    task.fm["blocker_summary"] = keep_reason
+                    save_task(task)
+                    kept_blocked.append({
+                        "task": task.id,
+                        "action": "await_auto_subtasks",
+                        "reason": keep_reason,
+                        "open_children": auto_subtask_sync.get("open_children") or [],
+                        "missing_children": auto_subtask_sync.get("missing_children") or [],
+                        **taxonomy_payload,
+                    })
+                    continue
+
+            if mm_required and not mm_passed and "loop_non_convergence" in cert_reasons and decision.upper() == "CONTINUE_LOOP" and not list_value(task.fm.get("auto_subtask_children")):
+                split_result = command_auto_split_non_convergence(argparse.Namespace(task=task.id))
+                keep_reason = "blocked resolver: loop_non_convergence detected; auto-generated narrowed convergence subtasks before next parent ratification"
+                task = find_task(task.id)
+                task.fm["blocked_resolve_last_checked_at"] = now_iso
+                task.fm["blocked_resolve_multimodel_required"] = mm_required
+                task.fm["blocked_resolve_reasons"] = reasons
+                task.fm["blocked_resolve_taxonomy_axes"] = taxonomy_payload.get("taxonomy_axes") or []
+                task.fm["blocked_resolve_axis_rationale"] = taxonomy_payload.get("axis_rationale") or {}
+                task.fm["blocked_resolve_last_action"] = "auto_split_non_convergence"
+                task.fm["blocked_resolve_reason"] = keep_reason
+                task.fm["blocker_status"] = "unresolved"
+                task.fm["blocker_summary"] = keep_reason
+                save_task(task)
+                kept_blocked.append({
+                    "task": task.id,
+                    "action": "auto_split_non_convergence",
+                    "reason": keep_reason,
+                    "created_count": split_result.get("created_count") or 0,
+                    "all_children": split_result.get("all_children") or [],
+                    "taxonomy_axes": split_result.get("taxonomy_axes") or taxonomy_payload.get("taxonomy_axes") or [],
+                    "axis_rationale": split_result.get("axis_rationale") or taxonomy_payload.get("axis_rationale") or {},
+                })
+                continue
+
+            # Gold path: certification/evidence is now sufficient; re-enter review.
+            if (not mm_required or mm_passed) and has_evidence:
+                to_status = "review"
+                reason = "blocked resolver: evidence/certification now sufficient; send to review for normal auto-close gates"
+                # A resolved blocked task may not have an active claim anymore; use
+                # resolver-scoped force only for blocked->review. The subsequent
+                # auto-close-review still enforces the normal done/completion gates.
+                failures, warnings = lifecycle_gate(task, to_status, actor, evidence, reason, True, args.authority)
+                if failures:
+                    task.fm["blocked_resolve_last_action"] = "keep_blocked_gate_failed"
+                    task.fm["blocked_resolve_reason"] = "; ".join(failures)
+                    save_task(task)
+                    kept_blocked.append({"task": task.id, "action": "keep_blocked_gate_failed", "failures": failures, "warnings": warnings})
+                    continue
+                apply_lifecycle_status(task, to_status, actor, evidence=evidence, reason=reason, force=True)
+                task.fm["blocked_resolve_last_action"] = "resolved_to_review"
+                task.fm["blocked_resolve_reason"] = reason
+                task.fm["blocker_status"] = "resolved"
+                save_task(task)
+                resolved.append({"task": task.id, "action": "resolved_to_review", "to_status": to_status, "evidence_count": len(evidence), "warnings": warnings, **taxonomy_payload})
+                continue
+
+            # Transient certification infrastructure failure should not strand the task forever.
+            if mm_required and not mm_passed and (gate_status in transient_gate_statuses or round_status in transient_round_statuses):
+                to_status = "retry" if args.transient_to_retry else "blocked"
+                reason = f"blocked resolver: transient multimodel status gate={gate_status or 'UNKNOWN'} round={round_status or 'unknown'}; retry certification/execution"
+                if to_status == "retry":
+                    failures, warnings = lifecycle_gate(task, to_status, actor, [], reason, args.force, args.authority)
+                    if failures:
+                        task.fm["blocked_resolve_last_action"] = "keep_blocked_retry_gate_failed"
+                        task.fm["blocked_resolve_reason"] = "; ".join(failures)
+                        save_task(task)
+                        kept_blocked.append({"task": task.id, "action": "keep_blocked_retry_gate_failed", "failures": failures})
+                        continue
+                    apply_lifecycle_status(task, to_status, actor, reason=reason, force=args.force, delay_minutes=args.retry_delay_minutes)
+                    task.fm["blocked_resolve_last_action"] = "resolved_to_retry"
+                    task.fm["blocked_resolve_reason"] = reason
+                    task.fm["blocker_status"] = "transient_retry"
+                    save_task(task)
+                    resolved.append({"task": task.id, "action": "resolved_to_retry", "to_status": to_status, "reason": reason, "warnings": warnings, **taxonomy_payload})
+                    continue
+
+            # Hard failure/non-convergence remains blocked until new evidence or a fresh PASS arrives.
+            keep_reason = "blocked resolver: still blocked"
+            if mm_required and not mm_passed:
+                keep_reason = f"blocked resolver: multimodel certification still not PASS (gate={gate_status or 'UNKNOWN'}, decision={decision or 'unknown'}, cert_reasons={cert_reasons})"
+            elif not has_evidence:
+                keep_reason = "blocked resolver: no structured completion evidence available"
+            task.fm["blocked_resolve_last_action"] = "keep_blocked"
+            task.fm["blocked_resolve_reason"] = keep_reason
+            task.fm["blocker_status"] = "unresolved"
+            task.fm["blocker_summary"] = keep_reason
+            save_task(task)
+            kept_blocked.append({
+                "task": task.id,
+                "action": "keep_blocked",
+                "reason": keep_reason,
+                "multimodel_required": mm_required,
+                "multimodel_passed": mm_passed,
+                "evidence_count": len(evidence),
+                **taxonomy_payload,
+            })
+        except Exception as exc:
+            errors.append({"task": task.id, "error": str(exc)})
+
+    derived_refresh = refresh_derived_task_views("blocked_resolve_step") if (resolved or kept_blocked or errors) else {}
+    status = "ERROR" if errors else "OK"
+    aggregate_axes: list[str] = []
+    aggregate_rationale: dict[str, list[str]] = {}
+    for row in [*resolved, *kept_blocked]:
+        if not isinstance(row, dict):
+            continue
+        for axis in row.get("taxonomy_axes") or []:
+            axis_name = str(axis)
+            if axis_name not in aggregate_axes:
+                aggregate_axes.append(axis_name)
+        rationale = row.get("axis_rationale") or {}
+        if not isinstance(rationale, dict):
+            continue
+        for axis, categories in rationale.items():
+            bucket = aggregate_rationale.setdefault(str(axis), [])
+            for category in categories if isinstance(categories, list) else []:
+                category_name = str(category)
+                if category_name not in bucket:
+                    bucket.append(category_name)
+    return {
+        "status": status,
+        "checked_count": len(candidates),
+        "resolved_count": len(resolved),
+        "kept_blocked_count": len(kept_blocked),
+        "error_count": len(errors),
+        "resolved": resolved,
+        "kept_blocked": kept_blocked,
+        "taxonomy_axes": aggregate_axes,
+        "axis_rationale": aggregate_rationale,
+        "errors": errors,
+        "derived_refresh": derived_refresh,
+    }
 
 def command_retry(args: argparse.Namespace) -> dict[str, Any]:
     t = find_task(args.task)
@@ -1636,7 +4047,8 @@ def command_retry(args: argparse.Namespace) -> dict[str, Any]:
         raise SystemExit("; ".join(failures))
     apply_lifecycle_status(t, "retry", args.actor, reason=args.reason, delay_minutes=args.delay_minutes)
     save_task(t)
-    return {"status": "OK", "task": t.id, "retry_count": t.fm.get("retry_count") or 0, "next_attempt_at": t.fm["next_attempt_at"], "warnings": warnings, "path": str(t.path)}
+    derived_refresh = refresh_derived_task_views("retry")
+    return {"status": "OK", "task": t.id, "retry_count": t.fm.get("retry_count") or 0, "next_attempt_at": t.fm["next_attempt_at"], "warnings": warnings, "path": str(t.path), "derived_refresh": derived_refresh}
 
 
 def command_lifecycle(args: argparse.Namespace) -> dict[str, Any]:
@@ -1653,9 +4065,15 @@ def command_lifecycle(args: argparse.Namespace) -> dict[str, Any]:
         missing_alignment = architecture_alignment_missing(t.fm)
         if missing_alignment:
             invalid.append({"task": t.id, "status": t.status, "fields": missing_alignment, "reason": "evolution_architecture_alignment_missing"})
+        missing_profile = project_profile_failures(t)
+        if missing_profile:
+            invalid.append({"task": t.id, "status": t.status, "fields": missing_profile, "reason": "project_profile_missing"})
         missing_mission = mission_envelope_missing(t.fm)
         if missing_mission:
             invalid.append({"task": t.id, "status": t.status, "fields": missing_mission, "reason": "mission_envelope_missing"})
+        permission_failures = permission_validation_failures(t.fm)
+        if permission_failures:
+            invalid.append({"task": t.id, "status": t.status, "fields": permission_failures, "reason": "permission_contract_invalid"})
         if t.status not in LIFECYCLE_TRANSITIONS:
             invalid.append({"task": t.id, "status": t.status, "reason": "status_not_in_lifecycle_graph"})
         claim_fields = [k for k in ("claimed_by", "claim_expires_at", "run_id") if t.fm.get(k)]
@@ -1709,11 +4127,18 @@ def command_transition(args: argparse.Namespace) -> dict[str, Any]:
     t = find_task(args.task)
     from_status = t.status
     to_status = STATUS_ALIASES.get(args.to_status, args.to_status)
-    failures, warnings = lifecycle_gate(t, to_status, args.actor, args.evidence, args.reason, args.force)
+    failures, warnings = lifecycle_gate(t, to_status, args.actor, args.evidence, args.reason, args.force, getattr(args, "authority", ""))
     if failures:
         raise SystemExit("; ".join(failures))
     apply_lifecycle_status(t, to_status, args.actor, evidence=args.evidence, reason=args.reason, ttl_minutes=args.ttl_minutes, delay_minutes=args.delay_minutes, force=args.force)
     save_task(t)
+    derived_refresh = refresh_derived_task_views("transition")
+
+    # Event-driven streaming: trigger multimodel on running/review transitions
+    streaming = {}
+    if to_status in {"running", "review"}:
+        streaming = maybe_stream_multimodel_intervention(t)
+
     return {
         "status": "OK",
         "task": t.id,
@@ -1722,6 +4147,8 @@ def command_transition(args: argparse.Namespace) -> dict[str, Any]:
         "warnings": warnings,
         "path": str(t.path),
         "next_allowed": allowed_next_statuses(to_status),
+        "derived_refresh": derived_refresh,
+        "multimodel_streaming": streaming,
     }
 
 
@@ -1755,6 +4182,21 @@ def render_dashboard() -> tuple[str, str]:
             f"| {m['mission_id']} | {m['progress_percent']}% | {m['done_nodes']} / {m['total_nodes']} | {', '.join(m.get('ready_nodes', [])) or '-'} | {blocked or '-'} | {invalid or '-'} |"
         )
     mission_table_text = "\n".join(mission_table)
+    multimodel_rows = [
+        t for t in tasks
+        if task_multimodel_intervention_required(t) or task_multimodel_status(t) or str(t.fm.get("multimodel_round_status") or "")
+    ][:15]
+    multimodel_table = ["| Task | Required | Last Round | Gate | Decision | Failures | Artifact |", "|---|---|---|---|---|---|---|"]
+    for t in multimodel_rows:
+        failures = "; ".join(list_value(t.fm.get("multimodel_last_failures")))
+        latest_round = str(t.fm.get("multimodel_round_status") or "")
+        latest_artifact = str(t.fm.get("multimodel_last_discussion_artifact") or "")
+        artifact = task_multimodel_artifact(t) if latest_round == "passed" else latest_artifact
+        artifact = artifact or latest_artifact
+        multimodel_table.append(
+            f"| {obsidian_link(t.path)} | {task_multimodel_intervention_required(t)} | {markdown_table_cell(latest_round)} | {markdown_table_cell(t.fm.get('multimodel_last_gate_status'))} | {markdown_table_cell(t.fm.get('multimodel_last_decision'))} | {markdown_table_cell(failures, 120)} | {markdown_table_cell(artifact)} |"
+        )
+    multimodel_table_text = "\n".join(multimodel_table)
     dashboard = f"""---
 type: dashboard
 status: active
@@ -1820,10 +4262,15 @@ DERIVED VIEW — NOT SOURCE OF TRUTH.
 
 {mission_table_text}
 
+## Multimodel Intervention / PUA-loop Round State
+
+{multimodel_table_text}
+
 ## Safety Invariants
 
 - Markdown task notes are canonical.
 - This dashboard and `任务池-排序.md` are derived views.
+- Every canonical task-note mutation command regenerates derived views in-process.
 - Claim before work; release/archive after proof.
 - Reconcile stale leases before dispatch.
 - `done` requires structured evidence (`command:`, `file:`, `search:`, `brainctl:`, `artifact:`, `url:`).
@@ -2041,7 +4488,17 @@ def command_reconcile(args: argparse.Namespace) -> dict[str, Any]:
             if args.write:
                 save_task(t)
             actions.append({"task": t.id, "action": action, "write": bool(args.write), "path": str(t.path)})
-    return {"status": "OK", "write": bool(args.write), "action_count": len(actions), "actions": actions}
+
+    for t in iter_tasks():
+        sync_action = sync_auto_subtask_parent(t, stamp=stamp, actor=args.actor, write=args.write)
+        if not sync_action:
+            continue
+        if sync_action["action"] == "auto_subtask_progress_synced" and not sync_action.get("open_children") and not sync_action.get("missing_children"):
+            continue
+        actions.append(sync_action)
+
+    derived_refresh = refresh_derived_task_views("reconcile") if args.write and actions else None
+    return {"status": "OK", "write": bool(args.write), "action_count": len(actions), "actions": actions, "derived_refresh": derived_refresh}
 
 
 def command_proof_check(args: argparse.Namespace) -> dict[str, Any]:
@@ -2197,13 +4654,157 @@ def parallel_group_key(task: Task) -> str:
 
 
 def dispatch_prompt_for_row(row: dict[str, Any]) -> str:
+    profile_context = format_project_profile_context(str(row.get("project") or ""))
     return (
         "Execute this local-brain task only after claiming it. "
         "Treat the task note as canonical workpad; reconcile first; verify; record proof; release/done/retry. "
         f"Task: {row['link']} ({row['id']}) priority={row['priority']} status={row['status']} "
-        f"lane={row['lane']} project={row['project']}"
+        f"lane={row['lane']} project={row['project']}\n\n"
+        f"{profile_context}"
     )
 
+
+
+def budget_handoff_decision(
+    *,
+    quota_state: str,
+    confidence: str,
+    signal: str = "",
+    task: Task | None = None,
+    pending_side_effect: bool = False,
+    idempotent: bool = True,
+    context_pressure: bool = False,
+) -> dict[str, Any]:
+    """Deterministic budget-handoff recommendation.
+
+    This is the automation-safe implementation of the budget exhaustion policy:
+    it recommends fallback band, continuation-packet requirements, and task
+    transition only. It does not buy quota, switch providers, mutate tasks, or
+    release claims.
+    """
+    quota = (quota_state or "unknown").strip().lower()
+    conf = (confidence or "unknown").strip().lower()
+    sig = (signal or "").strip()
+    valid_quota = {"healthy", "degraded", "limited", "exhausted", "unknown"}
+    valid_conf = {"high", "medium", "low", "unknown"}
+    warnings: list[str] = []
+    if quota not in valid_quota:
+        warnings.append(f"unknown_quota_state:{quota_state}")
+        quota = "unknown"
+    if conf not in valid_conf:
+        warnings.append(f"unknown_confidence:{confidence}")
+        conf = "unknown"
+
+    signal_l = sig.lower()
+    severe_signal = any(tok in signal_l for tok in ("quota exceeded", "exhausted", "circuit open", "cooldown", "429", "rate-limit", "rate limit"))
+    repeated_signal = any(tok in signal_l for tok in ("repeated", "again", "retry failed", "after bounded retry"))
+
+    if quota == "exhausted":
+        band = "BLACK"
+    elif quota == "limited" or (severe_signal and conf in {"high", "medium"}):
+        band = "RED"
+    elif quota == "degraded" or quota == "unknown" or context_pressure or pending_side_effect:
+        band = "AMBER"
+    else:
+        band = "GREEN"
+
+    if quota == "unknown" and (pending_side_effect or not idempotent or repeated_signal):
+        band = "RED"
+    if quota == "unknown" and conf == "unknown" and not idempotent:
+        band = "RED"
+
+    packet_required = band in {"RED", "BLACK"}
+    packet_optional = band == "AMBER"
+    local_check_first = band == "AMBER" and not pending_side_effect
+
+    if band == "GREEN":
+        transition = "continue"
+        action = "continue_normal_execution"
+    elif band == "AMBER":
+        transition = "continue"
+        action = "narrow_scope_and_run_local_check"
+    elif band == "RED":
+        if pending_side_effect:
+            transition = "review"
+        elif quota in {"limited", "unknown"}:
+            transition = "retry"
+        else:
+            transition = "blocked"
+        action = "checkpoint_then_transition_then_handoff_or_retry"
+    else:
+        transition = "blocked"
+        action = "emergency_checkpoint_then_block_retry_or_manual"
+
+    required_packet_fields = [
+        "task_id",
+        "parent_id",
+        "fallback_band",
+        "quota_state",
+        "confidence",
+        "authority",
+        "completed",
+        "pending",
+        "modified_files",
+        "verification",
+        "next_atomic_action",
+        "blocked_reason",
+        "resume_instructions",
+    ] if packet_required else []
+
+    evidence_gate = [
+        "task id and parent id if any",
+        "quota_state/confidence/source signal",
+        "commands/files already changed",
+        "verification passed/missing",
+        "next atomic action",
+        "reason noop was insufficient",
+    ] if packet_required else [
+        "record only if silence would be misread as missed failure"
+    ]
+
+    task_id = task.id if task else ""
+    parent_id = ""
+    if task:
+        parent = task.fm.get("parent") or task.fm.get("parent_task") or task.fm.get("parent_id") or ""
+        parent_id = str(parent)
+
+    return {
+        "status": "OK",
+        "task_id": task_id,
+        "parent_id": parent_id,
+        "quota_state": quota,
+        "confidence": conf,
+        "signal": sig,
+        "fallback_band": band,
+        "recommended_action": action,
+        "recommended_transition": transition,
+        "packet_required": packet_required,
+        "packet_optional": packet_optional,
+        "local_check_first": local_check_first,
+        "required_packet_fields": required_packet_fields,
+        "evidence_gate": evidence_gate,
+        "safety": {
+            "mutates_task": False,
+            "switches_provider": False,
+            "releases_claim": False,
+            "auto_purchases_quota": False,
+            "fail_soft": True,
+        },
+        "warnings": warnings,
+    }
+
+
+def command_budget_handoff_check(args: argparse.Namespace) -> dict[str, Any]:
+    task = find_task(args.task) if args.task else None
+    return budget_handoff_decision(
+        quota_state=args.quota_state,
+        confidence=args.confidence,
+        signal=args.signal or "",
+        task=task,
+        pending_side_effect=args.pending_side_effect,
+        idempotent=not args.non_idempotent,
+        context_pressure=args.context_pressure,
+    )
 
 def command_boundary_check(args: argparse.Namespace) -> dict[str, Any]:
     tasks = iter_tasks()
@@ -2217,11 +4818,17 @@ def command_boundary_check(args: argparse.Namespace) -> dict[str, Any]:
         missing_alignment = architecture_alignment_missing(t.fm)
         if missing_alignment:
             invalid.append({"task": t.id, "path": str(t.path), "fields": missing_alignment, "reason": "evolution_architecture_alignment_missing"})
+        missing_profile = project_profile_failures(t)
+        if missing_profile:
+            invalid.append({"task": t.id, "path": str(t.path), "fields": missing_profile, "reason": "project_profile_missing"})
         missing_mission = mission_envelope_missing(t.fm)
         if missing_mission:
             invalid.append({"task": t.id, "path": str(t.path), "fields": missing_mission, "reason": "mission_envelope_missing"})
         if t.lane not in VALID_LANES:
             invalid.append({"task": t.id, "path": str(t.path), "lane": t.lane, "reason": "invalid_lane"})
+        permission_failures = permission_validation_failures(t.fm)
+        if permission_failures:
+            invalid.append({"task": t.id, "path": str(t.path), "fields": permission_failures, "reason": "permission_contract_invalid"})
         if t.status in CLAIM_BOUND_STATUSES and not (t.fm.get("claimed_by") and t.fm.get("claim_expires_at") and t.fm.get("run_id")):
             invalid.append({"task": t.id, "path": str(t.path), "status": t.status, "reason": "claim_bound_status_missing_lease_metadata"})
     invalid.extend(mission_dag_invalids(tasks))
@@ -2258,12 +4865,16 @@ def command_boundary_check(args: argparse.Namespace) -> dict[str, Any]:
                 "reason": "parallel_boundary_conflict",
                 "details": details,
             })
+    priority_mode = taskpool_priority_mode()
     gates = {
         "work_lane_available": dispatchable_by_lane.get("work", 0) > 0,
         "autorun_enabled": os.environ.get(AUTORUN_ENV_FLAG) == "1",
         "kill_switch_env_set": os.environ.get("HERMES_LOCAL_BRAIN_AUTORUN_KILL") == "1",
         "kill_switch_file_present": AUTORUN_KILL_SWITCH.exists(),
-        "evolution_preempted_by_work": dispatchable_by_lane.get("work", 0) > 0 and dispatchable_by_lane.get("evolution", 0) > 0,
+        "priority_mode": priority_mode,
+        "priority_mode_file": str(TASKPOOL_PRIORITY_MODE_FILE),
+        "evolution_preempted_by_work": priority_mode == "work-first" and dispatchable_by_lane.get("work", 0) > 0 and dispatchable_by_lane.get("evolution", 0) > 0,
+        "work_preempted_by_evolution": priority_mode == "evolution-first" and dispatchable_by_lane.get("work", 0) > 0 and dispatchable_by_lane.get("evolution", 0) > 0,
     }
     status = "PASS" if not invalid else "FAIL"
     return {
@@ -2407,14 +5018,19 @@ def select_parallel_dispatch(max_agents: int) -> tuple[list[Task], list[dict[str
       boundary keys, so they naturally pass the boundary check.
     """
     candidates = dispatchable_tasks()
+    priority_mode = taskpool_priority_mode()
     work_available = any(t.lane == "work" for t in candidates)
+    evolution_available = any(t.lane == "evolution" for t in candidates)
     selected: list[Task] = []
     skipped: list[dict[str, Any]] = []
     used_boundaries: dict[str, str] = {}  # boundary_key -> first task_id
     boundary_parallel_groups: dict[str, str] = {}  # boundary_key -> parallel_group of first task
     for t in candidates:
-        if work_available and t.lane != "work":
-            skipped.append({"id": t.id, "lane": t.lane, "reason": "lane_preempted_by_work", "path": str(t.path)})
+        if priority_mode == "work-first" and work_available and t.lane != "work":
+            skipped.append({"id": t.id, "lane": t.lane, "reason": "lane_preempted_by_work", "path": str(t.path), "priority_mode": priority_mode})
+            continue
+        if priority_mode == "evolution-first" and evolution_available and t.lane != "evolution":
+            skipped.append({"id": t.id, "lane": t.lane, "reason": "lane_preempted_by_evolution", "path": str(t.path), "priority_mode": priority_mode})
             continue
         boundary_key = task_parallel_boundary_key(t)
         t_pg = parallel_group_key(t)
@@ -2465,6 +5081,7 @@ def command_parallel_dispatch_dry_run(args: argparse.Namespace) -> dict[str, Any
         "dry_run": True,
         "dispatchable": bool(selected),
         "max_agents": max_agents,
+        "priority_mode": taskpool_priority_mode(),
         "selected_count": len(selected),
         "selected": [t.row() for t in selected],
         "skipped": skipped,
@@ -2478,7 +5095,12 @@ def command_next(args: argparse.Namespace) -> dict[str, Any]:
     reconcile_result = None
     if not getattr(args, "no_reconcile", False):
         reconcile_result = command_reconcile(argparse.Namespace(write=bool(getattr(args, "reconcile", False)), actor="next", max_retries=3, retry_delay_minutes=60, stale_claim_status="pending", over_retry_status="blocked", promote_due_retry=True))
-        if reconcile_result.get("action_count") and not getattr(args, "reconcile", False):
+        blocking_reconcile_actions = []
+        for action in reconcile_result.get("actions", []):
+            if action.get("action") == "auto_subtask_progress_synced" and not action.get("ready") and not action.get("missing_children"):
+                continue
+            blocking_reconcile_actions.append(action)
+        if blocking_reconcile_actions and not getattr(args, "reconcile", False):
             return {"status": "OK", "next": None, "message": "Reconcile is required before dispatch. Re-run with --reconcile to write canonical task-note fixes, or run reconcile --write explicitly.", "reconcile": reconcile_result}
     rows = dispatchable_tasks()
     if not rows:
@@ -2499,7 +5121,8 @@ def command_dispatch_dry_run(args: argparse.Namespace) -> dict[str, Any]:
 
 def multimodel_intervention_sort_key(task: Task) -> tuple[int, int, int, datetime, str]:
     reasons = task_multimodel_intervention_reasons(task)
-    return (-len(reasons), LANE_SORT_WEIGHT.get(task.lane, 1), -task.score(), task.expires_at() or datetime.max.replace(tzinfo=TZ), task.id)
+    weights = lane_sort_weight()
+    return (-len(reasons), weights.get(task.lane, 1), -task.score(), task.expires_at() or datetime.max.replace(tzinfo=TZ), task.id)
 
 
 def multimodel_state_evidence_args(task: Task, reasons: list[str]) -> str:
@@ -2541,6 +5164,47 @@ def multimodel_state_evidence_args(task: Task, reasons: list[str]) -> str:
 
 def build_multimodel_intervention_plan(task: Task) -> dict[str, Any]:
     reasons = task_multimodel_intervention_reasons(task)
+    advisory_reasons = task_multimodel_advisory_reasons(task)
+    cert_reasons = task_multimodel_certification_reasons(task)
+
+    # Loop economy gate
+    economy = task_multimodel_economy_gate(task)
+    if economy["action"] == "pause":
+        return {
+            "schema": "local_brain_multimodel_intervention_v1",
+            "task": task.row(),
+            "trigger_reasons": reasons,
+            "advisory_reasons": advisory_reasons,
+            "certification_reasons": cert_reasons,
+            "advisory_only": True,
+            "recommended_tier": "none",
+            "intervention_required": False,
+            "economy_gate": economy,
+            "state_path": "",
+            "build_state_command": "",
+            "run_discussion_command": "",
+        }
+
+    # Apply economy throttle to tier
+    if economy["action"] == "throttle" and cert_reasons:
+        advisory_reasons = advisory_reasons + cert_reasons
+        cert_reasons = []
+
+    targeted_refresh_plan = build_targeted_evidence_refresh_plan(task)
+    if targeted_refresh_plan is not None:
+        if economy["action"] == "throttle":
+            targeted_refresh_plan["advisory_reasons"] = advisory_reasons
+            targeted_refresh_plan["certification_reasons"] = cert_reasons
+            targeted_refresh_plan["advisory_only"] = True
+            targeted_refresh_plan["recommended_tier"] = "T2_advisory" if len(reasons) >= 3 else "T1_advisory"
+            targeted_refresh_plan["run_discussion_command"] = targeted_refresh_plan["run_discussion_command"].replace(" --tier T3 --quorum 4", f" --tier {targeted_refresh_plan['recommended_tier'].split('_', 1)[0]}")
+            targeted_refresh_plan["pua_loop"] = {
+                "mode": "blocked_parent_targeted_evidence_advisory",
+                "round_gate": "refresh targeted parent evidence -> consult_models.py advisory round -> record PASS_ADVISORY_ONLY; never certify while economy throttle is active",
+                "completion_signal": "advisory consumed only; LOOP_DONE remains reserved for target-bound parent certification PASS",
+            }
+        return targeted_refresh_plan
+
     state_dir = HERMES_HOME / "state" / "taskpool-multimodel"
     state_path = state_dir / f"{task.id}-state.json"
     question = (
@@ -2564,6 +5228,22 @@ def build_multimodel_intervention_plan(task: Task) -> dict[str, Any]:
     question_arg = shlex.quote(question)
     state_arg = shlex.quote(str(state_path))
     task_arg = shlex.quote(task.id)
+    advisory_only = bool(advisory_reasons) and not bool(cert_reasons)
+    recommended_tier = "T3_certification" if cert_reasons else ("T2_advisory" if len(reasons) >= 3 else "T1_advisory")
+    consult_tier = "T3" if recommended_tier == "T3_certification" else recommended_tier.split("_", 1)[0]
+    consult_quorum_arg = " --quorum 4" if recommended_tier == "T3_certification" else ""
+    if advisory_only:
+        pua_loop = {
+            "mode": "advisory_until_signal_consumed",
+            "round_gate": f"run deterministic checks -> build target-bound claim/evidence state -> consult_models.py --tier {consult_tier} --discussion advisory round -> record PASS_ADVISORY_ONLY when advisory output passes; never authorize done",
+            "completion_signal": "advisory consumed only; LOOP_DONE remains reserved for certification-triggered target-bound 4/4 ratification-gate PASS",
+        }
+    else:
+        pua_loop = {
+            "mode": "continue_until_multimodel_pass",
+            "round_gate": "run deterministic checks -> build target-bound claim/evidence state -> consult_models.py --tier T3 --quorum 4 --discussion -> ratification-gate; continue if gate != PASS",
+            "completion_signal": "LOOP_DONE only after target-bound 4/4 ratification-gate PASS and local deterministic gates pass",
+        }
     return {
         "schema": "local_brain_multimodel_intervention_v1",
         "task": task.row(),
@@ -2573,12 +5253,13 @@ def build_multimodel_intervention_plan(task: Task) -> dict[str, Any]:
             "one_shot_landing": "output must be a directly executable next slice with acceptance evidence and rollback boundary",
         },
         "trigger_reasons": reasons,
+        "advisory_reasons": advisory_reasons,
+        "certification_reasons": cert_reasons,
+        "advisory_only": advisory_only,
+        "recommended_tier": recommended_tier,
         "intervention_required": bool(reasons),
-        "pua_loop": {
-            "mode": "continue_until_multimodel_pass",
-            "round_gate": "run deterministic checks -> build target-bound claim/evidence state -> consult_models.py --tier T3 --quorum 4 --discussion -> ratification-gate; continue if gate != PASS",
-            "completion_signal": "LOOP_DONE only after target-bound 4/4 ratification-gate PASS and local deterministic gates pass",
-        },
+        "economy_gate": economy,
+        "pua_loop": pua_loop,
         "state_path": str(state_path),
         "build_state_command": (
             f"mkdir -p {shlex.quote(str(state_dir))} && "
@@ -2594,7 +5275,7 @@ def build_multimodel_intervention_plan(task: Task) -> dict[str, Any]:
             f"{evidence_args} "
             f"--file {shlex.quote(str(task.path))} --out {state_arg}"
         ),
-        "run_discussion_command": f"python3 ~/.hermes/scripts/consult_models.py run {state_arg} --tier T3 --quorum 4 --discussion --max-rounds 3 --keep",
+        "run_discussion_command": f"python3 ~/.hermes/scripts/consult_models.py run {state_arg} --tier {consult_tier}{consult_quorum_arg} --discussion --max-rounds 3 --keep",
         "gate_command_template": f"python3 ~/.hermes/scripts/brain_task_orchestrator.py ratification-gate --task {task_arg} --discussion-result DISCUSSION_RESULT_JSON --json",
         "safety": "dry-run intervention plan only; no claim, no task mutation, no arbitrary hook execution",
     }
@@ -2609,7 +5290,14 @@ def command_multimodel_intervention_dry_run(args: argparse.Namespace) -> dict[st
     intervention_tasks = [t for t in candidates if task_multimodel_intervention_required(t)]
     intervention_tasks = sorted(intervention_tasks, key=multimodel_intervention_sort_key)
     max_tasks = max(1, int(getattr(args, "max_tasks", 5) or 5))
-    plans = [build_multimodel_intervention_plan(t) for t in intervention_tasks[:max_tasks]]
+
+    # Build before slicing so a higher-priority economy-paused task cannot hide
+    # the next actionable PUA-loop task.  Paused/throttled diagnostics remain
+    # visible in paused_plans, but executable runners consume only plans[].
+    all_plans = [build_multimodel_intervention_plan(t) for t in intervention_tasks]
+    actionable_plans = [p for p in all_plans if p.get("intervention_required")]
+    paused_plans = [p for p in all_plans if not p.get("intervention_required")]
+    plans = actionable_plans[:max_tasks]
     selected = plans[0] if plans else None
     result = {
         "status": "OK",
@@ -2620,9 +5308,12 @@ def command_multimodel_intervention_dry_run(args: argparse.Namespace) -> dict[st
         "selected_task_id": selected["task"]["id"] if selected else "",
         "selected": selected,
         "queued_count": len(intervention_tasks),
+        "actionable_count": len(actionable_plans),
+        "paused_count": len(paused_plans),
         "plans": plans,
+        "paused_plans": paused_plans[:max_tasks],
         "criteria": ["accuracy", "long_term_goal", "one_shot_landing"],
-        "safety": "dry-run only; this surfaces automatic intervention points but does not run models or edit tasks",
+        "safety": "dry-run only; plans[] are actionable; paused_plans[] are fail-closed diagnostics and are not executed",
     }
     # D4: convergence stats
     result["convergence"] = multimodel_convergence_stats()
@@ -2692,6 +5383,9 @@ def command_multimodel_intervention_step(args: argparse.Namespace) -> dict[str, 
     run_cmd = selected.get("run_discussion_command", "")
     state_path = selected.get("state_path", "")
 
+    recommended_tier = selected.get("recommended_tier", "T3_certification")
+    advisory_only_plan = selected.get("advisory_only", False)
+
     result: dict[str, Any] = {
         "status": "OK",
         "schema": "local_brain_multimodel_intervention_step_v1",
@@ -2699,6 +5393,9 @@ def command_multimodel_intervention_step(args: argparse.Namespace) -> dict[str, 
         "task_id": task_id,
         "state_path": state_path,
         "allowlist_active": allowlist_active,
+        "recommended_tier": recommended_tier,
+        "advisory_only": advisory_only_plan,
+        "tier_routing": "advisory" if advisory_only_plan else "certification",
     }
 
     # Step 1: Build state file (shell=True for && chains)
@@ -2728,11 +5425,15 @@ def command_multimodel_intervention_step(args: argparse.Namespace) -> dict[str, 
     else:
         try:
             proc = subprocess.run(run_cmd, capture_output=True, text=True, timeout=1200, shell=True)
+            discussion_result_path = extract_discussion_result_path_from_stdout(
+                (proc.stdout or "") + "\n" + (proc.stderr or "")
+            )
             result["run_discussion"] = {
                 "status": "OK" if proc.returncode == 0 else "FAIL",
                 "returncode": proc.returncode,
                 "stdout_tail": proc.stdout[-500:] if proc.stdout else "",
                 "stderr_tail": proc.stderr[-500:] if proc.stderr else "",
+                "discussion_result_path": discussion_result_path,
             }
         except Exception as exc:
             result["run_discussion"] = {"status": "ERROR", "error": str(exc)}
@@ -2741,9 +5442,27 @@ def command_multimodel_intervention_step(args: argparse.Namespace) -> dict[str, 
     discussion_path = ""
     gate_result: dict[str, Any] = {}
     if result.get("run_discussion", {}).get("status") == "OK":
-        # Find the latest discussion_result.json in tick output dirs
+        direct_path = str(result.get("run_discussion", {}).get("discussion_result_path") or "")
+        if direct_path:
+            candidate = Path(direct_path).expanduser()
+            if candidate.exists():
+                try:
+                    discussion = json.loads(candidate.read_text(encoding="utf-8"))
+                    task_obj = find_task(task_id)
+                    if task_obj:
+                        result["binding_stamp"] = stamp_discussion_task_binding(candidate, task_obj, state_path)
+                        discussion = json.loads(candidate.read_text(encoding="utf-8"))
+                    if advisory_only_plan:
+                        gate_result = advisory_round_gate_result(discussion)
+                    else:
+                        gate_result = ratification_gate_result(discussion, expected_task=task_obj)
+                    discussion_path = str(candidate)
+                except Exception:
+                    gate_result = {}
+                    discussion_path = ""
+        # Find the latest discussion_result.json in tick output dirs as a fallback.
         tick_dirs = sorted(Path(os.path.expanduser("~/.hermes")).glob("tick-*"), key=lambda p: p.stat().st_mtime, reverse=True)
-        for tick_dir in tick_dirs[:3]:
+        for tick_dir in ([] if gate_result else tick_dirs[:3]):
             candidate = tick_dir / "discussion_result.json"
             if candidate.exists():
                 try:
@@ -2752,8 +5471,10 @@ def command_multimodel_intervention_step(args: argparse.Namespace) -> dict[str, 
                     if task_obj:
                         result["binding_stamp"] = stamp_discussion_task_binding(candidate, task_obj, state_path)
                         discussion = json.loads(candidate.read_text(encoding="utf-8"))
-                    # Verify it's for our task by checking provenance or state_hash
-                    gate_result = ratification_gate_result(discussion, expected_task=task_obj)
+                    if advisory_only_plan:
+                        gate_result = advisory_round_gate_result(discussion)
+                    else:
+                        gate_result = ratification_gate_result(discussion, expected_task=task_obj)
                     discussion_path = str(candidate)
                     break
                 except Exception:
@@ -2762,16 +5483,16 @@ def command_multimodel_intervention_step(args: argparse.Namespace) -> dict[str, 
     result["gate"] = gate_result or {"status": "SKIP", "reason": "no_discussion_result"}
     result["discussion_path"] = discussion_path
 
-    # Step 4: On PASS, write to task frontmatter (D6)
-    if gate_result.get("status") == "PASS" and gate_result.get("decision") == "LOOP_DONE":
-        task = find_task(task_id)
-        if task:
-            mutate_result = write_multimodel_result_to_task(task, gate_result, discussion_path, state_path)
-            result["task_mutation"] = mutate_result
-        else:
-            result["task_mutation"] = {"status": "SKIP", "reason": "task_not_found"}
+    # Step 4: Persist every round outcome.  PASS certifies; non-PASS records
+    # fail-closed state so the next tick/human sees why the loop continues.
+    round_gate = gate_result or {"status": "SKIP", "decision": "continue_loop", "reason": "no_discussion_result", "failures": ["no_discussion_result"]}
+    if advisory_only_plan and round_gate.get("status") == "PASS" and str(round_gate.get("decision", "")).upper() == "LOOP_DONE":
+        round_gate = {**round_gate, "status": "PASS_ADVISORY_ONLY", "decision": "continue_loop", "advisory_block": "advisory_only_task_cannot_authorize_done"}
+    task = find_task(task_id)
+    if task:
+        result["task_mutation"] = write_multimodel_result_to_task(task, round_gate, discussion_path, state_path)
     else:
-        result["task_mutation"] = {"status": "SKIP", "reason": "gate_not_passed"}
+        result["task_mutation"] = {"status": "SKIP", "reason": "task_not_found"}
 
     # D4: convergence stats
     result["convergence"] = multimodel_convergence_stats()
@@ -2807,7 +5528,14 @@ def _run_single_task_pipeline(plan: dict[str, Any], allowlist_active: bool) -> d
     # Step 2: Run discussion
     try:
         proc = subprocess.run(run_cmd, capture_output=True, text=True, timeout=1200, shell=True)
-        result["run_discussion"] = {"status": "OK" if proc.returncode == 0 else "FAIL", "returncode": proc.returncode}
+        discussion_result_path = extract_discussion_result_path_from_stdout(
+            (proc.stdout or "") + "\n" + (proc.stderr or "")
+        )
+        result["run_discussion"] = {
+            "status": "OK" if proc.returncode == 0 else "FAIL",
+            "returncode": proc.returncode,
+            "discussion_result_path": discussion_result_path,
+        }
     except Exception as exc:
         result["run_discussion"] = {"status": "ERROR", "error": str(exc)}
 
@@ -2815,6 +5543,25 @@ def _run_single_task_pipeline(plan: dict[str, Any], allowlist_active: bool) -> d
     discussion_path = ""
     gate_result: dict[str, Any] = {}
     if result.get("run_discussion", {}).get("status") == "OK":
+        direct_path = str(result.get("run_discussion", {}).get("discussion_result_path") or "")
+        if direct_path:
+            candidate = Path(direct_path).expanduser()
+            if candidate.exists():
+                try:
+                    discussion = json.loads(candidate.read_text(encoding="utf-8"))
+                    task_obj = find_task(task_id)
+                    if task_obj:
+                        result["binding_stamp"] = stamp_discussion_task_binding(candidate, task_obj, state_path)
+                        discussion = json.loads(candidate.read_text(encoding="utf-8"))
+                    advisory_only_plan = plan.get("advisory_only", False)
+                    if advisory_only_plan:
+                        gate_result = advisory_round_gate_result(discussion)
+                    else:
+                        gate_result = ratification_gate_result(discussion, expected_task=task_obj)
+                    discussion_path = str(candidate)
+                except Exception:
+                    gate_result = {}
+                    discussion_path = ""
         # Look for tick directories created during our discussion (within last 10 min)
         import time
         cutoff = time.time() - 600
@@ -2823,7 +5570,7 @@ def _run_single_task_pipeline(plan: dict[str, Any], allowlist_active: bool) -> d
              if p.stat().st_mtime > cutoff),
             key=lambda p: p.stat().st_mtime, reverse=True
         )
-        for tick_dir in tick_dirs[:10]:
+        for tick_dir in ([] if gate_result else tick_dirs[:10]):
             candidate = tick_dir / "discussion_result.json"
             if not candidate.exists():
                 continue
@@ -2840,7 +5587,11 @@ def _run_single_task_pipeline(plan: dict[str, Any], allowlist_active: bool) -> d
                 if task_obj:
                     result["binding_stamp"] = stamp_discussion_task_binding(candidate, task_obj, state_path)
                     discussion = json.loads(candidate.read_text(encoding="utf-8"))
-                gate_result = ratification_gate_result(discussion, expected_task=task_obj)
+                advisory_only_plan = plan.get("advisory_only", False)
+                if advisory_only_plan:
+                    gate_result = advisory_round_gate_result(discussion)
+                else:
+                    gate_result = ratification_gate_result(discussion, expected_task=task_obj)
                 discussion_path = str(candidate)
                 break
             except Exception:
@@ -2849,15 +5600,17 @@ def _run_single_task_pipeline(plan: dict[str, Any], allowlist_active: bool) -> d
     result["gate"] = gate_result or {"status": "SKIP", "reason": "no_discussion_result"}
     result["discussion_path"] = discussion_path
 
-    # Step 4: Mutate on PASS
-    if gate_result.get("status") == "PASS" and gate_result.get("decision") == "LOOP_DONE":
-        task = find_task(task_id)
-        if task:
-            result["task_mutation"] = write_multimodel_result_to_task(task, gate_result, discussion_path, state_path)
-        else:
-            result["task_mutation"] = {"status": "SKIP", "reason": "task_not_found"}
+    # Step 4: Persist every round outcome. PASS certifies; non-PASS records
+    # fail-closed state for the next PUA-loop iteration.
+    round_gate = gate_result or {"status": "SKIP", "decision": "continue_loop", "reason": "no_discussion_result", "failures": ["no_discussion_result"]}
+    advisory_only_plan = plan.get("advisory_only", False)
+    if advisory_only_plan and round_gate.get("status") == "PASS" and str(round_gate.get("decision", "")).upper() == "LOOP_DONE":
+        round_gate = {**round_gate, "status": "PASS_ADVISORY_ONLY", "decision": "continue_loop", "advisory_block": "advisory_only_task_cannot_authorize_done"}
+    task = find_task(task_id)
+    if task:
+        result["task_mutation"] = write_multimodel_result_to_task(task, round_gate, discussion_path, state_path)
     else:
-        result["task_mutation"] = {"status": "SKIP", "reason": "gate_not_passed"}
+        result["task_mutation"] = {"status": "SKIP", "reason": "task_not_found"}
 
     return result
 
@@ -3092,6 +5845,36 @@ def _format_binding_for_failure(candidate: str) -> str:
     except Exception:
         pass
     return text
+
+
+def advisory_round_gate_result(discussion: dict[str, Any]) -> dict[str, Any]:
+    """Mark a completed T1/T2 advisory artifact as consumed, not certified.
+
+    Advisory-only taskpool interventions are routing/sanity signals. They should
+    not be promoted to LOOP_DONE, and they must not be evaluated by the canonical
+    T3 closeout gate that requires Claude+GPT+DeepSeek+MiMo. A parseable
+    consult_models artifact with at least one concrete model/vote is enough to
+    consume weak advisory triggers and stop scheduler churn; blockers inside the
+    artifact remain advisory provenance for the next human/worker slice.
+    """
+    if not isinstance(discussion, dict):
+        return {"status": "FAIL", "decision": "continue_loop", "failures": ["discussion_result_not_object"]}
+    raw_models = discussion.get("models_consulted") or []
+    raw_votes = discussion.get("ratification_votes") or discussion.get("votes") or []
+    models = [str(m).strip() for m in raw_models if isinstance(m, str) and str(m).strip()] if isinstance(raw_models, list) else []
+    vote_models = [str(v.get("model") or "").strip() for v in raw_votes if isinstance(v, dict) and str(v.get("model") or "").strip()] if isinstance(raw_votes, list) else []
+    participants = sorted(set(models + vote_models))
+    if not participants:
+        return {"status": "FAIL", "decision": "continue_loop", "failures": ["advisory_models_missing"]}
+    return {
+        "status": "PASS_ADVISORY_ONLY",
+        "decision": "continue_loop",
+        "failures": [],
+        "advisory_status": str(discussion.get("status") or discussion.get("certification_status") or "unknown"),
+        "models_consulted": participants,
+        "certification_authority": False,
+        "advisory_block": "advisory_only_task_cannot_authorize_done",
+    }
 
 
 def ratification_gate_result(discussion: dict[str, Any], expected_task: "Task" | None = None) -> dict[str, Any]:
@@ -3397,11 +6180,15 @@ def command_eligibility_check(args: argparse.Namespace) -> dict[str, Any]:
         reasons.append("kill_switch_env_set")
     if AUTORUN_KILL_SWITCH.exists():
         reasons.append("kill_switch_file_present")
-    if task and task.lane != "work" and any(t.lane == "work" and t.id != task.id for t in dispatchable_tasks()):
+    priority_mode = taskpool_priority_mode()
+    dispatchable_now = dispatchable_tasks()
+    if priority_mode == "work-first" and task and task.lane != "work" and any(t.lane == "work" and t.id != task.id for t in dispatchable_now):
         reasons.append("work_lane_available")
+    if priority_mode == "evolution-first" and task and task.lane != "evolution" and any(t.lane == "evolution" and t.id != task.id for t in dispatchable_now):
+        reasons.append("evolution_lane_available")
     if not allowlist:
         reasons.append("allowlist_empty")
-    elif not allowlist_hit:
+    elif task and not allowlist_hit:
         reasons.append("allowlist_miss")
     if task and not task.is_dispatchable():
         blockers = mission_node_blockers(task)
@@ -3425,6 +6212,7 @@ def command_eligibility_check(args: argparse.Namespace) -> dict[str, Any]:
         "status": "PASS",
         "eligible": eligible,
         "mode": "allow" if eligible else "deny",
+        "priority_mode": priority_mode,
         "reasons": sorted(set(reasons)),
         "warnings": warnings,
         "task_id": task.id if task else "",
@@ -3439,6 +6227,7 @@ def command_eligibility_check(args: argparse.Namespace) -> dict[str, Any]:
 
 
 def render_autorun_handoff(task: Task, claim: dict[str, Any], proof_hash: str, actor: str) -> str:
+    profile_context = format_project_profile_context(task.project)
     return f"""# Auto-Claim Handoff — {task.title}
 
 - task_id: `{task.id}`
@@ -3459,6 +6248,12 @@ def render_autorun_handoff(task: Task, claim: dict[str, Any], proof_hash: str, a
 ## Suggested Runner Prompt
 
 Claim has already been acquired. Work only within the task's stated workspace/contract, verify with deterministic commands, append proof, and close through lifecycle gates.
+
+## Project Profile
+
+```text
+{profile_context}
+```
 
 ## Claim Result
 
@@ -3483,6 +6278,7 @@ def render_parallel_handoff(task: Task, claim: dict[str, Any], boundary_info: di
     conflict_group = str(task.fm.get("conflict_group") or "").strip()
     parallel_group_val = str(task.fm.get("parallel_group") or "").strip()
     workspace = str(task.fm.get("workspace") or "").strip()
+    profile_context = format_project_profile_context(task.project)
     return f"""# Parallel Handoff — {task.title}
 
 - task_id: `{task.id}`
@@ -3492,6 +6288,12 @@ def render_parallel_handoff(task: Task, claim: dict[str, Any], boundary_info: di
 - batch_id: `{batch_id}`
 - batch_index: {batch_index}
 - claim_expires_at: `{task.fm.get('claim_expires_at') or ''}`
+
+## Project Profile
+
+```text
+{profile_context}
+```
 
 ## Boundary Constraints
 
@@ -3914,26 +6716,163 @@ def task_counts_snapshot(tasks: list[Task]) -> dict[str, Any]:
     }
 
 
+def parse_first_json_object(text: str) -> dict[str, Any] | None:
+    start = text.find("{")
+    if start < 0:
+        return None
+    try:
+        data, _end = json.JSONDecoder().raw_decode(text[start:])
+    except Exception:
+        return None
+    return data if isinstance(data, dict) else None
+
+
+def auto_completer_recursive_self_lock(last_error: str) -> bool:
+    """Detect dynamic-runner → tick → evidence-spine self-locks.
+
+    The auto-completer cron can legitimately be the only reason evidence-spine
+    is WARN: its previous tick failed because evidence-spine saw that same prior
+    auto-completer error.  Once this classifier recognizes the state, the next
+    evidence-spine run becomes PASS.  Unknown/non-structured errors still fail
+    closed.
+    """
+    if "taskpool_dynamic_runner_v1" not in last_error:
+        return False
+    root = parse_first_json_object(last_error.split("stdout:", 1)[-1])
+    if not root or root.get("schema") != "taskpool_dynamic_runner_v1":
+        return False
+    root_summary = root.get("summary") if isinstance(root.get("summary"), dict) else {}
+    if root_summary.get("status") != "ERROR" or str(root_summary.get("error_count") or "") != "1":
+        return False
+    tick = root.get("tick") if isinstance(root.get("tick"), dict) else {}
+    tick_cmd_parts = tick.get("cmd") if isinstance(tick.get("cmd"), list) else []
+    tick_cmd_basenames = {Path(str(part)).name for part in tick_cmd_parts}
+    if "brain_task_dispatch_tick.py" not in tick_cmd_basenames or "--summary" not in {str(part) for part in tick_cmd_parts}:
+        return False
+    if str(tick.get("returncode") or "") != "2":
+        return False
+    tick_payload = parse_first_json_object(str(tick.get("stdout") or "")) or {}
+    evidence_spine = tick_payload.get("evidence_spine") if isinstance(tick_payload.get("evidence_spine"), dict) else {}
+    spine_summary = evidence_spine.get("summary") if isinstance(evidence_spine.get("summary"), dict) else {}
+    tick_summary_is_single_dispatch_error = (
+        tick_payload.get("schema") == "brain_task_dispatch_tick_summary_v1"
+        and tick_payload.get("error_count") == 1
+    )
+    structured_self_lock = (
+        tick_summary_is_single_dispatch_error
+        and evidence_spine.get("status") in {"FAIL", "ERROR"}
+        and spine_summary.get("auto_completer_semantic_status") == "error"
+        and spine_summary.get("auto_completer_safe_for_next_tick") is False
+    )
+    legacy_generic_self_lock = (
+        tick_summary_is_single_dispatch_error
+        and evidence_spine.get("status") == "ERROR"
+        and evidence_spine.get("gate_status") in {None, ""}
+        and not spine_summary
+        and "brain_task_dispatch_tick.py" in str(tick_payload.get("recovery_command") or "")
+    )
+    return tick_payload.get("status") == "ERROR" and (structured_self_lock or legacy_generic_self_lock)
+
+
 def classify_auto_completer_job(job: dict[str, Any] | None) -> dict[str, Any]:
     if not job:
         return {"semantic_status": "missing", "task_result": "unknown", "blockers": [], "safe_for_next_tick": False}
     last_status = str(job.get("last_status") or "")
-    last_error = str(job.get("last_error") or job.get("last_error_tail") or "")
+    last_error = str(job.get("_last_error_raw") or job.get("last_error") or job.get("last_error_tail") or "")
     lower = last_error.lower()
     blockers: list[str] = []
     if "ts6133" in lower or "unused" in lower:
         blockers.append("typescript_unused_symbol_baseline_blocker")
     if "full build" in lower or "build" in lower:
         blockers.append("full_build_baseline_check")
+    retryable_runtime_timeout = (
+        "request timed out" in lower
+        or "runtimeerror: request timed out" in lower
+        or "subprocess_timeout" in lower
+        or "timeout_recorded" in lower
+    )
+    if retryable_runtime_timeout:
+        blockers.append("retryable_runtime_timeout")
     bounded_completed = (
         ("bounded slice" in lower or "有界" in last_error)
         and ("-> review" in lower or "running -> review" in lower or "状态已从" in last_error)
         and ("pass:" in lower or "32 tests passed" in lower or "proof-check" in lower)
     )
     baseline_blocker = bool(blockers) and any(token in lower for token in ("baseline", "unrelated", "ts6133", "full build"))
+    advisory_evidence_ready = any(token in lower for token in (
+        "truth_grounded_advisory_not_ratified",
+        "evidence化 advisory",
+        "advisory slice",
+        "advisory evidence",
+        "advisory report",
+    ))
+    ratification_pending_or_blocked = any(token in lower for token in (
+        "尚未产生可确认的 discussion_result",
+        "no_discussion_result",
+        "discussion_result.json",
+        "certification_manifest.json",
+        "cannot closeout",
+        "不能 closeout",
+        "cannot done",
+        "不能 done",
+        "not_certified",
+        "not ratified",
+        "未通过认证",
+        "ratification",
+        "t3 仍在运行",
+        "t3 still running",
+    ))
+    truth_grounded_advisory_not_ratified = advisory_evidence_ready and ratification_pending_or_blocked
+    not_certified_signal = any(token in lower for token in (
+        "not_certified",
+        "not certified",
+        "未通过认证",
+        "vote_reject",
+        "agreement_low",
+        "ratification failed",
+        "认证失败",
+    ))
+    long_running_certification = any(token in lower for token in (
+        "t3 仍在运行",
+        "t3 still running",
+        "still running",
+        "background process",
+        "尚未产生可确认的 discussion_result",
+        "waiting for ratification",
+        "等待 ratification",
+    ))
+    recursive_self_lock = auto_completer_recursive_self_lock(last_error)
+    if recursive_self_lock:
+        blockers.append("recursive_evidence_spine_self_lock")
+    if truth_grounded_advisory_not_ratified:
+        blockers.append("ratification_pending")
+    elif not_certified_signal:
+        blockers.append("certification_not_certified")
+    elif long_running_certification:
+        blockers.append("certification_long_running")
     if last_status == "error" and bounded_completed and baseline_blocker:
         semantic_status = "ok_with_task_blocker"
         task_result = "review_with_baseline_blocker"
+        safe_for_next_tick = True
+    elif last_status == "error" and truth_grounded_advisory_not_ratified:
+        semantic_status = "truth_grounded_advisory_not_ratified"
+        task_result = "task_evidence_ready_waiting_for_ratification"
+        safe_for_next_tick = True
+    elif last_status == "error" and not_certified_signal:
+        semantic_status = "certification_not_certified"
+        task_result = "task_certification_failed_requires_retry_or_handoff"
+        safe_for_next_tick = True
+    elif last_status == "error" and long_running_certification:
+        semantic_status = "certification_long_running"
+        task_result = "task_certification_still_running_wait_for_result"
+        safe_for_next_tick = True
+    elif last_status == "error" and retryable_runtime_timeout:
+        semantic_status = "retryable_runtime_timeout"
+        task_result = "scheduler_retry_or_deterministic_replacement_required"
+        safe_for_next_tick = True
+    elif last_status == "error" and recursive_self_lock:
+        semantic_status = "recursive_evidence_spine_self_lock"
+        task_result = "scheduler_recursive_gate_waiting_for_next_tick"
         safe_for_next_tick = True
     elif last_status == "ok":
         semantic_status = "ok"
@@ -3954,8 +6893,18 @@ def classify_auto_completer_job(job: dict[str, Any] | None) -> dict[str, Any]:
         "safe_for_next_tick": safe_for_next_tick,
         "last_status": last_status,
         "last_error_tail": redact_for_evidence(last_error),
-        "policy": "bounded slice reaching review with unrelated baseline blocker is task evidence/blocker, not scheduler crash",
+        "policy": "bounded slice reaching review with unrelated baseline blocker, retryable runtime timeout, not-certified ratification, long-running certification, or truth-grounded advisory awaiting ratification is task-level evidence/blocker, not scheduler crash",
     }
+
+
+def sanitize_cron_snapshot_for_evidence(cron: dict[str, Any]) -> dict[str, Any]:
+    sanitized = dict(cron)
+    sanitized["jobs"] = [
+        {k: v for k, v in job.items() if not str(k).startswith("_")}
+        for job in cron.get("jobs", [])
+        if isinstance(job, dict)
+    ]
+    return sanitized
 
 
 def build_taskpool_evidence_spine(max_agents: int = 3) -> dict[str, Any]:
@@ -3966,9 +6915,12 @@ def build_taskpool_evidence_spine(max_agents: int = 3) -> dict[str, Any]:
     boundary = command_boundary_check(argparse.Namespace(json=True))
     parallel = command_parallel_dispatch_dry_run(argparse.Namespace(max_agents=max_agents, json=True))
     multimodel = command_multimodel_intervention_dry_run(argparse.Namespace(task="", max_tasks=5, json=True))
+    permission_audit = command_permission_audit(argparse.Namespace(json=True))
     cron = load_cron_jobs_snapshot(TASKPOOL_CRON_JOB_NAMES)
     auto_job = next((j for j in cron.get("jobs", []) if j.get("name") == "local-brain-taskpool-auto-completer"), None)
     auto_semantics = classify_auto_completer_job(auto_job)
+    sanitized_cron = sanitize_cron_snapshot_for_evidence(cron)
+    sanitized_auto_job = {k: v for k, v in auto_job.items() if not str(k).startswith("_")} if isinstance(auto_job, dict) else None
     autorun = {
         "autorun_enabled": os.environ.get(AUTORUN_ENV_FLAG) == "1",
         "multimodel_autorun_enabled": os.environ.get(MULTIMODEL_AUTORUN_ENV_FLAG) == "1",
@@ -3980,25 +6932,27 @@ def build_taskpool_evidence_spine(max_agents: int = 3) -> dict[str, Any]:
     claims = [
         {"claim_id": "C-TP-001", "text": "Taskpool status counts are derived from canonical Markdown task notes.", "supported_by": ["E-TP-COUNTS"]},
         {"claim_id": "C-TP-002", "text": "Proof and selfcheck gates are observable before any review->done closeout.", "supported_by": ["E-TP-GATES"]},
-        {"claim_id": "C-TP-003", "text": "Parallel dispatch is dry-run only and enforces work-lane preemption / boundary isolation.", "supported_by": ["E-TP-DISPATCH"]},
+        {"claim_id": "C-TP-003", "text": "Parallel dispatch is dry-run only and enforces explicit priority-mode preemption plus boundary isolation.", "supported_by": ["E-TP-DISPATCH"]},
         {"claim_id": "C-TP-004", "text": "Autorun and multimodel autorun flags are explicit and fail-closed when disabled.", "supported_by": ["E-TP-AUTORUN"]},
-        {"claim_id": "C-TP-005", "text": "Auto-completer baseline blockers are classified separately from scheduler health.", "supported_by": ["E-TP-AUTO-COMPLETER"]},
+        {"claim_id": "C-TP-005", "text": "Auto-completer baseline blockers, retryable runtime timeouts, not-certified ratification, long-running certification, and truth-grounded advisory awaiting ratification are classified separately from scheduler health.", "supported_by": ["E-TP-AUTO-COMPLETER"]},
         {"claim_id": "C-TP-006", "text": "Multimodel convergence/pass-rate is observable together with failure taxonomy via ratification gate.", "supported_by": ["E-TP-MULTIMODEL"]},
+        {"claim_id": "C-TP-007", "text": "Taskpool permissions are classified separately from lifecycle completion; yolo-execution cannot mark done.", "supported_by": ["E-TP-PERMISSIONS"]},
     ]
     evidence = [
         {"evidence_id": "E-TP-COUNTS", "type": "snapshot", "supports": ["C-TP-001"], "payload": counts},
         {"evidence_id": "E-TP-GATES", "type": "command_result", "supports": ["C-TP-002"], "payload": {"proof_check": proof, "selfcheck": selfcheck}},
         {"evidence_id": "E-TP-DISPATCH", "type": "dry_run", "supports": ["C-TP-003"], "payload": {"boundary": boundary, "parallel_dispatch": parallel}},
         {"evidence_id": "E-TP-AUTORUN", "type": "policy_state", "supports": ["C-TP-004"], "payload": autorun},
-        {"evidence_id": "E-TP-AUTO-COMPLETER", "type": "cron_semantics", "supports": ["C-TP-005"], "payload": {"cron_job": auto_job, "classification": auto_semantics}},
+        {"evidence_id": "E-TP-AUTO-COMPLETER", "type": "cron_semantics", "supports": ["C-TP-005"], "payload": {"cron_job": sanitized_auto_job, "classification": auto_semantics}},
         {"evidence_id": "E-TP-MULTIMODEL", "type": "dry_run", "supports": ["C-TP-006"], "payload": {"convergence": multimodel.get("convergence", {}), "queued_count": multimodel.get("queued_count"), "selected_task_id": multimodel.get("selected_task_id"), "taxonomy_schema": "local_brain_multimodel_failure_taxonomy_v1"}},
-        {"evidence_id": "E-TP-CRON", "type": "scheduler_state", "supports": ["C-TP-004", "C-TP-005"], "payload": cron},
+        {"evidence_id": "E-TP-PERMISSIONS", "type": "permission_audit", "supports": ["C-TP-007"], "payload": permission_audit},
+        {"evidence_id": "E-TP-CRON", "type": "scheduler_state", "supports": ["C-TP-004", "C-TP-005"], "payload": sanitized_cron},
     ]
     cron_job_names = {str(j.get("name") or "") for j in cron.get("jobs", []) if isinstance(j, dict)}
     cron_required_present = sorted(set(TASKPOOL_CRON_JOB_NAMES) - cron_job_names)
     cron_observable = cron.get("status") == "OK" and not cron_required_present
-    auto_completer_safe = auto_semantics.get("semantic_status") in {"ok", "ok_with_task_blocker"} and auto_semantics.get("safe_for_next_tick") is True
-    gate_status = "PASS" if proof.get("status") == "PASS" and selfcheck.get("status") == "PASS" and boundary.get("status") == "PASS" and cron_observable and auto_completer_safe else "WARN"
+    auto_completer_safe = auto_semantics.get("semantic_status") in SAFE_AUTO_COMPLETER_SEMANTIC_STATUSES and auto_semantics.get("safe_for_next_tick") is True
+    gate_status = "PASS" if proof.get("status") == "PASS" and selfcheck.get("status") == "PASS" and boundary.get("status") == "PASS" and permission_audit.get("status") == "PASS" and cron_observable and auto_completer_safe else "WARN"
     status = "OK" if gate_status == "PASS" else "FAIL"
     return {
         "status": status,
@@ -4013,10 +6967,19 @@ def build_taskpool_evidence_spine(max_agents: int = 3) -> dict[str, Any]:
             "proof_check": proof.get("status"),
             "selfcheck": selfcheck.get("status"),
             "boundary_check": boundary.get("status"),
+            "priority_mode": taskpool_priority_mode(),
+            "priority_mode_file": str(TASKPOOL_PRIORITY_MODE_FILE),
             "parallel_selected_count": parallel.get("selected_count"),
+            "parallel_selected_lanes": [str(row.get("lane") or "") for row in parallel.get("selected", []) if isinstance(row, dict)],
             "autorun_enabled": autorun["autorun_enabled"],
             "multimodel_pass_rate": (multimodel.get("convergence") or {}).get("pass_rate"),
             "multimodel_trigger_rate": (multimodel.get("convergence") or {}).get("trigger_rate"),
+            "permission_audit": permission_audit.get("status"),
+            "permission_taxonomy_status": permission_audit.get("status"),
+            "unknown_surfaces": permission_audit.get("invalid", []),
+            "yolo_execution_defined": "yolo-execution" in taxonomy.AUTHORITY_TIERS,
+            "yolo_done_bypass_possible": False,
+            "taskpool_surface_known": "taskpool" in taxonomy.WRITE_SURFACES,
             "auto_completer_semantic_status": auto_semantics.get("semantic_status"),
             "auto_completer_safe_for_next_tick": auto_semantics.get("safe_for_next_tick"),
             "cron_status": cron.get("status"),
@@ -4105,21 +7068,28 @@ def command_autonomy_readiness(args: argparse.Namespace) -> dict[str, Any]:
     autorun_allowlist = load_autorun_allowlist()
     multimodel_allowlist = load_multimodel_allowlist()
     write_allowlist, write_allowlist_status = load_json_list_file(AUTONOMY_WRITE_ALLOWLIST)
-    write_surface_allowed = "kanban-worker" in {str(x).strip() for x in write_allowlist if isinstance(x, str)}
+    write_allowed_surfaces = {str(x).strip() for x in write_allowlist if isinstance(x, str)}
+    write_surface_allowed = "taskpool" in write_allowed_surfaces
     spine_summary = evidence_spine.get("summary") or {}
     counts = spine_summary.get("counts") or {}
     evidence_ids = {str(e.get("evidence_id")) for e in evidence_spine.get("evidence", []) if isinstance(e, dict)}
     required_evidence_ids = {
         "E-TP-COUNTS", "E-TP-GATES", "E-TP-DISPATCH", "E-TP-AUTORUN",
-        "E-TP-AUTO-COMPLETER", "E-TP-MULTIMODEL", "E-TP-CRON",
+        "E-TP-AUTO-COMPLETER", "E-TP-MULTIMODEL", "E-TP-PERMISSIONS", "E-TP-CRON",
     }
+    priority_mode = taskpool_priority_mode()
+    selected_lanes = set(spine_summary.get("parallel_selected_lanes") or [])
+    by_lane = counts.get("by_lane") or {}
+    priority_lane = "evolution" if priority_mode == "evolution-first" else "work"
+    priority_lane_available = bool(by_lane.get(priority_lane, 0))
+    priority_lane_selected = priority_lane in selected_lanes or (not selected_lanes and int(spine_summary.get("parallel_selected_count") or 0) >= 1)
     checks = [
         {"id": "CHK-EVIDENCE-SPINE", "passed": evidence_spine.get("status") == "OK" and required_evidence_ids <= evidence_ids, "evidence": "E-TP-* stable IDs"},
         {"id": "CHK-GATES", "passed": evidence_spine.get("gate_status") == "PASS" and spine_summary.get("selfcheck") == "PASS" and spine_summary.get("proof_check") == "PASS" and spine_summary.get("boundary_check") == "PASS", "evidence": "selfcheck/proof-check/boundary-check"},
         {"id": "CHK-CRON-OBSERVABILITY", "passed": spine_summary.get("cron_status") == "OK" and not spine_summary.get("cron_required_missing"), "evidence": "required taskpool cron jobs are readable and present", "missing": spine_summary.get("cron_required_missing", [])},
-        {"id": "CHK-AUTO-COMPLETER-SEMANTICS", "passed": spine_summary.get("auto_completer_semantic_status") in {"ok", "ok_with_task_blocker"} and spine_summary.get("auto_completer_safe_for_next_tick") is True, "evidence": "auto-completer cron status is semantically safe"},
+        {"id": "CHK-AUTO-COMPLETER-SEMANTICS", "passed": spine_summary.get("auto_completer_semantic_status") in SAFE_AUTO_COMPLETER_SEMANTIC_STATUSES and spine_summary.get("auto_completer_safe_for_next_tick") is True, "evidence": "auto-completer cron status is semantically safe"},
         {"id": "CHK-PROOF-CHAIN", "passed": proof_ok, "evidence": str(AUTORUN_PROOF_LOG), "failures": proof_failures},
-        {"id": "CHK-WORK-PREEMPTION", "passed": bool((counts.get("by_lane") or {}).get("work", 0)) and int(spine_summary.get("parallel_selected_count") or 0) >= 1, "evidence": "parallel-dispatch-dry-run work lane selection"},
+        {"id": "CHK-PRIORITY-MODE-PREEMPTION", "passed": priority_lane_available and priority_lane_selected, "evidence": f"parallel-dispatch-dry-run selected priority lane {priority_lane}", "priority_mode": priority_mode, "selected_lanes": sorted(selected_lanes)},
         {"id": "CHK-STALE-CLAIMS", "passed": int(counts.get("stale_claims") or 0) == 0, "evidence": "canonical task counts"},
         {"id": "CHK-AUTORUN-BRIDGE", "passed": eligibility.get("status") == "PASS" and (eligibility.get("eligible") is True or "autorun_disabled" in eligibility.get("reasons", []) or "allowlist_empty" in eligibility.get("reasons", []) or "allowlist_miss" in eligibility.get("reasons", [])), "evidence": "eligibility-check is fail-closed and non-mutating"},
         {"id": "CHK-RATIFICATION-VERIFIER", "passed": verifier.get("status") == "PASS", "evidence": "ratification verifier pass+hollow-shell fail selftest"},
@@ -4138,7 +7108,7 @@ def command_autonomy_readiness(args: argparse.Namespace) -> dict[str, Any]:
     if write_allowlist_status != "ok":
         activation_blockers.append(f"write_allowlist_{write_allowlist_status}")
     elif not write_surface_allowed:
-        activation_blockers.append("write_surface_kanban_worker_not_allowlisted")
+        activation_blockers.append("write_surface_taskpool_not_allowlisted")
     if os.environ.get("HERMES_LOCAL_BRAIN_AUTORUN_KILL") == "1" or AUTORUN_KILL_SWITCH.exists():
         activation_blockers.append("kill_switch_active")
 
@@ -4175,20 +7145,89 @@ def command_autonomy_readiness(args: argparse.Namespace) -> dict[str, Any]:
             "multimodel_count": len(multimodel_allowlist),
             "write_allowlist_path": str(AUTONOMY_WRITE_ALLOWLIST),
             "write_allowlist_status": write_allowlist_status,
-            "write_surface_kanban_worker_allowed": write_surface_allowed,
+            "write_surface_taskpool_allowed": write_surface_allowed,
+            "write_allowed_surfaces": sorted(write_allowed_surfaces),
         },
+    }
+
+
+def command_permission_audit(args: argparse.Namespace) -> dict[str, Any]:
+    tasks = iter_tasks()
+    invalid: list[dict[str, Any]] = []
+    missing_fields: list[dict[str, Any]] = []
+    by_lane = {lane: 0 for lane in VALID_LANES}
+    for t in tasks:
+        by_lane[t.lane] = by_lane.get(t.lane, 0) + 1
+        failures = permission_validation_failures(t.fm)
+        if failures:
+            invalid.append({"task": t.id, "path": str(t.path), "lane": t.lane, "failures": failures})
+        for field in ("required_authority", "max_authority", "write_surfaces", "completion_gate"):
+            if t.fm.get(field) in (None, "", []):
+                missing_fields.append({"task": t.id, "path": str(t.path), "lane": t.lane, "field": field, "default": task_permission_contract_for_fm(t.fm).get(field)})
+    yolo = taxonomy.describe_authority("yolo-execution")
+    checks = [
+        {"id": "CHK-TASKPOOL-SURFACE", "passed": "taskpool" in taxonomy.WRITE_SURFACES, "evidence": "permission_taxonomy.WRITE_SURFACES"},
+        {"id": "CHK-YOLO-HIGHEST", "passed": taxonomy.authority_rank("yolo-execution") > taxonomy.authority_rank("autonomous-execution"), "evidence": "AUTHORITY_TIERS rank"},
+        {"id": "CHK-YOLO-NO-COMPLETE", "passed": yolo.get("may_complete_task") is False and yolo.get("lifecycle_proof_required") is True, "evidence": "describe_authority(yolo-execution)"},
+        {"id": "CHK-TASK-PERMISSION-FIELDS", "passed": not invalid, "evidence": "permission_validation_failures over canonical tasks"},
+    ]
+    failures = [c["id"] for c in checks if not c.get("passed")]
+    return {
+        "status": "PASS" if not failures else "FAIL",
+        "schema": "local_brain_task_permission_audit_v1",
+        "generated_at": iso(),
+        "task_count": len(tasks),
+        "by_lane": by_lane,
+        "checks": checks,
+        "failures": failures,
+        "invalid": invalid,
+        "missing_fields": missing_fields,
+        "lane_defaults": taxonomy.LANE_AUTHORITY_DEFAULTS,
+        "yolo_invariant": yolo,
+        "policy": "--yolo is highest execution-approval authority; task completion remains review->done plus evidence/proof gated",
+    }
+
+
+def command_permission_migrate(args: argparse.Namespace) -> dict[str, Any]:
+    write = bool(getattr(args, "apply", False)) and not bool(getattr(args, "dry_run", False))
+    actions: list[dict[str, Any]] = []
+    for t in iter_tasks(include_generated=False):
+        before = dict(t.fm)
+        after = dict(t.fm)
+        apply_permission_defaults(after)
+        changed = {k: after.get(k) for k in ("required_authority", "max_authority", "permission_tier", "write_surfaces", "completion_gate", "lane_semantics") if before.get(k) != after.get(k)}
+        if not changed:
+            continue
+        actions.append({"task": t.id, "path": str(t.path), "lane": t.lane, "changes": changed, "write": write})
+        if write:
+            t.fm.update(changed)
+            t.body += f"\n- {iso()}: Permission taxonomy defaults applied by `permission-migrate --apply`. Changes: {json.dumps(changed, ensure_ascii=False)}\n"
+            save_task(t)
+    derived_refresh = refresh_derived_task_views("permission-migrate") if write and actions else None
+    return {
+        "status": "OK",
+        "schema": "local_brain_task_permission_migration_v1",
+        "write": write,
+        "dry_run": not write,
+        "action_count": len(actions),
+        "actions": actions,
+        "lane_defaults": taxonomy.LANE_AUTHORITY_DEFAULTS,
+        "derived_refresh": derived_refresh,
+        "safety": "dry-run by default; --apply only writes frontmatter defaults and audit body line",
     }
 
 
 def command_dashboard(args: argparse.Namespace) -> dict[str, Any]:
     ensure_inbox()
-    dashboard, pool = render_dashboard()
-    control = render_control_center()
     if args.write:
-        atomic_write(DASHBOARD, dashboard)
-        atomic_write(SORTED_POOL, pool)
-        atomic_write(CONTROL_CENTER, control)
-    return {"status": "OK", "write": bool(args.write), "dashboard": str(DASHBOARD), "sorted_pool": str(SORTED_POOL), "control_center": str(CONTROL_CENTER), "active_count": len(sorted_tasks()), "mission_summaries": mission_dag_summaries(iter_tasks()), "multimodel_convergence": multimodel_convergence_stats()}
+        derived_refresh = refresh_derived_task_views("dashboard")
+    else:
+        # Render once for parity with --write and to catch template errors, but
+        # do not mutate derived files in dry-run mode.
+        render_dashboard()
+        render_control_center()
+        derived_refresh = None
+    return {"status": "OK", "write": bool(args.write), "dashboard": str(DASHBOARD), "sorted_pool": str(SORTED_POOL), "control_center": str(CONTROL_CENTER), "active_count": len(sorted_tasks()), "mission_summaries": mission_dag_summaries(iter_tasks()), "multimodel_convergence": multimodel_convergence_stats(), "derived_refresh": derived_refresh}
 
 
 def command_selfcheck(args: argparse.Namespace) -> dict[str, Any]:
@@ -4202,17 +7241,20 @@ def command_selfcheck(args: argparse.Namespace) -> dict[str, Any]:
         missing_alignment = architecture_alignment_missing(t.fm)
         if missing_alignment:
             failures.append(f"evolution architecture alignment missing {missing_alignment}: {t.path}")
+        permission_failures = permission_validation_failures(t.fm)
+        if permission_failures:
+            failures.append(f"permission contract invalid {permission_failures}: {t.path}")
         if t.status not in VALID_STATUSES:
             failures.append(f"invalid status {t.status}: {t.path}")
         if t.status not in LIFECYCLE_TRANSITIONS:
             failures.append(f"status missing lifecycle transition contract {t.status}: {t.path}")
         if t.priority not in PRIORITY_WEIGHT:
             warnings.append(f"unknown priority {t.priority}: {t.path}")
-        if t.status in {"claimed", "running", "review"} and not t.fm.get("claimed_by"):
+        if t.status in CLAIM_BOUND_STATUSES and not t.fm.get("claimed_by"):
             failures.append(f"claim-bound status missing claimed_by: {t.path}")
-        if t.status in {"claimed", "running", "review"} and not t.fm.get("claim_expires_at"):
+        if t.status in CLAIM_BOUND_STATUSES and not t.fm.get("claim_expires_at"):
             failures.append(f"claim-bound status missing claim_expires_at: {t.path}")
-        if t.status in {"claimed", "running", "review"} and not t.fm.get("run_id"):
+        if t.status in CLAIM_BOUND_STATUSES and not t.fm.get("run_id"):
             failures.append(f"claim-bound status missing run_id: {t.path}")
         if t.status not in TERMINAL_STATUSES and not t.fm.get("expires_at"):
             warnings.append(f"active task missing expires_at: {t.path}")
@@ -4241,8 +7283,11 @@ def command_selfcheck(args: argparse.Namespace) -> dict[str, Any]:
             failures.append("control center missing natural-language trigger")
         if "multimodel-intervention-dry-run" not in control_text or "ratification-gate" not in control_text:
             failures.append("control center missing automatic multi-model intervention trigger/gate")
+    semantic_cp = semantic_control_plane_selfcheck()
+    for item in semantic_cp.get("warnings", []):
+        warnings.append(f"semantic control-plane warning: {item}")
     status = "PASS" if not failures else "FAIL"
-    return {"status": status, "task_count": len(iter_tasks()), "failures": failures, "warnings": warnings, "boundary": boundary, "paths": {"dashboard": str(DASHBOARD), "control_center": str(CONTROL_CENTER), "sorted_pool": str(SORTED_POOL), "inbox": str(INBOX)}}
+    return {"status": status, "task_count": len(iter_tasks()), "failures": failures, "warnings": warnings, "boundary": boundary, "semantic_control_plane": semantic_cp, "paths": {"dashboard": str(DASHBOARD), "control_center": str(CONTROL_CENTER), "sorted_pool": str(SORTED_POOL), "inbox": str(INBOX)}}
 
 
 def print_result(result: dict[str, Any], as_json: bool) -> int:
@@ -4276,6 +7321,14 @@ def build_parser() -> argparse.ArgumentParser:
     ap.add_argument("--capability-delta", default="")
     ap.add_argument("--anti-drift-check", default="")
     ap.add_argument("--acceptance-evidence", default="")
+    ap.add_argument("--priority-layer", default="")
+    ap.add_argument("--dependency-order", default="")
+    ap.add_argument("--multimodel-triage-result", default="")
+    ap.add_argument("--requires-multimodel", action="store_true")
+    ap.add_argument("--multimodel-reason", default="")
+    ap.add_argument("--expected-participants", default="")
+    ap.add_argument("--truth-gate", default="")
+    ap.add_argument("--evidence-bundle", default="")
     ap.add_argument("--layer", default="L3")
     ap.add_argument("--workflow-contract", default=DEFAULT_WORKFLOW)
     ap.add_argument("--workspace", default="")
@@ -4320,9 +7373,39 @@ def build_parser() -> argparse.ArgumentParser:
     dp.add_argument("task")
     dp.add_argument("--actor", default="hermes")
     dp.add_argument("--evidence", action="append", default=[])
+    dp.add_argument("--authority", default="", choices=["", *taxonomy.AUTHORITY_TIERS])
     dp.add_argument("--reason", default="")
     dp.add_argument("--force", action="store_true")
     dp.add_argument("--json", action="store_true")
+
+    acrp = sub.add_parser("auto-close-review")
+    acrp.add_argument("--task", default="")
+    acrp.add_argument("--actor", default="hermes-autorun-review-close")
+    acrp.add_argument("--max-tasks", type=int, default=5)
+    acrp.add_argument("--reason", default="")
+    acrp.add_argument("--authority", default="autonomous-execution", choices=["", *taxonomy.AUTHORITY_TIERS])
+    acrp.add_argument("--json", action="store_true")
+
+    brp = sub.add_parser("blocked-resolve-step")
+    brp.add_argument("--task", default="")
+    brp.add_argument("--actor", default="hermes-blocked-resolver")
+    brp.add_argument("--max-tasks", type=int, default=5)
+    brp.add_argument("--authority", default="autonomous-execution", choices=["", *taxonomy.AUTHORITY_TIERS])
+    brp.add_argument("--retry-delay-minutes", type=int, default=0)
+    brp.add_argument("--no-transient-to-retry", dest="transient_to_retry", action="store_false")
+    brp.set_defaults(transient_to_retry=True)
+    brp.add_argument("--force", action="store_true")
+    brp.add_argument("--json", action="store_true")
+
+    asnp = sub.add_parser("auto-split-non-convergence")
+    asnp.add_argument("--task", required=True)
+    asnp.add_argument("--json", action="store_true")
+
+    assp = sub.add_parser("auto-subtask-sync")
+    assp.add_argument("--task", default="")
+    assp.add_argument("--write", action="store_true")
+    assp.add_argument("--actor", default="hermes-auto-subtask-sync")
+    assp.add_argument("--json", action="store_true")
 
     pcp = sub.add_parser("proof-check")
     pcp.add_argument("--include-active", action="store_true")
@@ -4342,6 +7425,7 @@ def build_parser() -> argparse.ArgumentParser:
     trp.add_argument("task")
     trp.add_argument("--to", dest="to_status", required=True, choices=VALID_STATUSES)
     trp.add_argument("--actor", default="hermes")
+    trp.add_argument("--authority", default="", choices=["", *taxonomy.AUTHORITY_TIERS])
     trp.add_argument("--reason", default="")
     trp.add_argument("--evidence", action="append", default=[])
     trp.add_argument("--ttl-minutes", type=int, default=60)
@@ -4429,6 +7513,30 @@ def build_parser() -> argparse.ArgumentParser:
     arp.add_argument("--no-reconcile", action="store_true", help="skip reconcile preflight")
     arp.add_argument("--json", action="store_true")
 
+    pap = sub.add_parser("permission-audit")
+    pap.add_argument("--json", action="store_true")
+
+    scp = sub.add_parser("semantic-control-plane-dry-run")
+    scp.add_argument("--task", default="")
+    scp.add_argument("--project", default="")
+    scp.add_argument("--max-tasks", type=int, default=20)
+    scp.add_argument("--json", action="store_true")
+
+    pmp = sub.add_parser("permission-migrate")
+    pmp.add_argument("--dry-run", action="store_true", help="show changes without writing")
+    pmp.add_argument("--apply", action="store_true", help="write default permission fields")
+    pmp.add_argument("--json", action="store_true")
+
+    bhp = sub.add_parser("budget-handoff-check")
+    bhp.add_argument("--task")
+    bhp.add_argument("--quota-state", required=True, choices=["healthy", "degraded", "limited", "exhausted", "unknown"])
+    bhp.add_argument("--confidence", required=True, choices=["high", "medium", "low", "unknown"])
+    bhp.add_argument("--signal", default="")
+    bhp.add_argument("--pending-side-effect", action="store_true")
+    bhp.add_argument("--non-idempotent", action="store_true")
+    bhp.add_argument("--context-pressure", action="store_true")
+    bhp.add_argument("--json", action="store_true")
+
     sp = sub.add_parser("selfcheck")
     sp.add_argument("--json", action="store_true")
     return p
@@ -4450,6 +7558,14 @@ def main(argv: list[str] | None = None) -> int:
         return print_result(command_release(args), args.json)
     if args.cmd == "done":
         return print_result(command_done(args), args.json)
+    if args.cmd == "auto-close-review":
+        return print_result(command_auto_close_review(args), args.json)
+    if args.cmd == "blocked-resolve-step":
+        return print_result(command_blocked_resolve_step(args), args.json)
+    if args.cmd == "auto-split-non-convergence":
+        return print_result(command_auto_split_non_convergence(args), args.json)
+    if args.cmd == "auto-subtask-sync":
+        return print_result(command_auto_subtask_sync(args), args.json)
     if args.cmd == "proof-check":
         return print_result(command_proof_check(args), args.json)
     if args.cmd == "retry":
@@ -4488,6 +7604,15 @@ def main(argv: list[str] | None = None) -> int:
         return print_result(command_auto_claim_and_handoff(args), args.json)
     if args.cmd == "autorun-runner":
         return print_result(command_autorun_runner(args), args.json)
+    if args.cmd == "permission-audit":
+        return print_result(command_permission_audit(args), args.json)
+    if args.cmd == "semantic-control-plane-dry-run":
+        return print_result(semantic_control_plane_report(task_id=args.task, project=args.project, max_tasks=args.max_tasks), args.json)
+    if args.cmd == "permission-migrate":
+        return print_result(command_permission_migrate(args), args.json)
+    if args.cmd == "budget-handoff-check":
+        return print_result(command_budget_handoff_check(args), args.json)
+
     if args.cmd == "selfcheck":
         return print_result(command_selfcheck(args), args.json)
     raise SystemExit(2)
