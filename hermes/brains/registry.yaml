@@ -1,0 +1,55 @@
+# Hermes Brain Overlay Registry
+version: 0.1.0
+updated_at: 2026-05-18T21:20:16+0800
+runtime:
+  id: hermes-runtime
+  path: /Users/charles/.hermes/hermes-agent
+  stable_branch: private/main
+  private_remote: https://github.com/Charles-beta-he/hermes-agent-private.git
+  upstream_remote: https://github.com/NousResearch/hermes-agent.git
+  governance_docs:
+    - /Users/charles/.hermes/hermes-agent/docs/private/overlay-registry.md
+    - /Users/charles/.hermes/hermes-agent/docs/private/upgrade-sop.md
+    - /Users/charles/.hermes/hermes-agent/docs/private/stable-points.md
+  post_update_guard: /Users/charles/.hermes/scripts/post-update-check.py
+  required_selfcheck: private_repo_governance
+brain_repos:
+  personal_hermes_brain:
+    role: sanitized-knowledge-and-brain-overlay-backup
+    path: /Users/charles/Code/personal-hermes-brain
+    remote: https://github.com/Charles-beta-he/personal-hermes-brain.git
+    branch: main
+    backup_branch_for_private_repo_selfcheck: backup/selfcheck-private-repo-governance-20260518
+    contains:
+      - sanitized brain markdown
+      - selected scripts
+      - skills
+      - project-profiles
+    excludes:
+      - raw memory
+      - sessions
+      - state.db/sqlite/wal/shm
+      - auth/token/env files
+subbrains:
+  base:
+    path: /Users/charles/.hermes/brains/base/brain.yaml
+    version: 0.1.0
+    role: common constitution, memory policy, evidence packet, tool policy
+  main:
+    path: /Users/charles/.hermes/brains/main/brain.yaml
+    version: 0.1.0
+    role: router, dispatcher, acceptance arbiter, self-evolution steward
+  dev:
+    path: /Users/charles/.hermes/brains/dev/brain.yaml
+    version: 0.1.0
+    role: software delivery, project engineering, verification
+  hermes-core:
+    path: /Users/charles/.hermes/brains/hermes-core/brain.yaml
+    version: 0.1.0
+    role: Hermes runtime/private fork/overlay governance brain
+routing:
+  default_entry: main
+  hermes_private_repo_governance: hermes-core
+  personal_brain_backup_governance: hermes-core
+  taskpool_multimodel_hook_changes: hermes-core
+  general_software_project_changes: dev

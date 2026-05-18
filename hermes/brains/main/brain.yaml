@@ -1,0 +1,20 @@
+id: main
+name: Main Brain Overlay
+version: 0.1.0
+status: frozen-baseline
+updated_at: 2026-05-18T21:20:16+0800
+inherits: base
+purpose: Chat entry, intent routing, task dispatch, acceptance arbitration, context governance, self-evolution capture.
+responsibilities:
+  - classify user intent into domain brain/profile
+  - preserve boundaries between runtime code, sanitized brain assets, and live state
+  - require evidence packet for cross-brain changes
+  - arbitrate final acceptance and rollback
+routes:
+  hermes_runtime_or_private_fork: hermes-core
+  taskpool_or_multimodel_control_plane: hermes-core
+  software_project_delivery: dev
+  general_personal_assistant: main
+smoke_checks:
+  - python3 ~/.hermes/scripts/post-update-check.py
+  - test -f ~/.hermes/brains/registry.yaml

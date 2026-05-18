@@ -1,0 +1,58 @@
+id: hermes-core
+name: Hermes Core Brain Overlay
+version: 0.1.0
+status: frozen-baseline
+updated_at: 2026-05-18T21:20:16+0800
+inherits: base
+purpose: Own Hermes Runtime/private fork governance, sanitized personal brain backup, taskpool/multimodel/conductor control-plane evolution.
+assets:
+  runtime_private_code_repo:
+    path: /Users/charles/.hermes/hermes-agent
+    private_remote: https://github.com/Charles-beta-he/hermes-agent-private.git
+    upstream_remote: https://github.com/NousResearch/hermes-agent.git
+    stable_branch: private/main
+    governance_docs:
+      - docs/private/overlay-registry.md
+      - docs/private/upgrade-sop.md
+      - docs/private/stable-points.md
+  sanitized_brain_backup_repo:
+    path: /Users/charles/Code/personal-hermes-brain
+    remote: https://github.com/Charles-beta-he/personal-hermes-brain.git
+    current_wip_scope:
+      - hermes/scripts/brain_task_dispatch_tick.py
+      - hermes/scripts/brain_task_orchestrator.py
+      - hermes/scripts/consult_models.py
+      - hermes/scripts/test_brain_task_dispatch_tick.py
+      - hermes/scripts/test_brain_task_orchestrator.py
+    interpretation: taskpool/multimodel/conductor governance WIP; classify and commit separately before merging main.
+  live_guards:
+    post_update_check: /Users/charles/.hermes/scripts/post-update-check.py
+    required_checks:
+      - private_repo_governance
+      - overlay_registry
+      - hook_registry_selfcheck
+      - conductor_runtime_productization_regression
+      - openclaw_productization_regression
+boundaries:
+  never_git:
+    - raw memory
+    - sessions
+    - state.db/sqlite/wal/shm
+    - auth/token/env
+    - cache/log/runtime artifacts
+  do_not_do_by_default:
+    - upstream update on dirty tree
+    - force-push personal-hermes-brain main to resolve historical divergence
+    - nested global multimodel hook fanout
+routing_rules:
+  - if request mentions Hermes update/private fork/overlay/post-update-check, use hermes-core.
+  - if request touches taskpool event hook or expensive multimodel route, use hermes-core.
+  - if personal-hermes-brain contains WIP, treat it as sanitized brain asset WIP and preserve unrelated files.
+verification:
+  syntax:
+    - python3 -m py_compile ~/.hermes/scripts/post-update-check.py
+  runtime_selfcheck:
+    - python3 ~/.hermes/scripts/post-update-check.py
+  repo_state:
+    - git -C ~/.hermes/hermes-agent status --short --branch
+    - git -C ~/Code/personal-hermes-brain status --short --branch
