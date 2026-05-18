@@ -131,9 +131,19 @@ def validate_policy_for_task(policy: dict[str, Any], row: dict[str, Any]) -> tup
     task_id = str(row.get("id") or "")
     lane = str(row.get("lane") or "")
     project = str(row.get("project") or "")
+    architecture_target = str(row.get("architecture_target") or "")
+    brain = str(row.get("brain") or "")
     policy_task_ids = as_list(policy.get("task_ids"))
     policy_projects = as_list(policy.get("projects"))
-    project_keys = [project, f"project:{project}" if project else ""]
+    project_keys = [
+        project,
+        f"project:{project}" if project else "",
+        architecture_target,
+        f"architecture:{architecture_target}" if architecture_target else "",
+        f"project:{architecture_target}" if architecture_target else "",
+        brain,
+        f"brain:{brain}" if brain else "",
+    ]
     task_allowed = "*" in policy_task_ids or task_id in policy_task_ids or any(k and k in policy_projects for k in project_keys)
     if not task_allowed:
         reasons.append("policy_task_miss")

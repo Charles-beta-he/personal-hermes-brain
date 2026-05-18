@@ -2603,6 +2603,11 @@ def evidence_is_structured(e: str) -> bool:
     prefixes = (
         "command:", "file:", "search:", "brainctl:", "url:", "artifact:", "proof:",
         "live_lark_snapshot:", "classification:",
+        # Compatibility for auto-subtask backfill records written before
+        # evidence_is_structured learned these relationship shapes.  They are
+        # structured taskpool links, not free-form proof, and must not freeze
+        # global proof/evidence gates for unrelated dispatchable tasks.
+        "child-task:", "child-axis:",
     )
     if e.startswith(prefixes):
         return True
@@ -2756,16 +2761,35 @@ def load_multimodel_allowlist() -> list[Any]:
 
 
 def autorun_allowlist_matches(task: Task, allowlist: list[Any]) -> bool:
+    architecture_target = str(getattr(task, "architecture_target", "") or task.fm.get("architecture_target") or "").strip()
+    brain = str(task.fm.get("brain") or "").strip()
     for item in allowlist:
         if isinstance(item, str):
             token = item.strip()
-            if token in {task.id, f"task:{task.id}", task.project, f"project:{task.project}", task.title}:
+            # Backward compatibility: older allowlists used project:local-brain
+            # for the local-brain execution surface even when task.project is the
+            # broader project name (for example `hermes`).  Match the explicit
+            # project plus the architecture/brain routing surfaces without
+            # broadening to all Hermes tasks.
+            if token in {
+                task.id, f"task:{task.id}", task.project, f"project:{task.project}", task.title,
+                architecture_target, f"architecture:{architecture_target}", f"project:{architecture_target}",
+                brain, f"brain:{brain}",
+            }:
                 return True
         elif isinstance(item, dict):
             task_id = str(item.get("task_id") or item.get("id") or "").strip()
             project = str(item.get("project") or "").strip()
+            architecture = str(item.get("architecture_target") or item.get("architecture") or "").strip()
+            item_brain = str(item.get("brain") or "").strip()
             title = str(item.get("title") or "").strip()
-            if (task_id and task_id == task.id) or (project and project == task.project) or (title and title == task.title):
+            if (
+                (task_id and task_id == task.id)
+                or (project and project in {task.project, architecture_target})
+                or (architecture and architecture == architecture_target)
+                or (item_brain and item_brain == brain)
+                or (title and title == task.title)
+            ):
                 return True
     return False
 
@@ -2877,6 +2901,8 @@ def lifecycle_gate(task: Task, to_status: str, actor: str, evidence: list[str] |
         failures.append(f"invalid evidence shape: {invalid_evidence}; use command:/file:/search:/brainctl:/artifact:/url:/proof: prefixes or an existing absolute path")
     if to_status == "done" and evidence:
         failures.extend(completion_gate_failures(task, evidence))
+    if to_status == "done" and task_multimodel_intervention_required(task) and not task_multimodel_passed(task):
+        failures.append("multimodel_certification_required_before_done")
     if to_status == "done" and is_autorun_context(task, actor):
         proof_hashes = [str(e)[len("proof:") :] for e in evidence if str(e).startswith("proof:sha256:")]
         if not proof_hashes:
