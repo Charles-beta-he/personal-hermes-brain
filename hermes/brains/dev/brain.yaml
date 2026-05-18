@@ -1,0 +1,22 @@
+id: dev
+name: Development Brain Overlay
+version: 0.1.0
+status: frozen-baseline
+updated_at: 2026-05-18T21:20:16+0800
+inherits: base
+purpose: Software delivery across frontend/backend/admin/contract/devops/ui profiles.
+profiles:
+  - frontend
+  - backend
+  - admin
+  - contract
+  - devops
+  - ui-ux
+verification:
+  default:
+    - inspect git status first
+    - run relevant tests/builds
+    - verify no feature/entry/field regression
+routes:
+  hermes_core_code: hermes-core
+  external_product_code: dev
