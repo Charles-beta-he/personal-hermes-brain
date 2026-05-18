@@ -1,0 +1,45 @@
+id: main
+name: Main Brain Overlay
+version: 0.2.0
+status: active-router
+updated_at: 2026-05-19T01:35:00+0800
+inherits: base
+purpose: Chat entry, intent routing, task dispatch, acceptance arbitration, context governance, self-evolution capture, and multi-brain delegation.
+responsibilities:
+  - classify user intent into domain brain/profile before tool execution
+  - preserve boundaries between runtime code, sanitized brain assets, and live state
+  - require evidence packet for cross-brain changes
+  - arbitrate final acceptance, rollback, and unresolved-risk reporting
+  - prevent external-source analysis from collapsing into generic summaries
+routes:
+  hermes_runtime_or_private_fork: hermes-core
+  taskpool_or_multimodel_control_plane: hermes-core
+  agent_orchestration_control_plane_absorption: hermes-core
+  software_project_delivery: dev
+  design_system_or_design_manual: design
+  external_source_registry_or_fresh_context: research
+  media_voice_video_tool_evaluation: media
+  model_routing_quota_or_mlops: mlops
+  skill_workflow_ecosystem_or_template_extraction: workflow
+routing_protocol:
+  first_pass:
+    - identify whether the request is runtime governance, product delivery, source research, media, model ops, design, or workflow/skill ecosystem
+    - if multiple brains match, select owner brain plus delegate brains; main remains final arbiter
+  required_output_for_cross_brain_analysis:
+    - owner_brain
+    - delegate_brains
+    - source_evidence_boundary
+    - capability_delta
+    - adopt_defer_reject
+    - landing_surface
+    - verification_slice
+  stop_conditions:
+    - no canonical source for external adoption
+    - no owner brain selected for implementation
+    - evidence packet lacks commands/files/URLs
+smoke_checks:
+  - python3 ~/.hermes/scripts/post-update-check.py
+  - test -f ~/.hermes/brains/registry.yaml
+  - python3 ~/.hermes/scripts/brainctl.py --json brains route "analyze external GitHub repo and decide adopt or reject"
+  - python3 ~/.hermes/scripts/brainctl.py --json brains route "extract DESIGN.md design system rules"
+  - python3 ~/.hermes/scripts/brainctl.py --json brains route "evaluate voice cloning media tool"

@@ -1,0 +1,60 @@
+id: design
+name: Design and UI System Brain Overlay
+version: 0.1.0
+status: active-baseline
+updated_at: 2026-05-19T01:35:00+0800
+inherits: base
+purpose: Own product/UI design-system absorption, DESIGN.md consumption, visual quality gates, banner/slide/brand systems, and design-to-implementation verification.
+capabilities:
+  - design_system_absorption
+  - design_manual_authoring_and_consumption
+  - visual_quality_governance
+  - brand_token_component_rule_extraction
+  - screenshot_and_accessibility_evidence
+source_patterns_absorbed:
+  - awesome-design-md: DESIGN.md as agent-operable design contract
+  - ui-ux-pro-max: taste/style/token libraries and platform adapters
+  - baseline-ui: baseline implementation constraints and accessibility defaults
+  - fireworks-tech-graph: diagram/SVG export and workflow visual templates
+profiles:
+  design_manual:
+    owns:
+      - project DESIGN.md templates, brand/tone/color/token/component/layout/accessibility rules
+    required_inputs:
+      - project_or_product_surface
+      - existing_design_manual_or_absence_reason
+      - brand_and_token_sources
+      - component_inventory
+      - target_platforms
+    verification_defaults:
+      - design_manual_loaded_or_created
+      - baseline_ui_conflict_check
+      - ckm_design_system_conflict_check
+      - screenshot_or_visual_diff_evidence
+      - accessibility_keyboard_focus_check
+    stop_conditions:
+      - generic_visual_advice_without_project_rules
+      - replacing_existing_brand_tokens_without_decision
+  ui_implementation_review:
+    owns:
+      - front-end visual acceptance review against design manual and user red lines
+    verification_defaults:
+      - desktop_1280_screenshot
+      - mobile_375_screenshot
+      - console_zero_error
+      - motion_performance_risk_check
+      - no_h5_regression
+routing_hints:
+  positive:
+    - DESIGN.md
+    - design system
+    - UI审美
+    - brand tokens
+    - banner/slide/diagram visual system
+  delegate_to_dev_when:
+    - implementation requires app build/test changes
+  delegate_to_hermes_core_when:
+    - skill loader or route mechanics must change
+smoke_checks:
+  - python3 ~/.hermes/scripts/brainctl.py --json brains route "UI implementation using project DESIGN.md"
+  - python3 ~/.hermes/scripts/brainctl.py --json brains route "extract design tokens from awesome-design-md"

@@ -1,0 +1,103 @@
+id: hermes-core
+name: Hermes Core Brain Overlay
+version: 0.2.0
+status: active-baseline
+updated_at: 2026-05-19T01:35:00+0800
+inherits: base
+purpose: Own Hermes Runtime/private fork governance, sanitized personal brain backup, taskpool/multimodel/conductor control-plane evolution.
+assets:
+  runtime_private_code_repo:
+    path: /Users/charles/.hermes/hermes-agent
+    private_remote: https://github.com/Charles-beta-he/hermes-agent-private.git
+    upstream_remote: https://github.com/NousResearch/hermes-agent.git
+    stable_branch: private/main
+    governance_docs:
+      - docs/private/overlay-registry.md
+      - docs/private/upgrade-sop.md
+      - docs/private/stable-points.md
+  sanitized_brain_backup_repo:
+    path: /Users/charles/Code/personal-hermes-brain
+    remote: https://github.com/Charles-beta-he/personal-hermes-brain.git
+    current_wip_scope:
+      - hermes/scripts/brain_task_dispatch_tick.py
+      - hermes/scripts/brain_task_orchestrator.py
+      - hermes/scripts/consult_models.py
+      - hermes/scripts/test_brain_task_dispatch_tick.py
+      - hermes/scripts/test_brain_task_orchestrator.py
+    interpretation: taskpool/multimodel/conductor governance WIP; classify and commit separately before merging main.
+  live_guards:
+    post_update_check: /Users/charles/.hermes/scripts/post-update-check.py
+    required_checks:
+      - private_repo_governance
+      - overlay_registry
+      - hook_registry_selfcheck
+      - conductor_runtime_productization_regression
+      - openclaw_productization_regression
+boundaries:
+  never_git:
+    - raw memory
+    - sessions
+    - state.db/sqlite/wal/shm
+    - auth/token/env
+    - cache/log/runtime artifacts
+  do_not_do_by_default:
+    - upstream update on dirty tree
+    - force-push personal-hermes-brain main to resolve historical divergence
+    - nested global multimodel hook fanout
+routing_rules:
+  - if request mentions Hermes update/private fork/overlay/post-update-check, use hermes-core.
+  - if request touches taskpool event hook or expensive multimodel route, use hermes-core.
+  - if personal-hermes-brain contains WIP, treat it as sanitized brain asset WIP and preserve unrelated files.
+verification:
+  syntax:
+    - python3 -m py_compile ~/.hermes/scripts/post-update-check.py
+  runtime_selfcheck:
+    - python3 ~/.hermes/scripts/brainctl.py --json brains validate
+    - python3 ~/.hermes/scripts/post-update-check.py
+  repo_state:
+    - git -C ~/.hermes/hermes-agent status --short --branch
+    - git -C ~/Code/personal-hermes-brain status --short --branch
+
+
+profiles:
+  agent_control_plane_absorption:
+    owns:
+      - external agent-framework repo analysis that changes Hermes taskpool, conductor, continuation, budget, handoff, or evidence governance
+      - mapping Rowboat/Symphony/EvoAgentX/Orca/JCode/Paperclip/OpenClaw/Dreaming/Outcomes style mechanisms into Hermes fail-closed control-plane deltas
+    required_inputs:
+      - canonical_source
+      - mechanism_evidence
+      - current_hermes_control_plane_baseline
+      - capability_delta
+      - safety_boundary
+      - minimal_runtime_or_script_slice
+    verification_defaults:
+      - source_validation_completed
+      - control_plane_gap_map
+      - default_off_or_warn_only_rollout
+      - py_compile_or_targeted_tests
+      - post_update_check_relevant_guard
+      - taskpool_selfcheck_proof_evidence_spine_when_taskpool_touched
+    stop_conditions:
+      - self_relaxing_certification_or_truth_gate_patch
+      - runtime_state_or_secret_in_git
+      - generic_agent_framework_summary_without_hermes_landing_surface
+  sanitized_brain_backup_governance:
+    owns:
+      - personal-hermes-brain sync, safe tree validation, push guard, and divergent-history handling
+    stop_conditions:
+      - force_push_without_explicit_user_approval_and_backup
+      - committing untracked sanitized sync spillover without scope review
+routing_hints:
+  positive:
+    - taskpool
+    - conductor
+    - continuation
+    - budget handoff
+    - OpenClaw
+    - Dreaming Outcomes
+    - Rowboat Symphony EvoAgentX Orca JCode Paperclip
+  delegate_to_workflow_when:
+    - the delta is skill/template/process only, not runtime/control-plane code
+  delegate_to_mlops_when:
+    - the delta is primarily provider/model/quota routing

@@ -1,0 +1,104 @@
+version: 0.4.0
+updated_at: 2026-05-19T01:35:00+0800
+runtime:
+  id: hermes-runtime
+  path: /Users/charles/.hermes/hermes-agent
+  stable_branch: private/main
+  private_remote: https://github.com/Charles-beta-he/hermes-agent-private.git
+  upstream_remote: https://github.com/NousResearch/hermes-agent.git
+  governance_docs:
+  - /Users/charles/.hermes/hermes-agent/docs/private/overlay-registry.md
+  - /Users/charles/.hermes/hermes-agent/docs/private/upgrade-sop.md
+  - /Users/charles/.hermes/hermes-agent/docs/private/stable-points.md
+  - /Users/charles/.hermes/hermes-agent/docs/private/multibrain-architecture.md
+  post_update_guard: /Users/charles/.hermes/scripts/post-update-check.py
+  required_selfcheck: private_repo_governance
+brain_repos:
+  personal_hermes_brain:
+    role: sanitized-knowledge-and-brain-overlay-backup
+    path: /Users/charles/Code/personal-hermes-brain
+    remote: https://github.com/Charles-beta-he/personal-hermes-brain.git
+    branch: main
+    backup_branch_for_private_repo_selfcheck: backup/selfcheck-private-repo-governance-20260518
+    contains:
+    - sanitized brain markdown
+    - selected scripts
+    - skills
+    - project-profiles
+    excludes:
+    - raw memory
+    - sessions
+    - state.db/sqlite/wal/shm
+    - auth/token/env files
+subbrains:
+  base:
+    path: /Users/charles/.hermes/brains/base/brain.yaml
+    version: 0.1.0
+    role: common constitution, memory policy, evidence packet, tool policy
+  main:
+    path: /Users/charles/.hermes/brains/main/brain.yaml
+    version: 0.2.0
+    role: router, dispatcher, acceptance arbiter, multi-brain delegation steward
+  dev:
+    path: /Users/charles/.hermes/brains/dev/brain.yaml
+    version: 0.3.0
+    role: senior software delivery, project engineering, verification, worker handoff,
+      external repo absorption, source validation, local-first static app delivery,
+      design-manual guided UI
+  hermes-core:
+    path: /Users/charles/.hermes/brains/hermes-core/brain.yaml
+    version: 0.2.0
+    role: Hermes runtime/private fork/overlay governance and agent control-plane absorption
+      brain
+  design:
+    path: /Users/charles/.hermes/brains/design/brain.yaml
+    version: 0.1.0
+    role: design systems, UI quality, DESIGN.md, brand/token/component governance
+  research:
+    path: /Users/charles/.hermes/brains/research/brain.yaml
+    version: 0.1.0
+    role: external source registry, fresh context, web research, provenance/citation
+      governance
+  media:
+    path: /Users/charles/.hermes/brains/media/brain.yaml
+    version: 0.1.0
+    role: voice/video/media tool validation, local media automation, model-weight/privacy
+      safety
+  mlops:
+    path: /Users/charles/.hermes/brains/mlops/brain.yaml
+    version: 0.1.0
+    role: model routing, quota/cost, inference/training/evaluation, model runtime
+      governance
+  workflow:
+    path: /Users/charles/.hermes/brains/workflow/brain.yaml
+    version: 0.1.0
+    role: skill/workflow ecosystem, template/protocol extraction, eval-driven skill
+      authoring
+routing:
+  default_entry: main
+  hermes_private_repo_governance: hermes-core
+  personal_brain_backup_governance: hermes-core
+  brain_overlay_schema_changes: hermes-core
+  taskpool_multimodel_hook_changes: hermes-core
+  model_quorum_provider_or_router_policy: hermes-core
+  hermes_runtime_or_private_fork_changes: hermes-core
+  general_software_project_changes: dev
+  frontend_backend_fullstack_delivery: dev
+  api_contract_and_browser_harness_verification: dev
+  project_ci_build_test_fixes: dev
+  ui_ux_admin_product_delivery: dev
+  external_repo_absorption_or_source_validation: dev
+  local_first_static_app_delivery: dev
+  design_manual_guided_ui_delivery: dev
+  web_research_browser_automation: dev
+  media_tool_evaluation: dev
+  external_source_registry_planning: dev
+  design_system_or_design_manual: design
+  visual_quality_or_ui_brand_governance: design
+  external_source_registry_or_fresh_context: research
+  web_research_browser_source_retrieval: research
+  media_voice_video_tool_evaluation: media
+  model_routing_quota_or_mlops: mlops
+  inference_training_eval_tool_assessment: mlops
+  skill_workflow_ecosystem_or_template_extraction: workflow
+  spec_driven_or_planning_workflow_absorption: workflow

@@ -1,0 +1,55 @@
+id: mlops
+name: Model Operations and Routing Brain Overlay
+version: 0.1.0
+status: active-baseline
+updated_at: 2026-05-19T01:35:00+0800
+inherits: base
+purpose: Own model/provider routing, quota/cost governance, inference/training/evaluation tool absorption, model memory/runtime tradeoffs, and fail-soft multimodel verification.
+capabilities:
+  - model_provider_routing_governance
+  - quota_cost_observability
+  - inference_training_eval_tool_assessment
+  - model_memory_context_runtime_design
+source_patterns_absorbed:
+  - keycompute: model routing, compute governance, observability
+  - MiniMind: lightweight LLM learning/evaluation reference boundary
+  - rtk-hermes: pre-tool command rewrite and token filtering
+  - TencentDB-Agent-Memory/openhuman/agentmemory/plur: memory/runtime layering candidates
+profiles:
+  routing_and_quota:
+    required_inputs:
+      - provider_or_model_surface
+      - cost_latency_quality_goal
+      - quota_failure_modes
+      - fallback_policy
+      - canonical_model_ids
+    verification_defaults:
+      - provider_probe_or_status_evidence
+      - canonical_id_match
+      - fail_soft_fallback_declared
+      - cost_or_quota_boundary_declared
+    stop_conditions:
+      - hardcoding_noncanonical_model_ids
+      - quota_unobservable_for_expensive_autorun
+  model_runtime_absorption:
+    owns:
+      - inference/training/eval/memory repos assessed for Hermes-compatible local-first adoption
+    verification_defaults:
+      - source_validation_completed
+      - dependency_and_hardware_cost_declared
+      - benchmark_or_smoke_boundary_declared
+routing_hints:
+  positive:
+    - model routing
+    - provider quota
+    - vLLM
+    - fine-tuning
+    - inference
+    - LLM eval
+    - token compression
+    - model memory
+  delegate_to_hermes_core_when:
+    - taskpool multimodel hook/control-plane code changes
+smoke_checks:
+  - python3 ~/.hermes/scripts/brainctl.py --json brains route "optimize model provider quota routing"
+  - python3 ~/.hermes/scripts/brainctl.py --json brains route "evaluate vLLM inference deployment"

@@ -1,0 +1,50 @@
+id: media
+name: Media and Voice Automation Brain Overlay
+version: 0.1.0
+status: active-baseline
+updated_at: 2026-05-19T01:35:00+0800
+inherits: base
+purpose: Own media/voice/video tool evaluation, local-first transcription/dubbing/translation workflows, model-weight/license/privacy checks, and sample-based quality evidence.
+capabilities:
+  - media_tool_source_validation
+  - local_voice_video_pipeline_evaluation
+  - model_weight_license_privacy_boundary
+  - ffmpeg_whisper_tts_youtube_automation
+source_patterns_absorbed:
+  - Voice Pro: local transcription, dubbing, translation, separation, YouTube processing surface
+  - DramaDirector: schema-first media orchestration, stateful CLI, drop-in skill integration
+  - OmniVoiceStudio: fail-closed 404/source-unverified handling before adoption
+profiles:
+  voice_video_tool_evaluation:
+    required_inputs:
+      - tool_source
+      - claimed_capabilities
+      - license
+      - install_surface
+      - model_weight_sources
+      - input_output_formats
+      - privacy_boundary
+    verification_defaults:
+      - canonical_source_verified
+      - license_and_weight_boundary_checked
+      - local_dependency_cost_declared
+      - cli_or_api_surface_checked
+      - sample_or_explicit_no_quality_claim_boundary
+    stop_conditions:
+      - source_unverified_or_404
+      - untrusted_binary_or_model_weights
+      - cloud_upload_of_private_media_without_user_consent
+routing_hints:
+  positive:
+    - voice cloning
+    - TTS
+    - Whisper
+    - ffmpeg
+    - YouTube audio/video
+    - 配音
+    - 语音克隆
+  delegate_to_dev_when:
+    - implementing a UI/API wrapper around a validated media tool
+smoke_checks:
+  - python3 ~/.hermes/scripts/brainctl.py --json brains route "verify OmniVoiceStudio source validation 404 before adoption"
+  - python3 ~/.hermes/scripts/brainctl.py --json brains route "evaluate local voice cloning and ffmpeg workflow"

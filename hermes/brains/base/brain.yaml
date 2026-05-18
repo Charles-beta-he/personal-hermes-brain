@@ -1,0 +1,20 @@
+id: base
+name: Base Brain Overlay
+version: 0.1.0
+status: frozen-baseline
+updated_at: 2026-05-18T21:20:16+0800
+purpose: Shared constitution for all Hermes brain overlays.
+principles:
+  - Evidence first; model agreement is advisory, not proof.
+  - Runtime state and sensitive state never enter Git.
+  - Brain overlays are controlled assets with version, changelog, smoke check, and rollback.
+  - Domain brains can propose evolution, but main brain arbitrates acceptance.
+required_files:
+  - constitution.md
+  - evidence-packet.md
+  - memory-policy.md
+  - tool-policy.md
+  - evolution-protocol.md
+compatibility_checks:
+  - python3 ~/.hermes/scripts/post-update-check.py
+  - brain overlay files must be text-only and secret-scanned before backup.

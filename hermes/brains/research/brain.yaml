@@ -1,0 +1,59 @@
+id: research
+name: Research and Fresh Context Brain Overlay
+version: 0.1.0
+status: active-baseline
+updated_at: 2026-05-19T01:35:00+0800
+inherits: base
+purpose: Own external source discovery, live web/browser retrieval strategy, public API/source registry, fresh-context indexing, and provenance-safe citations.
+capabilities:
+  - source_discovery_and_validation
+  - web_research_browser_automation_strategy
+  - external_source_registry_governance
+  - fresh_context_indexing
+  - citation_and_provenance_packets
+source_patterns_absorbed:
+  - public-apis: API catalog discovery with auth/freshness/quota fields
+  - Context7: versioned docs retrieval to reduce coding hallucination
+  - CocoIndex: incremental multi-source indexing and fresh context data plane
+  - web-access: cross-platform retrieval and browser automation strategy
+profiles:
+  source_registry:
+    required_inputs:
+      - source_url_or_catalog
+      - domain
+      - auth_requirement
+      - freshness_requirement
+      - quota_or_rate_limit
+      - license_or_usage_boundary
+      - fallback_source
+    verification_defaults:
+      - canonical_source_verified
+      - metadata_recorded
+      - freshness_and_auth_boundary_declared
+      - fallback_and_citation_path_present
+    stop_conditions:
+      - source_added_without_provenance
+      - dynamic_page_claim_without_browser_or_dom_evidence
+  fresh_context_pipeline:
+    owns:
+      - docs/API/article ingestion plans, indexing deltas, retrieval freshness, stale-doc risk
+    verification_defaults:
+      - current_url_cited
+      - version_or_timestamp_recorded
+      - cache_vs_live_boundary_declared
+      - retrieval_smoke_or_sample_query
+routing_hints:
+  positive:
+    - public APIs
+    - Context7
+    - fresh context
+    - source registry
+    - web-access
+    - latest docs
+  delegate_to_dev_when:
+    - retrieved data drives code implementation
+  delegate_to_hermes_core_when:
+    - retrieval pipeline mutates Hermes taskpool/runtime
+smoke_checks:
+  - python3 ~/.hermes/scripts/brainctl.py --json brains route "build external source registry from public APIs"
+  - python3 ~/.hermes/scripts/brainctl.py --json brains route "use Context7 latest docs for coding"

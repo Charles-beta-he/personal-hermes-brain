@@ -1,0 +1,47 @@
+id: workflow
+name: Workflow and Skill Ecosystem Brain Overlay
+version: 0.1.0
+status: active-baseline
+updated_at: 2026-05-19T01:35:00+0800
+inherits: base
+purpose: Own skill/workflow ecosystem absorption, planning-with-files, eval-driven skill authoring, orchestration-plan compilation, and reusable procedure distillation.
+capabilities:
+  - skill_ecosystem_governance
+  - workflow_plan_compilation
+  - eval_driven_skill_authoring
+  - reusable_template_and_protocol_extraction
+source_patterns_absorbed:
+  - SkillClaw: sandboxed skill evolution decisioning
+  - Perplexity agent skills: skill package structure and maintenance practices
+  - Superpowers/Planning with Files: composable development flows and context-loss resistance
+  - spec-kit: spec-driven development contract
+  - Dreaming/Outcomes: experience distillation and independent evaluator separation
+profiles:
+  external_workflow_absorption:
+    required_inputs:
+      - source_repo_or_article
+      - workflow_stage_map
+      - current_skill_or_brain_baseline
+      - proposed_template_or_protocol
+      - eval_or_smoke_test
+    verification_defaults:
+      - workflow_gap_map
+      - trigger_boundary_examples
+      - template_or_reference_file_created_or_deferred
+      - skill_graph_risk_declared
+    stop_conditions:
+      - generic_process_summary_without_skill_or_template_delta
+      - trigger_surface_widened_without_neighbor_examples
+routing_hints:
+  positive:
+    - skill ecosystem
+    - workflow generator
+    - planning with files
+    - spec-kit
+    - eval framework
+    - skill authoring
+  delegate_to_hermes_core_when:
+    - changing Hermes skill loader/runtime mechanics
+smoke_checks:
+  - python3 ~/.hermes/scripts/brainctl.py --json brains route "audit skill ecosystem and workflow gaps"
+  - python3 ~/.hermes/scripts/brainctl.py --json brains route "absorb spec-kit into workflow templates"
