@@ -231,6 +231,127 @@ class BrainctlTestCase(unittest.TestCase):
         commands = set(subparsers.choices)
         self.assertTrue({"validate", "expire", "promote", "review"} <= commands)
 
+    def test_html_build_generates_clickable_sidecar_without_mutating_canonical_markdown(self):
+        md = self.write_note(
+            "07-仪表盘/Dashboard.md",
+            "# Dashboard\n\nSee [[05-实践与项目/tasks/Task A]] and [external](https://example.com).\n",
+        )
+        self.write_note("05-实践与项目/tasks/Task A.md", "# Task A\n\nProof.\n")
+        before = md.read_text(encoding="utf-8")
+        result = brainctl.html_build(paths=["07-仪表盘/Dashboard.md"], json_mode=True)
+        self.assertEqual(result["written_count"], 1)
+        html_path = self.vault / "07-仪表盘/Dashboard.html"
+        self.assertTrue(html_path.exists())
+        html = html_path.read_text(encoding="utf-8")
+        self.assertIn('data-canonical-source="07-仪表盘/Dashboard.md"', html)
+        self.assertIn('href="Dashboard.md"', html)
+        self.assertIn('href="本地大脑图形导航.html"', html)
+        self.assertIn('href="../05-实践与项目/tasks/Task A.md"', html)
+        self.assertIn('href="https://example.com"', html)
+        self.assertEqual(md.read_text(encoding="utf-8"), before)
+
+    def test_html_status_marks_source_stale_and_refresh_restores_freshness(self):
+        md = self.write_note("07-仪表盘/Dynamic.md", "# Dynamic\n\nfirst\n")
+        brainctl.html_build(paths=["07-仪表盘/Dynamic.md"], json_mode=True)
+        md.write_text("# Dynamic\n\nsecond\n", encoding="utf-8")
+        status = brainctl.html_status(paths=["07-仪表盘/Dynamic.md"], json_mode=True)
+        self.assertEqual(status["items"][0]["status"], "stale_source")
+        refreshed = brainctl.html_refresh(paths=["07-仪表盘/Dynamic.md"], json_mode=True)
+        self.assertEqual(refreshed["written_count"], 1)
+        status = brainctl.html_status(paths=["07-仪表盘/Dynamic.md"], json_mode=True)
+        self.assertEqual(status["items"][0]["status"], "fresh")
+        self.assertIn("second", (self.vault / "07-仪表盘/Dynamic.html").read_text(encoding="utf-8"))
+
+    def test_html_status_marks_dependency_stale_and_refreshes_dependent_page(self):
+        self.write_note("Deps/Source.md", "# Source\n\n[[Deps/Target]]\n")
+        target = self.write_note("Deps/Target.md", "# Target\n\nold\n")
+        brainctl.html_build(paths=["Deps/Source.md"], json_mode=True)
+        target.write_text("# Target\n\nnew\n", encoding="utf-8")
+        status = brainctl.html_status(paths=["Deps/Source.md"], json_mode=True)
+        self.assertEqual(status["items"][0]["status"], "stale_dependency")
+        refreshed = brainctl.html_refresh(paths=["Deps/Source.md"], json_mode=True)
+        self.assertEqual(refreshed["written_count"], 1)
+        self.assertEqual(brainctl.html_status(paths=["Deps/Source.md"], json_mode=True)["items"][0]["status"], "fresh")
+
+    def test_html_refresh_noops_when_requested_source_is_fresh(self):
+        source = self.vault / "07-仪表盘" / "dashboard.md"
+        source.parent.mkdir(parents=True, exist_ok=True)
+        source.write_text("# Dashboard\n", encoding="utf-8")
+        brainctl.html_build(paths=["07-仪表盘/dashboard.md"], json_mode=True)
+
+        result = brainctl.html_refresh(paths=["07-仪表盘/dashboard.md"], json_mode=True)
+
+        self.assertEqual(result["written_count"], 0)
+
+    def test_html_graph_generates_big_screen_navigation_from_manifest(self):
+        self.write_note("07-仪表盘/Dashboard.md", "# Dashboard\n\n[[05-实践与项目/projects/Demo/Project - Demo]]\n")
+        self.write_note("05-实践与项目/projects/Demo/Project - Demo.md", "# Demo\n\n[review](../../../../06-治理与评审/reviews/Review.md)\n")
+        self.write_note("06-治理与评审/reviews/Review.md", "# Review\n")
+        brainctl.html_build(json_mode=True)
+
+        result = brainctl.html_graph(json_mode=True)
+
+        self.assertEqual(result["schema"], "local_brain_html_graph_v1")
+        self.assertEqual(result["node_count"], 3)
+        graph_path = self.vault / "07-仪表盘" / "本地大脑图形导航.html"
+        self.assertTrue(graph_path.exists())
+        html = graph_path.read_text(encoding="utf-8")
+        self.assertIn('data-local-brain-entry="react-app-redirect"', html)
+        self.assertIn('url=local-brain-app/index.html', html)
+        self.assertIn('href="local-brain-app/index.html"', html)
+        self.assertIn("React Cockpit / Mission Control", html)
+        self.assertIn("HTML nodes", html)
+        self.assertIn("Edges", html)
+        self.assertIn("本地大脑HTML入口", html)
+
+    def test_html_graph_creates_obsidian_visible_markdown_launcher(self):
+        self.write_note("07-仪表盘/Dashboard.md", "# Dashboard\n")
+        brainctl.html_build(json_mode=True)
+
+        result = brainctl.html_graph(json_mode=True)
+
+        launcher = self.vault / "07-仪表盘" / "本地大脑HTML入口.md"
+        self.assertTrue(launcher.exists())
+        text = launcher.read_text(encoding="utf-8")
+        self.assertIn("generated: true", text)
+        self.assertIn("本地大脑图形导航.html", text)
+        self.assertIn("本地大脑HTML跳转测试.md", text)
+        self.assertIn("file://", text)
+        self.assertEqual(result["launcher"], "07-仪表盘/本地大脑HTML入口.md")
+
+    def test_html_graph_creates_jump_test_file_and_richer_big_screen_details(self):
+        self.write_note("07-仪表盘/Dashboard.md", "# Dashboard\n\n[[05-实践与项目/projects/Demo/Project - Demo]]\n")
+        self.write_note("05-实践与项目/projects/Demo/Project - Demo.md", "# Demo\n\n[[06-治理与评审/reviews/Review]]\n")
+        self.write_note("06-治理与评审/reviews/Review.md", "# Review\n")
+        brainctl.html_build(json_mode=True)
+
+        result = brainctl.html_graph(json_mode=True)
+
+        self.assertEqual(result["jump_test"], "07-仪表盘/本地大脑HTML跳转测试.md")
+        graph = (self.vault / "07-仪表盘" / "本地大脑图形导航.html").read_text(encoding="utf-8")
+        self.assertIn('data-local-brain-entry="react-app-redirect"', graph)
+        self.assertIn('url=local-brain-app/index.html', graph)
+        self.assertIn("跳转测试", graph)
+        self.assertIn("React Cockpit / Mission Control", graph)
+        self.assertIn("HTML nodes", graph)
+        jump = (self.vault / "07-仪表盘" / "本地大脑HTML跳转测试.md").read_text(encoding="utf-8")
+        self.assertIn("# 本地大脑 HTML 跳转测试", jump)
+        self.assertIn("兼容图形导航入口", jump)
+        self.assertIn("仪表盘样例", jump)
+        self.assertIn("项目样例", jump)
+        self.assertIn("治理评审样例", jump)
+        self.assertIn("file://", jump)
+        self.assertIn("05-实践与项目/projects/Demo/Project - Demo.html", jump)
+
+    def test_parser_exposes_html_command(self):
+        parser = brainctl.build_parser()
+        subparsers = next(action for action in parser._actions if action.dest == "cmd")
+        self.assertIn("html", set(subparsers.choices))
+        html_parser = subparsers.choices["html"]
+        html_subparsers = next(action for action in html_parser._actions if action.dest == "html_cmd")
+        self.assertIn("watch", set(html_subparsers.choices))
+        self.assertIn("graph", set(html_subparsers.choices))
+
 
 if __name__ == "__main__":
     unittest.main()
