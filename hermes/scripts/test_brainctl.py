@@ -352,6 +352,44 @@ class BrainctlTestCase(unittest.TestCase):
         self.assertIn("watch", set(html_subparsers.choices))
         self.assertIn("graph", set(html_subparsers.choices))
 
+    def test_dev_brain_snapshot_contains_engineering_execution_contract(self):
+        import yaml
+
+        dev_path = SCRIPT.parent.parent / "brains" / "dev" / "brain.yaml"
+        dev = yaml.safe_load(dev_path.read_text(encoding="utf-8"))
+
+        self.assertEqual(dev["id"], "dev")
+        self.assertEqual(dev["inherits"], "base")
+        self.assertIn("software_engineering_execution", dev.get("capabilities", []))
+        self.assertIn("frontend", dev["profiles"])
+        self.assertIn("backend", dev["profiles"])
+        self.assertIn("fullstack", dev["profiles"])
+        self.assertIn("qa_verification", dev["profiles"])
+        self.assertIn("no_feature_entry_field_loss", dev["red_lines"])
+        self.assertIn("backend_field_change_requires_flyway_and_prod_confirmation", dev["red_lines"])
+        self.assertIn("project_code_not_pushed_by_default", dev["red_lines"])
+        self.assertIn("required_fields", dev["taskpool_contract"])
+        self.assertIn("brain", dev["taskpool_contract"]["required_fields"])
+        self.assertIn("verification_contract", dev["taskpool_contract"]["required_fields"])
+        self.assertIn("required_context", dev["worker_handoff"])
+        self.assertIn("required_output", dev["worker_handoff"])
+        self.assertIn("desktop_1280", dev["verification_matrix"]["frontend"])
+        self.assertIn("mobile_375", dev["verification_matrix"]["frontend"])
+        self.assertTrue(dev["parallelization_policy"]["requires_integration_owner_when"])
+
+    def test_registry_snapshot_routes_engineering_to_dev_and_governance_to_hermes_core(self):
+        import yaml
+
+        registry_path = SCRIPT.parent.parent / "brains" / "registry.yaml"
+        registry = yaml.safe_load(registry_path.read_text(encoding="utf-8"))
+        routing = registry["routing"]
+
+        self.assertEqual(routing["general_software_project_changes"], "dev")
+        self.assertEqual(routing["frontend_backend_fullstack_delivery"], "dev")
+        self.assertEqual(routing["api_contract_and_browser_harness_verification"], "dev")
+        self.assertEqual(routing["brain_overlay_schema_changes"], "hermes-core")
+        self.assertEqual(routing["taskpool_multimodel_hook_changes"], "hermes-core")
+
 
 if __name__ == "__main__":
     unittest.main()

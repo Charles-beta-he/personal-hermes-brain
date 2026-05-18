@@ -1,22 +1,304 @@
 id: dev
 name: Development Brain Overlay
-version: 0.1.0
-status: frozen-baseline
-updated_at: 2026-05-18T21:20:16+0800
+version: 0.2.0
+status: active-baseline
+updated_at: 2026-05-18T23:20:00+0800
 inherits: base
-purpose: Software delivery across frontend/backend/admin/contract/devops/ui profiles.
+purpose: Senior software engineering execution brain for frontend/backend/admin/fullstack/contract/devops/ui-ux delivery, with project-profile grounding, taskpool handoff contracts, red-line preservation, and evidence-first verification.
+capabilities:
+  - software_engineering_execution
+  - project_profile_grounding
+  - contract_aware_delivery
+  - evidence_first_verification
+  - taskpool_worker_handoff
+  - browser_harness_validation
+
 profiles:
-  - frontend
-  - backend
-  - admin
-  - contract
-  - devops
-  - ui-ux
-verification:
-  default:
-    - inspect git status first
-    - run relevant tests/builds
-    - verify no feature/entry/field regression
+  frontend:
+    owns:
+      - SPA/H5 routes, forms, state, API client integration, build/type/lint contracts
+      - visible behavior, entry preservation, responsive desktop/mobile verification
+    required_inputs:
+      - repo_path
+      - package_manager
+      - route_or_component_scope
+      - api_contract_source
+      - protected_entries
+    verification_defaults:
+      - lint_or_typecheck
+      - unit_or_component_tests_when_available
+      - production_build
+      - browser_harness:desktop_1280
+      - browser_harness:mobile_375_when_h5_or_responsive_touched
+    escalation_triggers:
+      - api_schema_or_dto_change
+      - shared_state_or_auth_flow_change
+      - route_entry_removal_or_rename
+  backend:
+    owns:
+      - controllers, services, domain logic, persistence, API contracts, migrations, integration tests
+    required_inputs:
+      - repo_path
+      - runtime_version
+      - api_contract_source
+      - database_and_migration_system
+      - auth_permission_model
+    verification_defaults:
+      - targeted_unit_tests
+      - integration_or_controller_contract_tests
+      - migration_inspection_when_entity_field_changes
+      - controller_service_domain_test_chain_evidence
+    escalation_triggers:
+      - entity_field_or_schema_change
+      - auth_permission_payment_or_funds_surface
+      - public_api_compatibility_change
+  fullstack:
+    owns:
+      - FE/BE contract reconciliation, end-to-end behavior, dependency order, final integration evidence
+    required_inputs:
+      - frontend_profile_ref
+      - backend_profile_ref
+      - contract_diff
+      - integration_owner
+    verification_defaults:
+      - backend_contract_tests
+      - frontend_build_and_smoke
+      - real_or_representative_api_smoke
+      - integration_handoff_summary
+    escalation_triggers:
+      - shared DTO/schema changes
+      - cross-repo release sequencing
+  contract:
+    owns:
+      - OpenAPI/DTO/schema/client-server compatibility, backward compatibility checks, generated client impacts
+    verification_defaults:
+      - schema_diff
+      - backward_compatibility_review
+      - consumer_impact_check
+      - generated_artifact_check_when_applicable
+  devops:
+    owns:
+      - project-local CI/build/deploy/config/container/runtime compatibility and rollback notes
+    verification_defaults:
+      - config_diff_review
+      - dry_run_or_local_smoke_when_available
+      - no_secret_leakage_check
+      - rollback_path_documented
+  ui_ux:
+    owns:
+      - visual polish, responsive layout, accessibility, design tokens, motion/performance-sensitive UI
+    verification_defaults:
+      - browser_harness:desktop_1280
+      - browser_harness:mobile_375
+      - accessibility_keyboard_focus_check_when_interactive
+      - visual_regression_notes
+  admin:
+    owns:
+      - admin routes, permissioned forms/tables, CRUD flows, data display consistency
+    verification_defaults:
+      - route_permission_check
+      - table_form_data_flow_smoke
+      - frontend_build
+  qa_verification:
+    owns:
+      - independent reproduction, evidence bundle review, regression-risk challenge, acceptance proof
+    verification_defaults:
+      - reproduce_or_readback_claim
+      - verify_commands_ran
+      - inspect_changed_files_against_red_lines
+      - final_evidence_packet_review
+  integration_owner:
+    owns:
+      - merge coherence, dependency order, shared contracts, final done evidence, rollback coordination
+    required_when:
+      - api_schema_changed
+      - db_migration_changed
+      - shared_ui_tokens_changed
+      - auth_or_permission_changed
+      - ci_or_deploy_config_changed
+
+red_lines:
+  - no_feature_entry_field_loss
+  - no_precision_validation_security_downgrade
+  - no_h5_or_mobile_regression
+  - backend_field_change_requires_flyway_and_prod_confirmation
+  - backend_must_cover_controller_service_domain_test_chain
+  - project_code_not_pushed_by_default
+  - no_unverified_auth_payment_funds_or_permission_changes
+  - no_runtime_or_secret_artifacts_in_git
+  - preserve_existing_user_visible_behavior_unless_explicitly_changed
+
+project_profile_policy:
+  required_before_implementation:
+    - repo_path
+    - stack_and_runtime
+    - package_manager_or_build_tool
+    - test_commands
+    - build_commands
+    - deploy_target_if_relevant
+    - database_and_migration_system_if_relevant
+    - api_schema_or_contract_source_if_relevant
+    - protected_entries_routes_fields
+    - auth_permission_model_if_relevant
+    - h5_mobile_surfaces_if_relevant
+    - browser_breakpoints
+    - rollback_path
+    - forbidden_side_effects
+  fallback_allowed_when:
+    - user_explicitly_requests_small_read_only_analysis
+    - task_is_documentation_only
+  fail_closed_when_missing:
+    - write_operation_without_repo_path
+    - backend_change_without_migration_policy
+    - ui_h5_change_without_browser_verification_plan
+
+taskpool_contract:
+  required_fields:
+    - task_id
+    - brain
+    - task_type
+    - profile
+    - target_surface
+    - repo_path
+    - project_profile_ref
+    - affected_layers
+    - affected_files_or_globs
+    - protected_entries
+    - schema_or_contract_touched
+    - db_migration_touched
+    - h5_risk
+    - ui_breakpoints
+    - auth_or_permission_touched
+    - deploy_or_ci_touched
+    - verification_contract
+    - evidence_required
+    - rollback_notes
+    - owner
+    - dependencies
+    - parallel_group
+    - integration_owner_required
+    - done_definition
+  recommended_frontmatter_defaults:
+    brain: dev
+    lane: work
+    completion_gate: evidence-reviewed-done
+    permission_tier: budget-handoff
+  done_definition:
+    - changed_files_summarized
+    - behavior_delta_explicit
+    - red_lines_checked
+    - verification_contract_satisfied_or_gap_declared
+    - rollback_notes_present
+
+worker_handoff:
+  required_context:
+    - active_profile
+    - project_profile_summary
+    - user_red_lines
+    - taskpool_contract_fields
+    - files_and_surfaces_in_scope
+    - files_and_surfaces_out_of_scope
+    - verification_contract
+    - dependency_order
+    - parallel_boundary
+  required_output:
+    - changed_files
+    - behavior_delta
+    - compatibility_notes
+    - contract_or_schema_diff
+    - migration_notes
+    - commands_run
+    - verification_results
+    - browser_harness_evidence
+    - risk_residuals
+    - assumptions
+    - unresolved_questions
+    - rollback_instructions
+    - next_owner_instructions
+  stop_conditions:
+    - missing_project_profile_for_write_task
+    - red_line_conflict_detected
+    - schema_or_migration_uncertainty_without_user_or_prod_evidence
+    - verification_command_unavailable_without_declared_alternative
+
+verification_matrix:
+  frontend:
+    - inspect_git_status_first
+    - lint_or_typecheck
+    - relevant_unit_or_component_tests
+    - production_build
+    - desktop_1280
+    - mobile_375
+    - preserve_routes_entries_fields
+  backend:
+    - inspect_git_status_first
+    - targeted_unit_tests
+    - controller_or_api_contract_tests
+    - service_domain_test_evidence
+    - flyway_or_migration_inspection_when_fields_change
+    - prod_migration_state_confirmation_when_required
+  fullstack:
+    - backend_contract_tests
+    - frontend_build
+    - api_smoke
+    - dependency_order_evidence
+    - final_integration_owner_review
+  contract:
+    - schema_diff
+    - backwards_compatibility_check
+    - generated_client_server_impact_check
+  devops:
+    - config_diff
+    - no_secret_leakage_check
+    - dry_run_or_local_smoke
+    - rollback_path_verified
+  ui_ux:
+    - desktop_1280
+    - mobile_375
+    - keyboard_focus_when_interactive
+    - accessibility_semantics_when_applicable
+    - motion_performance_risk_check
+  admin:
+    - route_permission_check
+    - table_form_data_flow_smoke
+    - frontend_build
+  qa_verification:
+    - independent_evidence_review
+    - changed_file_red_line_scan
+    - acceptance_packet_readback
+
+parallelization_policy:
+  can_parallelize_when:
+    - different_repos_or_disjoint_workspaces
+    - disjoint_file_globs_and_no_shared_contract
+    - read_only_analysis_tasks
+    - qa_verification_after_implementation_snapshot
+  requires_integration_owner_when:
+    - api_schema_changed
+    - db_migration_changed
+    - shared_ui_tokens_changed
+    - auth_or_permission_changed
+    - routing_or_navigation_changed
+    - shared_state_or_generated_artifacts_changed
+    - ci_or_deploy_config_changed
+  conflict_keys:
+    - repo_path
+    - affected_files_or_globs
+    - api_contract_source
+    - database_schema
+    - auth_permission_model
+    - shared_design_tokens
+
 routes:
   hermes_core_code: hermes-core
+  brain_overlay_schema_changes: hermes-core
+  taskpool_or_multimodel_control_plane: hermes-core
+  model_quorum_provider_or_router_policy: hermes-core
   external_product_code: dev
+  frontend_backend_fullstack_delivery: dev
+  api_contract_and_browser_harness_verification: dev
+  project_ci_build_test_fixes: dev
+
+smoke_checks:
+  - python3 ~/.hermes/scripts/brainctl.py --json brains route "uvisa frontend H5 bugfix"
+  - python3 ~/.hermes/scripts/brainctl.py --json brains route "Hermes taskpool multimodel hook change"
