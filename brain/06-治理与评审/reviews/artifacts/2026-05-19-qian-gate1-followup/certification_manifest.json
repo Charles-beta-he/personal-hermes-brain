@@ -1,0 +1,116 @@
+{
+  "schema_version": "certification_manifest_v1",
+  "generated_at": "2026-05-19T04:17:39.508125Z",
+  "tick_dir": "/Users/charles/.hermes/tick-20260519-040651-196913-p27946-2bebad88-fdf866c7",
+  "status": "not_certified",
+  "can_claim_complete_certification": false,
+  "reasons": [
+    "fanout counts inconsistent with plan files",
+    "merged fanout counts inconsistent with plan files",
+    "ratification approvals do not cover expected participants: missing=['gemini-3.1-pro-preview']",
+    "ratification contains unsigned/non-true best_within_constraints",
+    "discussion status is not_certified"
+  ],
+  "gates": {
+    "tick_dir_exists": true,
+    "plans_present": true,
+    "merged_plan_present": true,
+    "discussion_result_present": true,
+    "fanout_certification_schema_valid": true,
+    "fanout_certification_schema_errors": [],
+    "merged_fanout_certification_schema_valid": true,
+    "merged_fanout_certification_schema_errors": [],
+    "fanout_certified": true,
+    "multi_model_certified": true,
+    "truth_can_certify": true,
+    "merged_fanout_certified": true,
+    "merged_multi_model_certified": true,
+    "merged_truth_can_certify": true,
+    "issue_ledger_present": true,
+    "issue_ledger_malformed_count": 0,
+    "ratification_votes_present": true,
+    "ratification_vote_count": 4,
+    "non_dict_vote_count": 0,
+    "expected_vote_count": 4,
+    "planner_count": 4,
+    "success_count": 3,
+    "merged_planner_count": 4,
+    "merged_success_count": 3,
+    "plan_file_count": 4,
+    "expected_participants_present": true,
+    "expected_participants_valid": true,
+    "expected_participant_count": 4,
+    "expected_participants_unique": true,
+    "models_consulted_present": true,
+    "models_consulted_valid": true,
+    "models_consulted_unique": true,
+    "plan_models_unique": true,
+    "plan_models_match_expected": true,
+    "models_consulted_match_expected": true,
+    "approval_count": 3,
+    "unique_approval_count": 3,
+    "reject_count": 0,
+    "no_reject_votes": true,
+    "all_votes_best_within_constraints": false,
+    "vote_models_unique": true,
+    "vote_models_nonempty": true,
+    "vote_models_expected": true,
+    "expected_participants_all_approved": false,
+    "ratification_quorum_met": true,
+    "unresolved_severity_ge_3_count": 0,
+    "agreement_matrix_present": true,
+    "agreement_matrix_min": 0.95,
+    "agreement_matrix_pass": true,
+    "discussion_status": "not_certified",
+    "merged_patches_are_list": true,
+    "empty_patches_have_no_action_intent": true,
+    "plan_patch_artifacts_well_formed": true
+  },
+  "artifacts": {
+    "plans": {
+      "count": 4,
+      "files": [
+        {
+          "path": "plans/deepseek-v4-pro.json",
+          "exists": true,
+          "bytes": 1793,
+          "sha256": "59655580522348723a5517a61178697331f5e210ae9dfb847cc3bf977bd9e5af"
+        },
+        {
+          "path": "plans/gemini-3.1-pro-preview.json",
+          "exists": true,
+          "bytes": 997,
+          "sha256": "4bef5cd995d95162a73b62cbfa1715daea5b6bcafecdbfd84778f10c4457353a"
+        },
+        {
+          "path": "plans/gpt-5.5.json",
+          "exists": true,
+          "bytes": 2471,
+          "sha256": "3868bf7a5676e366f50fc618c09f81cb3851428d0391c7900214bef12caec64e"
+        },
+        {
+          "path": "plans/mimo-v2.5-pro.json",
+          "exists": true,
+          "bytes": 3581,
+          "sha256": "5f7db658cb9d0633935526a32fe3d8c48dc9293e44df2070035071caaa41837a"
+        }
+      ]
+    },
+    "merged_plan": {
+      "path": "merged_plan.json",
+      "exists": true,
+      "bytes": 9495,
+      "sha256": "2c60613bf6acc1f8c1cfe5dae6fba319e20633a01afd42ad553bd4aed49e8c10"
+    },
+    "discussion_result": {
+      "path": "discussion_result.json",
+      "exists": true,
+      "bytes": 29031,
+      "sha256": "ae33d0f1855f4ddf339dbb2f5690bef1f40ba39648ae181d7539c9a9c72c4da0"
+    },
+    "certification_manifest": {
+      "path": "final/certification_manifest.json",
+      "exists": true
+    }
+  }
+}

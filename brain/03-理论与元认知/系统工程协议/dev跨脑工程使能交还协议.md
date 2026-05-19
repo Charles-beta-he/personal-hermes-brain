@@ -35,7 +35,28 @@ cross_brain_enablement_request:
   return_to_brain: "..."
 ```
 
-## 3. dev 交还契约
+## 3. 从定性到定量任务生成契约
+
+当 research/domain brain 给出定性判断但缺少可执行验证时，先用如下 packet 生成 dev 验证任务草案；默认只 dry-run，不直接写入任务池：
+
+```yaml
+qual_to_quant_request:
+  requesting_brain: research|design|media|mlops|workflow|main
+  return_to_brain: "..."
+  claim: "..."
+  source_packet:
+    verified: []
+    uncertain: []
+    missing: []
+  confidence: 0.0
+  falsifier: "若该断言不成立，应观察到什么反例/失败信号"
+  desired_artifact: script|cli|connector|browser_harness|test|dashboard|adapter|validator
+  acceptance_evidence: "dev 交付后请求脑可复核的证据"
+```
+
+参考实现：`hermes/scripts/qual_to_quant_task_contract.py --demo --json`。
+
+## 4. dev 交还契约
 
 ```yaml
 cross_brain_enablement_handback:
@@ -54,7 +75,7 @@ cross_brain_enablement_handback:
   next_step_for_requesting_brain: "..."
 ```
 
-## 4. 生命周期
+## 5. 生命周期
 
 1. main 或 registry 将 capability_gap 路由到 dev。
 2. dev 明确最小工程交付物和验收命令。
@@ -63,7 +84,7 @@ cross_brain_enablement_handback:
 5. 请求脑恢复原任务并做领域验收。
 6. workflow 决定是否沉淀 skill/protocol。
 
-## 5. 验收门
+## 6. 验收门
 
 - artifact 存在且可调用。
 - invocation_example 能被复制执行。
@@ -71,7 +92,7 @@ cross_brain_enablement_handback:
 - handback 明确 return_to_brain。
 - 领域结论由请求脑/main 验收，不由 dev 自证。
 
-## 6. 与钱学森系统工程的对应
+## 7. 与钱学森系统工程的对应
 
 - dev = 执行/生产子系统。
 - main = 总体设计部。

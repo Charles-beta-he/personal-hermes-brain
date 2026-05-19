@@ -1,0 +1,767 @@
+{
+  "status": "not_certified",
+  "models_consulted": [
+    "deepseek-v4-pro",
+    "gemini-3.1-pro-preview",
+    "gpt-5.5",
+    "mimo-v2.5-pro"
+  ],
+  "expected_participants": [
+    "deepseek-v4-pro",
+    "gemini-3.1-pro-preview",
+    "gpt-5.5",
+    "mimo-v2.5-pro"
+  ],
+  "rounds_used": 3,
+  "agreement_matrix": {
+    "framing": 0.95,
+    "approach": 0.95,
+    "implementation_order": 0.95
+  },
+  "final_design": {
+    "meta": {
+      "planner_model": "ensemble:4",
+      "planner_role": "merged",
+      "state_hash": "3bef05b22c9f66941605b334abddd7bc1f5b5364a974a1e23e2caea7c4b76466",
+      "tier_target": "T1",
+      "confidence": 0.6723,
+      "source_plans": 4
+    },
+    "diagnosis": {
+      "root_cause_class": "no_action",
+      "summary": "Merged from 4 planners, consensus score=0.672"
+    },
+    "patches": [],
+    "merge_info": {
+      "strategy": "intersection_first",
+      "planners": 4,
+      "quorum": 3,
+      "unanimous_count": 0,
+      "majority_count": 0,
+      "minority_count": 2,
+      "arbitration_needed": true,
+      "minority_patches": [
+        "P-001-noop-gate1-protocol-unblock",
+        "P-001"
+      ],
+      "consensus_score": 0.6723,
+      "consensus_verdict": "weak_consensus",
+      "max_blast_radius": "single_tier"
+    },
+    "verification": {
+      "expected_metric_delta": {
+        "main_pass_rate": 0.01
+      },
+      "guard_metrics": [
+        "main_pass_rate"
+      ],
+      "tier_eval_plan": "T0_T1"
+    },
+    "rollback_signal": {
+      "auto_rollback_if": "main_pass_rate < pre - 0.05",
+      "kill_switch_inc": false
+    },
+    "quota_snapshot": {
+      "openai-codex::gpt-5.5": {
+        "model": "gpt-5.5",
+        "provider": "openai-codex",
+        "status": "unobservable",
+        "observability": "unobservable",
+        "quota_type": "subscription_cap",
+        "remaining_tokens": null,
+        "remaining_requests": null,
+        "remaining_usd": null,
+        "reset_at": null,
+        "source": "response_headers",
+        "confidence": 0.2,
+        "stale_after_seconds": 300,
+        "last_updated": "2026-05-19T04:03:46.048214Z",
+        "usage": {}
+      },
+      "google-gemini-cli::gemini-3.1-pro-preview": {
+        "model": "gemini-3.1-pro-preview",
+        "provider": "google-gemini-cli",
+        "status": "unknown",
+        "observability": "unknown",
+        "quota_type": "unknown",
+        "remaining_tokens": null,
+        "remaining_requests": null,
+        "remaining_usd": null,
+        "reset_at": null,
+        "source": "error_inference",
+        "confidence": 0.2,
+        "stale_after_seconds": 300,
+        "last_updated": "2026-05-19T04:04:29.400046Z",
+        "error_class": "unknown"
+      },
+      "xiaomi::mimo-v2.5-pro": {
+        "model": "mimo-v2.5-pro",
+        "provider": "xiaomi",
+        "status": "unknown",
+        "observability": "unknown",
+        "quota_type": "unknown",
+        "remaining_tokens": null,
+        "remaining_requests": null,
+        "remaining_usd": null,
+        "reset_at": null,
+        "source": "error_inference",
+        "confidence": 0.2,
+        "stale_after_seconds": 300,
+        "last_updated": "2026-05-19T04:02:45.492130Z",
+        "error_class": "unknown"
+      },
+      "deepseek::deepseek-v4-pro": {
+        "model": "deepseek-v4-pro",
+        "provider": "deepseek",
+        "status": "unknown",
+        "observability": "unknown",
+        "quota_type": "unknown",
+        "remaining_tokens": null,
+        "remaining_requests": null,
+        "remaining_usd": null,
+        "reset_at": null,
+        "source": "response_headers",
+        "confidence": 0.1,
+        "stale_after_seconds": 300,
+        "last_updated": "2026-05-19T04:05:52.614973Z",
+        "usage": {}
+      }
+    },
+    "quota_confidence": {
+      "schema_version": 1,
+      "exact_count": 0,
+      "estimated_count": 0,
+      "unknown_count": 3,
+      "unobservable_count": 1,
+      "exhausted_count": 0,
+      "has_low_confidence_quota": true,
+      "low_confidence_models": [
+        "deepseek-v4-pro",
+        "gemini-3.1-pro-preview",
+        "gpt-5.5",
+        "mimo-v2.5-pro"
+      ]
+    },
+    "skipped_due_to_quota": [],
+    "fanout_certification": {
+      "schema_version": 1,
+      "status": "fanout_quorum_met",
+      "certified": true,
+      "multi_model_certified": true,
+      "certification_scope": "multi_model",
+      "below_min_quorum": false,
+      "success_count": 3,
+      "fail_count": 1,
+      "planner_count": 4,
+      "min_quorum": 2,
+      "reason": "planner fan-out met min_quorum: 3/2"
+    },
+    "planner_patch_summary": {
+      "schema_version": 1,
+      "planner_count": 4,
+      "total_patch_count": 3,
+      "noop_patch_count": 3,
+      "conditional_advisory_patch_count": 0,
+      "concrete_patch_count": 0,
+      "malformed_plan_count": 0,
+      "plans_missing_patches_count": 0,
+      "plans_non_list_patches_count": 0,
+      "non_dict_patch_count": 0,
+      "models_with_concrete_patches": [],
+      "models_with_noop_only_patches": [
+        "deepseek-v4-pro",
+        "gpt-5.5",
+        "mimo-v2.5-pro"
+      ],
+      "concrete_model_count": 0,
+      "noop_only_model_count": 3,
+      "certification_intent": "no_action_certification"
+    },
+    "evidence_bundle": {
+      "schema_version": 1,
+      "created_at": "2026-05-19T04:06:51.208401+00:00",
+      "claims": [
+        {
+          "id": "C-001",
+          "text": "qian-meta-synthesis skill provides reusable source/evidence/dissent/handback schema.",
+          "severity": 3
+        },
+        {
+          "id": "C-002",
+          "text": "qual_to_quant_task_contract creates dry-run dev validation task drafts with requesting_brain/falsifier/desired_artifact/return_to_brain/acceptance_evidence.",
+          "severity": 3
+        },
+        {
+          "id": "C-003",
+          "text": "cybernetic_control_plane remains warn-only and does not block dispatch.",
+          "severity": 3
+        },
+        {
+          "id": "C-004",
+          "text": "atom_collision_emergence is read-only/suggest-only and does not write core atoms.",
+          "severity": 3
+        }
+      ],
+      "evidence": [
+        {
+          "id": "E-001",
+          "type": "command",
+          "summary": "skill_view loaded qian-meta-synthesis; repo copy exists under hermes/skills/workflow/qian-meta-synthesis",
+          "supports": [
+            "C-001"
+          ],
+          "exit_code": 0,
+          "contradicts": []
+        },
+        {
+          "id": "E-002",
+          "type": "command",
+          "summary": "python3 hermes/scripts/qual_to_quant_task_contract.py --demo --json returned status OK and task_id dev-validate-*",
+          "supports": [
+            "C-002"
+          ],
+          "exit_code": 0,
+          "contradicts": []
+        },
+        {
+          "id": "E-003",
+          "type": "command",
+          "summary": "python3 hermes/scripts/cybernetic_control_plane.py --demo --json returned risk_level high and blocks_dispatch false",
+          "supports": [
+            "C-003"
+          ],
+          "exit_code": 0,
+          "contradicts": []
+        },
+        {
+          "id": "E-004",
+          "type": "command",
+          "summary": "python3 hermes/scripts/atom_collision_emergence.py --atom-dir brain/04-知识原子/atoms --limit 12 --json returned status OK, atom_count 12, candidates 3, writes_core_atoms false",
+          "supports": [
+            "C-004"
+          ],
+          "exit_code": 0,
+          "contradicts": []
+        }
+      ],
+      "grounding": {
+        "C-001": {
+          "claim_id": "C-001",
+          "claim_text": "qian-meta-synthesis skill provides reusable source/evidence/dissent/handback schema.",
+          "severity": 3,
+          "truth_status": "verified_by_evidence",
+          "supporting_evidence_ids": [
+            "E-001"
+          ],
+          "non_verifying_supporting_evidence_ids": [],
+          "contradicting_evidence_ids": [],
+          "candidate_evidence_ids": []
+        },
+        "C-002": {
+          "claim_id": "C-002",
+          "claim_text": "qual_to_quant_task_contract creates dry-run dev validation task drafts with requesting_brain/falsifier/desired_artifact/return_to_brain/acceptance_evidence.",
+          "severity": 3,
+          "truth_status": "verified_by_evidence",
+          "supporting_evidence_ids": [
+            "E-002"
+          ],
+          "non_verifying_supporting_evidence_ids": [],
+          "contradicting_evidence_ids": [],
+          "candidate_evidence_ids": []
+        },
+        "C-003": {
+          "claim_id": "C-003",
+          "claim_text": "cybernetic_control_plane remains warn-only and does not block dispatch.",
+          "severity": 3,
+          "truth_status": "verified_by_evidence",
+          "supporting_evidence_ids": [
+            "E-003"
+          ],
+          "non_verifying_supporting_evidence_ids": [],
+          "contradicting_evidence_ids": [],
+          "candidate_evidence_ids": []
+        },
+        "C-004": {
+          "claim_id": "C-004",
+          "claim_text": "atom_collision_emergence is read-only/suggest-only and does not write core atoms.",
+          "severity": 3,
+          "truth_status": "verified_by_evidence",
+          "supporting_evidence_ids": [
+            "E-004"
+          ],
+          "non_verifying_supporting_evidence_ids": [],
+          "contradicting_evidence_ids": [],
+          "candidate_evidence_ids": []
+        }
+      },
+      "evidence_coverage": 1.0,
+      "verified_claim_count": 4,
+      "claim_count": 4
+    },
+    "truth_assessment": {
+      "schema_version": 1,
+      "truth_status": "grounded",
+      "can_certify_truth": true,
+      "claim_count": 4,
+      "verified_claim_count": 4,
+      "evidence_coverage": 1.0,
+      "unsupported_claim_ids": [],
+      "unsupported_high_severity_claim_ids": [],
+      "needs_link_review_claim_ids": [],
+      "needs_link_review_high_severity_claim_ids": [],
+      "contradicted_claim_ids": [],
+      "contradicted_high_severity_claim_ids": [],
+      "reasons": []
+    },
+    "discussion": {
+      "status": "not_certified",
+      "result_file": "/Users/charles/.hermes/tick-20260519-040651-196913-p27946-2bebad88-fdf866c7/discussion_result.json",
+      "rounds_used": 1,
+      "models_consulted": [
+        "gpt-5.5",
+        "gemini-3.1-pro-preview",
+        "mimo-v2.5-pro",
+        "deepseek-v4-pro"
+      ],
+      "certification_manifest": "/Users/charles/.hermes/tick-20260519-040651-196913-p27946-2bebad88-fdf866c7/final/certification_manifest.json",
+      "can_claim_complete_certification": false
+    }
+  },
+  "issue_ledger": [],
+  "ratification_votes": [
+    {
+      "model": "deepseek-v4-pro",
+      "vote": "approve",
+      "best_within_constraints": true,
+      "reasoning": "All 4 claims verified, evidence coverage 1.0, no unresolved issues, no unsupported or contradicted claims. Truth status grounded, can certify. No critiques or evidence requests needed."
+    },
+    {
+      "model": "gemini-3.1-pro-preview",
+      "vote": "amend",
+      "best_within_constraints": false,
+      "reasoning": "discussion call failed/unparseable: initial=Error: Error code: 400 - {'detail': \"The 'gemini-3.1-pro-preview' model is not supported when using Codex with a ChatGPT; retry=Error: Error code: 400 - {'detail': \"The 'gemini-3.1-pro-preview' model is not supported when using Codex with a ChatGPT"
+    },
+    {
+      "model": "gpt-5.5",
+      "vote": "approve",
+      "best_within_constraints": true,
+      "reasoning": "No unresolved round_delta issues remain. truth_gate permits certification: C-001..C-004 all verified by E-001..E-004, evidence_coverage=1.0, can_certify_truth=true. planner_patch_summary shows no_action_certification with concrete_patch_count=0, so empty patches are not a blocker. Round 2 blocker was missing best_within_constraints signature; this response supplies true."
+    },
+    {
+      "model": "mimo-v2.5-pro",
+      "vote": "approve",
+      "best_within_constraints": true,
+      "reasoning": "All 4 claims verified (100% evidence coverage), truth_status grounded, no unsupported/contradicted claims, no unresolved issues. Model output meets all quality gates."
+    }
+  ],
+  "discussion_transcript": [
+    {
+      "round": 1,
+      "unresolved_issue_ids": [],
+      "votes": [
+        {
+          "model": "deepseek-v4-pro",
+          "vote": "approve",
+          "best_within_constraints": true,
+          "reasoning": "All 4 claims verified by evidence (E-001 through E-004). Truth gate grounded (1.0 coverage). Planner fan-out met min_quorum (3/2) with 3 noop patches, 0 concrete patches, certification_intent='no_action_certification'. No unresolved round_delta issues or novel severity>=3 blockers. Empty patches list is consistent with explicit noop sign-off. Approve."
+        },
+        {
+          "model": "gemini-3.1-pro-preview",
+          "vote": "amend",
+          "best_within_constraints": false,
+          "reasoning": "discussion call failed/unparseable: initial=Error: Error code: 400 - {'detail': \"The 'gemini-3.1-pro-preview' model is not supported when using Codex with a ChatGPT; retry=Error: Error code: 400 - {'detail': \"The 'gemini-3.1-pro-preview' model is not supported when using Codex with a ChatGPT"
+        },
+        {
+          "model": "gpt-5.5",
+          "vote": "approve",
+          "best_within_constraints": true,
+          "reasoning": "No unresolved round_delta issues are present. truth_gate permits certification: grounded, can_certify_truth=true, 4/4 claims verified, evidence_coverage=1.0. planner_patch_summary shows no_action_certification with concrete_patch_count=0; per instructions, empty current_best_summary.patches is not a blocker. No novel severity>=3 blockers identified."
+        },
+        {
+          "model": "mimo-v2.5-pro",
+          "vote": "approve",
+          "best_within_constraints": true,
+          "reasoning": "Round 1. All 4 claims verified (E-001..E-004), truth gate grounded with 1.0 coverage. Fanout quorum 3/4 met. No unresolved issues. Empty patches are intentional (no_action_certification, concrete_patch_count=0). No novel severity>=3 blockers. Recommend certification."
+        }
+      ],
+      "status": {
+        "status": "not_certified",
+        "approval_count": 3,
+        "reject_count": 0,
+        "reasons": [
+          "missing best_within_constraints signatures: ['gemini-3.1-pro-preview']"
+        ]
+      },
+      "prompt_chars": 18400,
+      "prompt_chars_by_model": {
+        "deepseek-v4-pro": 4600,
+        "gemini-3.1-pro-preview": 4600,
+        "gpt-5.5": 4600,
+        "mimo-v2.5-pro": 4600
+      },
+      "parse_status_by_model": {
+        "deepseek-v4-pro": "ok",
+        "gemini-3.1-pro-preview": "failed_closed",
+        "gpt-5.5": "ok",
+        "mimo-v2.5-pro": "ok"
+      },
+      "estimated_chars_saved": 26664
+    },
+    {
+      "round": 2,
+      "unresolved_issue_ids": [],
+      "votes": [
+        {
+          "model": "deepseek-v4-pro",
+          "vote": "approve",
+          "best_within_constraints": true,
+          "reasoning": "All 4 claims verified, evidence coverage 1.0, no unresolved issues, no unsupported or contradicted claims. Truth gate confirms grounded status with full certification readiness."
+        },
+        {
+          "model": "gemini-3.1-pro-preview",
+          "vote": "amend",
+          "best_within_constraints": false,
+          "reasoning": "discussion call failed/unparseable: initial=Error: Error code: 400 - {'detail': \"The 'gemini-3.1-pro-preview' model is not supported when using Codex with a ChatGPT; retry=Error: Error code: 400 - {'detail': \"The 'gemini-3.1-pro-preview' model is not supported when using Codex with a ChatGPT"
+        },
+        {
+          "model": "gpt-5.5",
+          "vote": "approve",
+          "best_within_constraints": true,
+          "reasoning": "No unresolved round_delta issues remain. truth_gate permits certification: grounded, can_certify_truth=true, 4/4 claims verified, evidence_coverage=1.0. planner_patch_summary shows certification_intent=no_action_certification and concrete_patch_count=0, so empty current_best_summary.patches is explicitly not a blocker."
+        },
+        {
+          "model": "mimo-v2.5-pro",
+          "vote": "approve",
+          "best_within_constraints": true,
+          "reasoning": "Round 1 blocker (gemini-3.1-pro-preview missing best_within_constraints signature) resolved — unresolved_issues empty. Truth gate grounded: 4/4 claims verified (E-001..E-004), evidence_coverage=1.0. Planner patch summary: no_action_certification with concrete_patch_count=0; per instructions §6, empty patches is not a blocker when certification_intent is no_action_certification. Fanout quorum met 3/2. No novel severity>=3 blockers found in this round. Approve."
+        }
+      ],
+      "status": {
+        "status": "not_certified",
+        "approval_count": 3,
+        "reject_count": 0,
+        "reasons": [
+          "missing best_within_constraints signatures: ['gemini-3.1-pro-preview']"
+        ]
+      },
+      "prompt_chars": 20308,
+      "prompt_chars_by_model": {
+        "deepseek-v4-pro": 5077,
+        "gemini-3.1-pro-preview": 5077,
+        "gpt-5.5": 5077,
+        "mimo-v2.5-pro": 5077
+      },
+      "parse_status_by_model": {
+        "deepseek-v4-pro": "retried",
+        "gemini-3.1-pro-preview": "failed_closed",
+        "gpt-5.5": "ok",
+        "mimo-v2.5-pro": "ok"
+      },
+      "estimated_chars_saved": 33508
+    },
+    {
+      "round": 3,
+      "unresolved_issue_ids": [],
+      "votes": [
+        {
+          "model": "deepseek-v4-pro",
+          "vote": "approve",
+          "best_within_constraints": true,
+          "reasoning": "All 4 claims verified, evidence coverage 1.0, no unresolved issues, no unsupported or contradicted claims. Truth status grounded, can certify. No critiques or evidence requests needed."
+        },
+        {
+          "model": "gemini-3.1-pro-preview",
+          "vote": "amend",
+          "best_within_constraints": false,
+          "reasoning": "discussion call failed/unparseable: initial=Error: Error code: 400 - {'detail': \"The 'gemini-3.1-pro-preview' model is not supported when using Codex with a ChatGPT; retry=Error: Error code: 400 - {'detail': \"The 'gemini-3.1-pro-preview' model is not supported when using Codex with a ChatGPT"
+        },
+        {
+          "model": "gpt-5.5",
+          "vote": "approve",
+          "best_within_constraints": true,
+          "reasoning": "No unresolved round_delta issues remain. truth_gate permits certification: C-001..C-004 all verified by E-001..E-004, evidence_coverage=1.0, can_certify_truth=true. planner_patch_summary shows no_action_certification with concrete_patch_count=0, so empty patches are not a blocker. Round 2 blocker was missing best_within_constraints signature; this response supplies true."
+        },
+        {
+          "model": "mimo-v2.5-pro",
+          "vote": "approve",
+          "best_within_constraints": true,
+          "reasoning": "All 4 claims verified (100% evidence coverage), truth_status grounded, no unsupported/contradicted claims, no unresolved issues. Model output meets all quality gates."
+        }
+      ],
+      "status": {
+        "status": "not_certified",
+        "approval_count": 3,
+        "reject_count": 0,
+        "reasons": [
+          "missing best_within_constraints signatures: ['gemini-3.1-pro-preview']"
+        ]
+      },
+      "prompt_chars": 20316,
+      "prompt_chars_by_model": {
+        "deepseek-v4-pro": 5079,
+        "gemini-3.1-pro-preview": 5079,
+        "gpt-5.5": 5079,
+        "mimo-v2.5-pro": 5079
+      },
+      "parse_status_by_model": {
+        "deepseek-v4-pro": "retried",
+        "gemini-3.1-pro-preview": "failed_closed",
+        "gpt-5.5": "ok",
+        "mimo-v2.5-pro": "retried"
+      },
+      "estimated_chars_saved": 42236
+    }
+  ],
+  "communication": {
+    "schema": "multi_model_comm_packet_v1",
+    "mode": "manifest_delta",
+    "rounds": [
+      {
+        "round": 1,
+        "mode": "manifest_delta",
+        "prompt_chars_by_model": {
+          "deepseek-v4-pro": 4600,
+          "gemini-3.1-pro-preview": 4600,
+          "gpt-5.5": 4600,
+          "mimo-v2.5-pro": 4600
+        },
+        "prompt_chars": 18400,
+        "raw_context_chars_per_model": 11266,
+        "packet_chars_per_model": 4600,
+        "estimated_chars_saved": 26664,
+        "estimated_tokens_saved": 6668,
+        "compression_ratio": 0.4083
+      },
+      {
+        "round": 2,
+        "mode": "manifest_delta",
+        "prompt_chars_by_model": {
+          "deepseek-v4-pro": 5077,
+          "gemini-3.1-pro-preview": 5077,
+          "gpt-5.5": 5077,
+          "mimo-v2.5-pro": 5077
+        },
+        "prompt_chars": 20308,
+        "raw_context_chars_per_model": 13454,
+        "packet_chars_per_model": 5077,
+        "estimated_chars_saved": 33508,
+        "estimated_tokens_saved": 8380,
+        "compression_ratio": 0.3774
+      },
+      {
+        "round": 3,
+        "mode": "manifest_delta",
+        "prompt_chars_by_model": {
+          "deepseek-v4-pro": 5079,
+          "gemini-3.1-pro-preview": 5079,
+          "gpt-5.5": 5079,
+          "mimo-v2.5-pro": 5079
+        },
+        "prompt_chars": 20316,
+        "raw_context_chars_per_model": 15638,
+        "packet_chars_per_model": 5079,
+        "estimated_chars_saved": 42236,
+        "estimated_tokens_saved": 10560,
+        "compression_ratio": 0.3248
+      }
+    ],
+    "total_prompt_chars": 59024,
+    "estimated_chars_saved": 102408,
+    "estimated_tokens_saved": 25608,
+    "policy": "send manifest+delta packets; keep full artifacts in tick files; request omitted evidence explicitly"
+  },
+  "remaining_risks": [],
+  "truth_assessment": {
+    "schema_version": 1,
+    "truth_status": "grounded",
+    "can_certify_truth": true,
+    "claim_count": 4,
+    "verified_claim_count": 4,
+    "evidence_coverage": 1.0,
+    "unsupported_claim_ids": [],
+    "unsupported_high_severity_claim_ids": [],
+    "needs_link_review_claim_ids": [],
+    "needs_link_review_high_severity_claim_ids": [],
+    "contradicted_claim_ids": [],
+    "contradicted_high_severity_claim_ids": [],
+    "reasons": []
+  },
+  "evidence_bundle": {
+    "schema_version": 1,
+    "created_at": "2026-05-19T04:06:51.208401+00:00",
+    "claims": [
+      {
+        "id": "C-001",
+        "text": "qian-meta-synthesis skill provides reusable source/evidence/dissent/handback schema.",
+        "severity": 3
+      },
+      {
+        "id": "C-002",
+        "text": "qual_to_quant_task_contract creates dry-run dev validation task drafts with requesting_brain/falsifier/desired_artifact/return_to_brain/acceptance_evidence.",
+        "severity": 3
+      },
+      {
+        "id": "C-003",
+        "text": "cybernetic_control_plane remains warn-only and does not block dispatch.",
+        "severity": 3
+      },
+      {
+        "id": "C-004",
+        "text": "atom_collision_emergence is read-only/suggest-only and does not write core atoms.",
+        "severity": 3
+      }
+    ],
+    "evidence": [
+      {
+        "id": "E-001",
+        "type": "command",
+        "summary": "skill_view loaded qian-meta-synthesis; repo copy exists under hermes/skills/workflow/qian-meta-synthesis",
+        "supports": [
+          "C-001"
+        ],
+        "exit_code": 0,
+        "contradicts": []
+      },
+      {
+        "id": "E-002",
+        "type": "command",
+        "summary": "python3 hermes/scripts/qual_to_quant_task_contract.py --demo --json returned status OK and task_id dev-validate-*",
+        "supports": [
+          "C-002"
+        ],
+        "exit_code": 0,
+        "contradicts": []
+      },
+      {
+        "id": "E-003",
+        "type": "command",
+        "summary": "python3 hermes/scripts/cybernetic_control_plane.py --demo --json returned risk_level high and blocks_dispatch false",
+        "supports": [
+          "C-003"
+        ],
+        "exit_code": 0,
+        "contradicts": []
+      },
+      {
+        "id": "E-004",
+        "type": "command",
+        "summary": "python3 hermes/scripts/atom_collision_emergence.py --atom-dir brain/04-知识原子/atoms --limit 12 --json returned status OK, atom_count 12, candidates 3, writes_core_atoms false",
+        "supports": [
+          "C-004"
+        ],
+        "exit_code": 0,
+        "contradicts": []
+      }
+    ],
+    "grounding": {
+      "C-001": {
+        "claim_id": "C-001",
+        "claim_text": "qian-meta-synthesis skill provides reusable source/evidence/dissent/handback schema.",
+        "severity": 3,
+        "truth_status": "verified_by_evidence",
+        "supporting_evidence_ids": [
+          "E-001"
+        ],
+        "non_verifying_supporting_evidence_ids": [],
+        "contradicting_evidence_ids": [],
+        "candidate_evidence_ids": []
+      },
+      "C-002": {
+        "claim_id": "C-002",
+        "claim_text": "qual_to_quant_task_contract creates dry-run dev validation task drafts with requesting_brain/falsifier/desired_artifact/return_to_brain/acceptance_evidence.",
+        "severity": 3,
+        "truth_status": "verified_by_evidence",
+        "supporting_evidence_ids": [
+          "E-002"
+        ],
+        "non_verifying_supporting_evidence_ids": [],
+        "contradicting_evidence_ids": [],
+        "candidate_evidence_ids": []
+      },
+      "C-003": {
+        "claim_id": "C-003",
+        "claim_text": "cybernetic_control_plane remains warn-only and does not block dispatch.",
+        "severity": 3,
+        "truth_status": "verified_by_evidence",
+        "supporting_evidence_ids": [
+          "E-003"
+        ],
+        "non_verifying_supporting_evidence_ids": [],
+        "contradicting_evidence_ids": [],
+        "candidate_evidence_ids": []
+      },
+      "C-004": {
+        "claim_id": "C-004",
+        "claim_text": "atom_collision_emergence is read-only/suggest-only and does not write core atoms.",
+        "severity": 3,
+        "truth_status": "verified_by_evidence",
+        "supporting_evidence_ids": [
+          "E-004"
+        ],
+        "non_verifying_supporting_evidence_ids": [],
+        "contradicting_evidence_ids": [],
+        "candidate_evidence_ids": []
+      }
+    },
+    "evidence_coverage": 1.0,
+    "verified_claim_count": 4,
+    "claim_count": 4
+  },
+  "evidence_requests": [
+    {
+      "id": "ER-001",
+      "requested_by": "mimo-v2.5-pro",
+      "claim_id": "C-001",
+      "claim": "",
+      "tool_needed": "file",
+      "command": "cat hermes/skills/workflow/qian-meta-synthesis/SKILL.md | grep -A5 'source\\|evidence\\|dissent\\|handback' | head -40",
+      "why": "E-001 proves skill exists and loads, but does not prove the source/evidence/dissent/handback schema fields are actually defined. Need to inspect SKILL.md body to confirm schema completeness before Gate3 runtime certification.",
+      "status": "requested",
+      "safety": "read_only_or_orchestrator_approved"
+    },
+    {
+      "id": "ER-002",
+      "requested_by": "mimo-v2.5-pro",
+      "claim_id": "C-002",
+      "claim": "",
+      "tool_needed": "terminal",
+      "command": "python3 hermes/scripts/qual_to_quant_task_contract.py --demo --json | python3 -c \"import sys,json; d=json.load(sys.stdin); t=d.get('task',d.get('tasks',[{}])[0] if isinstance(d.get('tasks'),list) else {}); fields=['requesting_brain','falsifier','desired_artifact','return_to_brain','acceptance_evidence']; print({f:t.get(f,'MISSING') for f in fields})\"",
+      "why": "E-002 confirms demo run exits 0 with status OK, but does not verify the output task draft actually contains all 5 required contract fields (requesting_brain, falsifier, desired_artifact, return_to_brain, acceptance_evidence). Field-level schema validation needed before Gate3.",
+      "status": "requested",
+      "safety": "read_only_or_orchestrator_approved"
+    },
+    {
+      "id": "ER-003",
+      "requested_by": "mimo-v2.5-pro",
+      "claim_id": "C-002",
+      "claim": "",
+      "tool_needed": "terminal",
+      "command": "python3 hermes/scripts/qual_to_quant_task_contract.py --demo --json | python3 -c \"import sys,json; d=json.load(sys.stdin); print('task_count:', len(d.get('tasks',[d.get('task',{})]) if isinstance(d.get('tasks'),list) else [d.get('task',{})]))\" 2>&1 | head -5",
+      "why": "Confirm whether demo produces single task or batch, to assess whether dev-validate-* pattern holds for downstream orchestration.",
+      "status": "requested",
+      "safety": "read_only_or_orchestrator_approved"
+    }
+  ],
+  "provenance": [
+    "deepseek-v4-pro contributed seed proposal",
+    "gemini-3.1-pro-preview contributed seed proposal",
+    "gpt-5.5 contributed seed proposal",
+    "mimo-v2.5-pro contributed seed proposal"
+  ],
+  "reasons": [
+    "missing best_within_constraints signatures: ['gemini-3.1-pro-preview']"
+  ],
+  "fanout_certification": {
+    "schema_version": 1,
+    "status": "fanout_quorum_met",
+    "certified": true,
+    "multi_model_certified": true,
+    "certification_scope": "multi_model",
+    "below_min_quorum": false,
+    "success_count": 3,
+    "fail_count": 1,
+    "planner_count": 4,
+    "min_quorum": 2,
+    "reason": "planner fan-out met min_quorum: 3/2"
+  }
+}
