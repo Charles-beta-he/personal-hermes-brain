@@ -391,6 +391,7 @@ class BrainctlTestCase(unittest.TestCase):
         self.assertEqual(routing["taskpool_multimodel_hook_changes"], "hermes-core")
         self.assertEqual(routing["external_repo_absorption_or_source_validation"], "dev")
         self.assertEqual(routing["local_first_static_app_delivery"], "dev")
+        self.assertEqual(routing["cross_brain_capability_gap_closure"], "dev")
         self.assertEqual(routing["design_system_or_design_manual"], "design")
         self.assertEqual(routing["external_source_registry_or_fresh_context"], "research")
         self.assertEqual(routing["media_voice_video_tool_evaluation"], "media")
@@ -402,6 +403,7 @@ class BrainctlTestCase(unittest.TestCase):
             ("analyze external GitHub repo and decide adopt or reject", "dev", "external_repo_absorption_or_source_validation"),
             ("UI implementation using project DESIGN.md", "design", "design_system_or_design_manual"),
             ("local first React static app browser QA", "dev", "local_first_static_app_delivery"),
+            ("research brain has a missing browser connector; implement and hand back", "dev", "cross_brain_capability_gap_closure"),
             ("verify OmniVoiceStudio source validation 404 before adoption", "media", "media_voice_video_tool_evaluation"),
             ("build external source registry from public APIs and Context7", "research", "external_source_registry_or_fresh_context"),
             ("optimize model provider quota routing with keycompute", "mlops", "model_routing_quota_or_mlops"),

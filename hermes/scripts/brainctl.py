@@ -1566,6 +1566,7 @@ def multibrain_route(query: str, *, json_mode: bool = False) -> dict:
     brain = "main"
     reason = "default_entry"
     rules = [
+        ("dev", "cross_brain_capability_gap_closure", ["capability gap", "missing tool", "missing connector", "browser connector", "api connector", "mcp bridge", "test harness", "hand back", "handoff back", "打通", "补功能", "缺少功能", "交还", "交付给", "能力缺口", "工具缺口", "链路不通"]),
         ("hermes-core", "hermes_private_repo_governance", ["hermes", "private", "私有仓", "upstream", "overlay", "post-update-check", "taskpool", "任务池", "conductor", "brainctl", "多脑", "openclaw", "dreaming", "outcomes", "rowboat", "symphony", "evoagentx", "orca", "jcode", "paperclip", "agent control", "control-plane"]),
         ("design", "design_system_or_design_manual", ["design.md", "design manual", "design system", "design token", "brand", "baseline-ui", "ui implementation", "awesome-design-md", "ui-ux-pro", "项目设计", "设计手册", "设计规范", "审美", "视觉"]),
         ("media", "media_voice_video_tool_evaluation", ["voice cloning", "tts", "dubbing", "whisper", "ffmpeg", "media tool", "youtube audio", "youtube video", "omnivoicestudio", "voice pro", "dram director", "语音克隆", "配音", "媒体工具", "音视频"]),

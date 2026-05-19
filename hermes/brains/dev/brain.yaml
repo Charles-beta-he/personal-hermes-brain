@@ -4,7 +4,7 @@ version: 0.3.0
 status: active-baseline
 updated_at: 2026-05-19T01:14:57+0800
 inherits: base
-purpose: Senior software engineering execution brain for frontend/backend/admin/fullstack/contract/devops/ui-ux delivery, with project-profile grounding, taskpool handoff contracts, red-line preservation, and evidence-first verification.
+purpose: "Senior software engineering execution brain for frontend/backend/admin/fullstack/contract/devops/ui-ux delivery, with project-profile grounding, taskpool handoff contracts, red-line preservation, and evidence-first verification. Also acts as cross-brain engineering enablement: when main/research/design/media/workflow/mlops identifies a missing tool, connector, browser harness, API/MCP bridge, test harness, or delivery gap, dev implements, wires, tests, documents, and hands the capability back to the requesting brain."
 capabilities:
   - software_engineering_execution
   - project_profile_grounding
@@ -19,6 +19,8 @@ capabilities:
   - web_research_strategy
   - media_tool_evaluation
   - external_source_registry
+  - cross_brain_development_enablement
+  - capability_gap_closure
 
 profiles:
   frontend:
@@ -276,6 +278,40 @@ profiles:
     stop_conditions:
       - source_added_without_provenance
       - stale_or_unversioned_docs_used_for_coding_without_current_check
+  cross_brain_development_enablement:
+    owns:
+      - engineering enablement requests from main/research/design/media/workflow/mlops brains when their primary task is blocked by a missing implementation capability
+      - scripts, CLIs, browser harnesses, API connectors, MCP/tool bridges, test harnesses, data exporters, adapters, and packaging needed for another brain to continue its original mission
+      - handback contracts that return verified usage instructions, smoke evidence, failure boundaries, and ownership notes to the requesting brain
+    required_inputs:
+      - requesting_brain
+      - original_task_or_goal
+      - requested_capability_gap
+      - target_repo_or_tool_surface
+      - deliverable_type
+      - acceptance_smoke
+      - return_to_brain
+      - reusable_or_oneoff
+    verification_defaults:
+      - implementation_or_connector_created
+      - targeted_unit_or_smoke_test
+      - end_to_end_usage_probe_when_possible
+      - no_secret_or_runtime_state_leakage_check
+      - handback_usage_contract_written
+      - requesting_brain_can_resume_original_task
+    stop_conditions:
+      - requesting_brain_goal_unclear
+      - missing_write_scope_or_repo_path_for_code_change
+      - capability_requires_credentials_or_sensitive_upload_without_user_consent
+      - delivery_would_replace_domain_judgment_of_requesting_brain
+    handback_contract:
+      required_output:
+        - delivered_artifact_path_or_command
+        - invocation_example
+        - verification_commands_and_results
+        - known_limits_and_failure_modes
+        - return_to_brain
+        - next_step_for_requesting_brain
 
 red_lines:
   - no_feature_entry_field_loss
@@ -338,6 +374,9 @@ taskpool_contract:
     - parallel_group
     - integration_owner_required
     - done_definition
+    - requesting_brain_when_cross_brain_enablement
+    - requested_capability_gap_when_cross_brain_enablement
+    - return_to_brain_when_cross_brain_enablement
   recommended_frontmatter_defaults:
     brain: dev
     lane: work
@@ -349,6 +388,7 @@ taskpool_contract:
     - red_lines_checked
     - verification_contract_satisfied_or_gap_declared
     - rollback_notes_present
+    - cross_brain_capability_delivered_and_handback_ready_when_applicable
 
 worker_handoff:
   required_context:
@@ -464,6 +504,7 @@ routes:
   web_research_browser_automation: dev
   media_tool_evaluation: dev
   external_source_registry_planning: dev
+  cross_brain_capability_gap_closure: dev
 
 smoke_checks:
   - python3 ~/.hermes/scripts/brainctl.py --json brains route "uvisa frontend H5 bugfix"
@@ -471,3 +512,4 @@ smoke_checks:
   - python3 ~/.hermes/scripts/brainctl.py --json brains route "analyze external GitHub repo and decide adopt or reject"
   - python3 ~/.hermes/scripts/brainctl.py --json brains route "local first React static app browser QA"
   - python3 ~/.hermes/scripts/brainctl.py --json brains route "UI implementation using project DESIGN.md"
+  - python3 ~/.hermes/scripts/brainctl.py --json brains route "research brain cannot read a dynamic page; implement browser connector and hand back"

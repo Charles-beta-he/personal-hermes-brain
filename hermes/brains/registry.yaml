@@ -43,8 +43,8 @@ subbrains:
     path: /Users/charles/.hermes/brains/dev/brain.yaml
     version: 0.3.0
     role: senior software delivery, project engineering, verification, worker handoff,
-      external repo absorption, source validation, local-first static app delivery,
-      design-manual guided UI
+      cross-brain capability-gap closure, external repo absorption, source validation,
+      local-first static app delivery, design-manual guided UI
   hermes-core:
     path: /Users/charles/.hermes/brains/hermes-core/brain.yaml
     version: 0.2.0
@@ -93,6 +93,7 @@ routing:
   web_research_browser_automation: dev
   media_tool_evaluation: dev
   external_source_registry_planning: dev
+  cross_brain_capability_gap_closure: dev
   design_system_or_design_manual: design
   visual_quality_or_ui_brand_governance: design
   external_source_registry_or_fresh_context: research
