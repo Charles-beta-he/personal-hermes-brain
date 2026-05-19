@@ -1,0 +1,175 @@
+⚠️  Reached maximum iterations (1). Requesting summary...
+可压缩成“著作级吸收方案”如下：
+
+题名：
+《Hermes 多脑系统工程：从多模型协作到人机协同巨系统》
+
+核心命题：
+钱学森的系统工程/工程控制论进入 Hermes，不是“借名包装”，而是把 Hermes 从多模型工具链升级为：
+有总体设计部、有控制闭环、有层级分工、有工程验收、有知识沉淀的人机协同智能工程系统。
+
+一、5 个关键缺口
+
+1. 总体设计部缺口
+   现状：多脑偏“模型并列调用/投票”。
+   缺口：缺一个统筹目标、约束、资源、风险、验收的“总师层”。
+   钱学森映射：总体设计部。
+
+2. 工程控制闭环缺口
+   现状：执行、评审、重试存在，但闭环不显式。
+   缺口：缺“目标态—观测态—偏差—控制动作—再观测—收敛/升级”协议。
+   钱学森映射：工程控制论。
+
+3. 层级巨系统缺口
+   现状：skills、memory、taskpool、gateway、models 各自存在。
+   缺口：缺“巨系统—子系统—执行单元”的层级关系和责任边界。
+   钱学森映射：开放复杂巨系统。
+
+4. 人机协同缺口
+   现状：偏自动化，人的角色常被动介入。
+   缺口：缺“人类总师/价值仲裁者/授权者”的正式接口。
+   钱学森映射：人机结合、以人为主的综合集成。
+
+5. 工程知识沉淀缺口
+   现状：memory/skill 有沉淀能力，但不一定形成控制策略。
+   缺口：缺失败案例、调参策略、收敛模式、验收模板的系统化积累。
+   钱学森映射：从工程实践反哺系统方法。
+
+二、5 个落地 artifact
+
+1. 《Hermes 多脑总体设计部白皮书》
+   内容：
+   - 多脑角色体系
+   - 任务分解原则
+   - 模型编队机制
+   - 人类仲裁边界
+   - 风险/资源/上下文预算
+   - done 验收原则
+
+2. Control Loop Spec
+   每个复杂任务都记录：
+   - Desired State：目标状态
+   - Observed State：观测状态
+   - Error Signal：偏差信号
+   - Control Action：控制动作
+   - Sampling Point：下一次观测点
+   - Stop/Escalate Rule：收敛或升级条件
+
+3. Multi-Brain Architecture Map
+   层级图应包含：
+   - 用户/总师层
+   - 规划脑 planner
+   - 执行脑 implementer
+   - 评审脑 critic
+   - 仲裁脑 arbiter
+   - 记忆/技能层
+   - taskpool 控制平面
+   - gateway/外部世界接口
+
+4. Taskpool Cybernetics Protocol
+   把任务池变成控制系统：
+   - ready：可控输入
+   - active：执行中状态
+   - blocked：偏差/失控状态
+   - verified：已被观测验证
+   - done：闭环完成
+   - retry：必须说明控制变量变化
+
+5. Failure-to-Skill Casebook
+   每次复杂失败沉淀为：
+   - 问题类型
+   - 失控原因
+   - 观测信号
+   - 修正动作
+   - 验收证据
+   - 可复用 skill / checklist / test / guardrail
+
+三、Dev 工程使能边界
+
+应该使能：
+
+1. 多脑角色化，而不是简单多模型投票
+   planner / implementer / reviewer / arbiter / historian 各司其职。
+
+2. 每个任务显式带控制变量
+   context、budget、risk、confidence、evidence、rollback、human-approval。
+
+3. 自动推进但不自动越权
+   低风险任务可自动闭环；高风险任务必须人类授权。
+
+4. taskpool 成为控制平面
+   不只是 TODO list，而是任务状态机、偏差检测器、验收账本。
+
+5. skill/memory 成为工程知识系统
+   memory 存稳定事实；skill 存可复用流程；casebook 存失败模式。
+
+不应越界：
+
+1. 不把钱学森理论口号化。
+2. 不把“多脑”误解为模型越多越好。
+3. 不让自动化绕过用户授权。
+4. 不把临时任务状态写进长期 memory。
+5. 不用理论复杂性压倒工程可验证性。
+
+四、验收门
+
+1. 总体设计验收门
+   必须回答：
+   - 谁是总师？
+   - 谁负责规划？
+   - 谁负责执行？
+   - 谁负责评审？
+   - 谁负责仲裁？
+   - 谁对 done 负责？
+
+2. 控制闭环验收门
+   每个复杂任务必须存在：
+   目标 → 观测 → 偏差 → 控制动作 → 再观测 → 收敛/升级。
+
+3. 多脑协同验收门
+   多模型输出必须有：
+   - 角色分工
+   - 冲突处理
+   - 证据来源
+   - 最终责任方
+   - 失败降级路径
+
+4. 工程证据验收门
+   done 不能只靠语言声明，必须有至少一种证据：
+   - 测试结果
+   - 文件 diff
+   - 日志
+   - 运行截图/输出
+   - 审查结论
+   - 用户确认
+
+5. 知识沉淀验收门
+   复杂任务结束后至少沉淀一种 durable artifact：
+   - skill
+   - protocol
+   - checklist
+   - casebook
+   - architecture note
+   - regression test
+
+五、最小实现路线
+
+Phase 1：概念固化
+产出《Hermes 多脑系统工程纲领》：
+定义总师层、控制闭环、多脑角色、验收门。
+
+Phase 2：协议固化
+产出 Control Loop Spec + Taskpool Cybernetics Protocol：
+让每个复杂任务都能被观测、纠偏、验收。
+
+Phase 3：系统固化
+把协议嵌入 Hermes：
+taskpool、skills、memory、model routing、verification 都遵守同一控制论结构。
+
+Phase 4：案例固化
+建立 Failure-to-Skill Casebook：
+把失败变成系统免疫力。
+
+一句话定稿：
+
+钱学森系统工程进入 Hermes 的关键，不是给多脑加一层宏大叙事，而是把 Hermes 设计成一个可观测、可纠偏、可验收、可沉淀的人机协同智能工程巨系统。

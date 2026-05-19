@@ -1,0 +1,33 @@
+{
+  "error": "all_failed",
+  "tick_dir": "/Users/charles/.hermes/tick-20260519-030643-863546-p82661-1db2f72e-432d9e9f",
+  "chain_id": "1db2f72e-c1a0-4085-878a-c715308260ba",
+  "fanout_certification": {
+    "schema_version": 1,
+    "status": "all_failed",
+    "certified": false,
+    "multi_model_certified": false,
+    "certification_scope": "single_model",
+    "below_min_quorum": true,
+    "success_count": 0,
+    "fail_count": 2,
+    "planner_count": 2,
+    "min_quorum": 2,
+    "reason": "all planners failed"
+  },
+  "quota_confidence": {
+    "schema_version": 1,
+    "exact_count": 0,
+    "estimated_count": 0,
+    "unknown_count": 3,
+    "unobservable_count": 1,
+    "exhausted_count": 0,
+    "has_low_confidence_quota": true,
+    "low_confidence_models": [
+      "deepseek-v4-pro",
+      "gemini-3.1-pro-preview",
+      "gpt-5.5",
+      "mimo-v2.5-pro"
+    ]
+  }
+}

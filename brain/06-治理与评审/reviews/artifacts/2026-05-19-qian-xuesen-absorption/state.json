@@ -1,0 +1,42 @@
+{
+  "schema": "multi_model_state_v1",
+  "created_at": "2026-05-19T02:56:13.123019+00:00",
+  "question": "多模型思考：如何把钱学森《论系统工程》《工程控制论》及开放复杂巨系统/综合集成方法论提升为 Hermes 多脑核心著作系统吸收级？请给出缺失部分、分脑职责、dev 工程使能位置、可落地 artifact/任务/验证门。",
+  "context": {
+    "current_assets": [
+      "brain/04-知识原子/atoms/系统工程四环Agent映射.md: 已有四环映射但只是原则级，不是核心著作系统吸收级",
+      "brain/03-理论与元认知/复杂巨系统理论与Hermes优化方案.md: 已有《论系统工程》作为核心书籍和九概念映射",
+      "hermes/brains/dev/brain.yaml: 已加入 cross_brain_development_enablement，dev 为主脑直接开发任务与跨脑能力缺口工程打通脑",
+      "hermes/brains/registry.yaml/brainctl.py: 已加入 cross_brain_capability_gap_closure 路由"
+    ],
+    "verified_sources_file": "/tmp/qian_multibrain_absorb/sources.json",
+    "source_facts": [
+      "OpenLibrary: Engineering cybernetics, Hsue Shen Tsien, first_publish_year 1954",
+      "OpenLibrary: Lun xi tong gong cheng, Hsue Shen Tsien, first_publish_year 1982",
+      "OpenLibrary: Qian Xuesen xi tong ke xue si xiang wen xuan, Xuesen Qian, first_publish_year 2011",
+      "Wikipedia summary: Qian Xuesen was aerospace engineer and cyberneticist, established engineering cybernetics"
+    ],
+    "desired_architecture": "main=router/arbiter; dev=software delivery and cross-brain capability-gap closure; research=source/provenance; workflow=protocol extraction; hermes-core=runtime/taskpool/multimodel control plane; design/media/mlops retain domain judgment",
+    "constraint": "Do not make dev a domain-judgment brain; dev implements/wires/tests/hands back capabilities."
+  },
+  "constraints": [
+    "必须真实区分：核心著作来源验证、概念萃取、流程协议、控制面机制、dev工程实现。",
+    "不要泛泛读书笔记；每个吸收项必须有可执行 capability_delta、artifact、acceptance_evidence。"
+  ],
+  "acceptance_criteria": [
+    "输出分为 missing gaps / canonical works / multi-brain responsibility matrix / dev engineering enablement / implementation backlog / verification gates。",
+    "给出哪些内容应进入 brain atoms、哪些进入 skills/protocols、哪些进入 taskpool evolution tasks、哪些进入 runtime tests。"
+  ],
+  "non_goals": [],
+  "risk_level": "medium",
+  "budget": {},
+  "claims": [],
+  "evidence": [],
+  "implementation_target": {
+    "files": [],
+    "verify_commands": [],
+    "forbidden_changes": []
+  },
+  "is_candidate_solution": false,
+  "state_owner": "main_orchestrator"
+}

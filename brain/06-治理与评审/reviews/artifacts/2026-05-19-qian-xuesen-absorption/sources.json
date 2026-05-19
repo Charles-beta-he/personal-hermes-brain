@@ -1,0 +1,93 @@
+[
+  {
+    "source": "wikipedia_summary",
+    "title": "Qian Xuesen",
+    "url": "https://en.wikipedia.org/api/rest_v1/page/summary/Qian%20Xuesen",
+    "extract": "Qian Xuesen was a Chinese aerospace engineer and cyberneticist who made significant contributions to the field of aerodynamics and established engineering cybernetics. He achieved recognition as one of America's leading experts in rockets and high-speed flight theory prior to his deportation to China in 1955."
+  },
+  {
+    "source": "wikipedia_summary",
+    "title": "Engineering Cybernetics",
+    "url": "https://en.wikipedia.org/api/rest_v1/page/summary/Engineering%20Cybernetics",
+    "extract": "Engineering cybernetics, also known as technical cybernetics or cybernetic engineering, is the branch of cybernetics concerned with applications in engineering, in fields such as control engineering and robotics."
+  },
+  {
+    "source": "openlibrary_search",
+    "query": "Hsue-Shen Tsien Engineering Cybernetics",
+    "url": "https://openlibrary.org/search.json?q=Hsue-Shen+Tsien+Engineering+Cybernetics&limit=8",
+    "docs": [
+      {
+        "title": "Engineering cybernetics",
+        "author_name": [
+          "Hsue Shen Tsien"
+        ],
+        "first_publish_year": 1954
+      }
+    ]
+  },
+  {
+    "source": "openlibrary_search",
+    "query": "Qian Xuesen systems engineering",
+    "url": "https://openlibrary.org/search.json?q=Qian+Xuesen+systems+engineering&limit=8",
+    "docs": [
+      {
+        "title": "Qian Xuesen xue shu si xiang =",
+        "author_name": [
+          "Wenhua Wang"
+        ],
+        "first_publish_year": 2007
+      },
+      {
+        "title": "Qian Xuesen xi tong ke xue si xiang wen xuan",
+        "author_name": [
+          "Xuesen Qian"
+        ],
+        "first_publish_year": 2011
+      },
+      {
+        "title": "Zhi hui de yao shi",
+        "author_name": [
+          "Hsue Shen Tsien"
+        ],
+        "first_publish_year": 2005
+      },
+      {
+        "title": "Man-Machine-Environment System Engineering : Proceedings of the 21th International Conference on MMESE",
+        "author_name": [
+          "Shengzhao Long",
+          "Balbir S. Dhillon"
+        ],
+        "first_publish_year": 2021
+      },
+      {
+        "title": "Man-Machine-Environment System Engineering : Proceedings of the 21st International Conference on MMESE",
+        "author_name": [
+          "Shengzhao Long",
+          "Balbir S. Dhillon"
+        ],
+        "first_publish_year": 2022
+      },
+      {
+        "title": "Lun xi tong gong cheng",
+        "author_name": [
+          "Hsue Shen Tsien"
+        ],
+        "first_publish_year": 1982
+      }
+    ]
+  },
+  {
+    "source": "openlibrary_search",
+    "query": "Qian Hsue-Shen Gong cheng kong zhi lun",
+    "url": "https://openlibrary.org/search.json?q=Qian+Hsue-Shen+Gong+cheng+kong+zhi+lun&limit=8",
+    "docs": [
+      {
+        "title": "Gong cheng kong zhi lun. Qian Xuesen, Song Jian zhu",
+        "author_name": [
+          "Hsue Shen Tsien"
+        ],
+        "first_publish_year": 1980
+      }
+    ]
+  }
+]

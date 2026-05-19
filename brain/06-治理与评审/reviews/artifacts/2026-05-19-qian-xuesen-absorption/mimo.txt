@@ -1,0 +1,278 @@
+  ┊ review diff
+⚠️  Reached maximum iterations (1). Requesting summary...
+⚠️  Reached maximum iterations (1). Requesting summary...
+a/brain/04-知识原子/atoms/综合集成方法论.md → b/brain/04-知识原子/atoms/综合集成方法论.md
+@@ -0,0 +1,78 @@
++---
++title: 综合集成方法论（Meta-Synthetic Method）
++created: 2026-05-19
++type: atom
++concepts: [Qian Xuesen, meta-synthesis, qualitative-to-quantitative, expert system, machine system, knowledge system, open complex giant system]
++source_boundary: reconstructed_from_domain_knowledge_not_verbatim_quote
++sources:
++  - Lun xi tong gong cheng, Hsue Shen Tsien, 1982 (综合集成法原始论述)
++  - Qian Xuesen xi tong ke xue si xiang wen xuan, 2011 (文选扩展)
++  - 钱学森 1992 综合集成研讨厅论文
++status: current
++capability_delta: 将钱学森综合集成法从概念提及提升为可执行的多脑协作协议
++evidence: pending_dev_validation
++---
++
++# 综合集成方法论（Meta-Synthetic Method）
++
++## 概念边界
++
++此卡不是《论系统工程》逐字摘录，而是将钱学森"从定性到定量综合集成法"及"综合集成研讨厅"重构为 Hermes 多脑架构的协作决策协议。
++
++## 核心结构：三体系集成
++
++钱学森提出解决开放复杂巨系统问题需要三个体系协同：
++
++| 体系 | 原始含义 | Hermes 多脑映射 | 职责 |
++|------|---------|----------------|------|
++| 专家体系 | 人的经验、直觉、领域判断 | main脑 + 人类专家接口(human-in-the-loop) | 路由、仲裁、最终决策权、定性判断 |
++| 机器体系 | 计算机的算力、数据处理、模型推理 | dev脑 + mlops脑 + media脑 | 定量实现、代码执行、模型推理、内容生成 |
++| 知识体系 | 历史数据、文献、案例库、已有知识 | research脑 + workflow脑 + hermes-core脑 | 来源验证、协议沉淀、状态管理、事实核查 |
++
++## 从定性到定量的迭代循环
++
++```
++Round N:
++  1. 定性判断 (main出题)
++     ↓
++  2. 知识验证 (research核查事实/来源)
++     ↓
++  3. 定量实现 (dev编码/mlops推理)
++     ↓
++  4. 专家评审 (main验收 + 人类可选介入)
++     ↓
++  5. 知识沉淀 (workflow固化协议/atom更新)
++     ↓
++Round N+1: 基于Round N结论的新的定性判断
++```
++
++关键约束：
++- 每轮必须有evidence（非"多模型同意"即为真）
++- 人类专家可在Step 1或Step 4介入（human-in-the-loop非可选装饰）
++- 收敛判据：连续2轮结论不变 + 验收门全通过 → 本轮终止
++
++## 研讨厅模式映射
++
++钱学森"综合集成研讨厅"= 专家面对面讨论 + 机器辅助计算 + 知识库检索 三者实时交互。
++
++Hermes映射：
++- 研讨厅 = main脑发起的multi-model ratification session
++- 专家面对面 = 多模型投票（GPT/Claude/MiMo/DeepSeek各出判断）
++- 机器辅助计算 = dev/mlops执行具体计算/测试/推理
++- 知识库检索 = research脑调用session_search/web_search/local-brain
++
++## 与"系统工程四环"的关系
++
++综合集成法是四环中"第4环：综合/沉淀"的升级版——四环侧重流程闭环，综合集成法侧重"如何做出正确决策"。
++
++- 四环 = 流程生命周期（设计→分解→验证→沉淀）
++- 综合集成法 = 决策方法论（定性→定量→评审→收敛）
++
++两者正交：四环是what，综合集成法是how。
++
++## 反模式
++
++- 跳过research验证直接dev实现（缺知识体系）
++- 人类完全不参与决策（专家体系退化为纯机器投票）
++- 单轮即收敛无迭代（未达"从定性到定量"的渐进精度）
++- 把"多模型同意"等同于"综合集成"（忽略了知识体系的独立验证）
+  ┊ review diff
+a/brain/04-知识原子/atoms/社会系统工程三层.md → b/brain/04-知识原子/atoms/社会系统工程三层.md
+@@ -0,0 +1,85 @@
++---
++title: 社会系统工程三层与多脑组织架构
++created: 2026-05-19
++type: atom
++concepts: [Qian Xuesen, social systems engineering, organizational decision, multi-brain governance, feedback hierarchy]
++source_boundary: reconstructed_from_domain_knowledge_not_verbatim_quote
++sources:
++  - Lun xi tong gong cheng, Hsue Shen Tsien, 1982 (社会系统工程章节)
++  - Engineering cybernetics, Hsue Shen Tsien, 1954 (Ch9 系统设计)
++  - Qian Xuesen xi tong ke xue si xiang wen xuan, 2011
++status: current
++capability_delta: 为Hermes多脑架构提供"跨脑组织工程"理论依据，解决脑间权限/职责/通信的正当性问题
++evidence: pending_dev_validation
++---
++
++# 社会系统工程三层与多脑组织架构
++
++## 概念边界
++
++此卡将钱学森社会系统工程思想重构为 Hermes 多脑治理架构的理论基础。社会系统工程研究"由人组成的大系统如何有效运转"——对应 Hermes "由多个脑组成的系统如何有效协作"。
++
++## 三层架构
++
++### 第1层：执行层（对应社会系统的"生产单元"）
++
++| 脑 | 职责 | 权限边界 |
++|---|------|---------|
++| dev | 直接开发、跨脑工程打通、测试验证 | 可写代码/配置，不可最终决策 |
++| mlops | 模型训练、推理、量化、评估 | 可调用GPU/模型，不可跨脑路由 |
++| media | 内容生成、音视频处理 | 可调用媒体工具，不可修改控制面 |
++| design | 设计判断、UI/UX领域决策 | 可产出设计artifact，不可修改后端 |
++
++执行层特征：做具体的事，交还结果，不做最终判断。
++
++### 第2层：协调层（对应社会系统的"管理机构"）
++
++| 脑 | 职责 | 权限边界 |
++|---|------|---------|
++| main | 路由、仲裁、最终决策权 | 可调度所有脑，可否决执行层产出 |
++| hermes-core | 控制面状态管理、配置、工具注册 | 可修改系统配置，不可替代main仲裁 |
++| workflow | 协议沉淀、流程固化、规范制定 | 可制定流程标准，不可强制执行 |
++
++协调层特征：决定"谁做什么、怎么判断、流程是什么"。
++
++### 第3层：知识层（对应社会系统的"智库/研究院"）
++
++| 脑 | 职责 | 权限边界 |
++|---|------|---------|
++| research | 来源验证、事实核查、情报收集 | 可判定"真/假/不确定"，不可直接执行 |
++| （隐含）memory/session_search | 历史知识检索 | 被动服务，不主动决策 |
++
++知识层特征：提供决策依据，不替代决策。
++
++## 反馈层级
++
++钱学森强调社会系统的多层反馈——不是单一反馈环，而是：
++
++```
++微观反馈：执行层内部（dev: 写代码→测试→修bug→重测）
++中观反馈：协调层↔执行层（main: 验收→退修→再验收）
++宏观反馈：知识层→协调层→执行层（research: 发现新证据→main: 修正决策→dev: 重新实现）
++```
++
++当前Hermes的主要缺口在宏观反馈——research发现新事实后，如何触发main重新仲裁并使dev返工，缺乏自动化协议。
++
++## 与综合集成法的关系
++
++- 综合集成法 = 决策方法论（怎么做出正确判断）
++- 社会系统工程 = 组织架构论（谁来做什么、权限如何分配）
++
++两者互补：没有组织架构，方法论无法落地；没有方法论，组织架构只是空壳。
++
++## 对dev脑的约束
++
++dev脑在社会系统工程框架下的定位：
++1. dev是执行层，不是决策层——dev可以判断"代码能不能跑"，不能判断"该不该做"
++2. dev的跨脑工程职责（打通能力缺口）必须通过协调层(main)审批
++3. dev交还给main的必须是"证据包"而非"我觉得完成了"
+… omitted 7 diff line(s) across 1 additional file(s)/section(s)
+⚠️  Reached maximum iterations (1). Requesting summary...
+⚠️  Reached maximum iterations (1). Requesting summary...
+完整交付报告如下。
+
+---
+
+## 钱学森核心著作系统吸收 — 完整交付报告
+
+### 已落地文件清单
+
+本轮通过4次迭代，成功写入3个文件：
+
+```
+✅ brain/04-知识原子/atoms/综合集成方法论.md          (3372 bytes)
+✅ brain/04-知识原子/atoms/社会系统工程三层.md        (3904 bytes)
+✅ brain/07-仪表盘/核心著作吸收进度.md               (写入成功)
+```
+
+两个P0 atom已按已有atom规范（frontmatter: title/created/type/concepts/source_boundary/sources/status/capability_delta/evidence）落地。
+
+---
+
+### 六项交付物回顾
+
+#### 1. 缺失部分（7项capability_delta）
+
+```
+D1 综合集成研讨厅方法论        P0  ✅已落地
+D2 从定性到定量M-S方法         P0  ✅已落地（合并入D1 atom）
+D3 开放复杂巨系统分类体系      P2  待启动
+D4 最优控制→Agent策略优化      P1  待启动
+D5 社会系统工程三层            P0  ✅已落地
+D6 人机结合决策循环            P1  待启动
+D7 大成智慧跨脑融合            P1  待启动
+```
+
+P0完成率: 3/3 = 100%
+整体完成率: 3/7 = 43%
+
+#### 2. 核心著作吸收矩阵
+
+```
+8项著作/概念中:
+  ✅已完成: 4项 (Ch1-3控制论基础, 四环映射, 综合集成法, 社会系统工程)
+  ⏳P1 backlog: 2项 (Ch4-7最优控制, 大成智慧)
+  ⚠️50%: 1项 (Ch8-10系统设计)
+  ⏳P2: 1项 (研讨厅architecture pattern)
+```
+
+#### 3. 多脑职责矩阵（钱学森三体系映射）
+
+```
+专家体系 → main脑(路由/仲裁/决策) + human-in-the-loop
+机器体系 → dev脑(执行) + mlops脑(推理) + media脑(生成)
+知识体系 → research脑(验证) + workflow脑(协议) + hermes-core脑(状态)
+```
+
+三层架构已在"社会系统工程三层"atom中结构化定义，含执行层/协调层/知识层的权限边界。
+
+#### 4. dev工程使能位置
+
+```
+dev定位: 机器体系核心执行单元
+  ├── 主任务: 直接开发
+  ├── 跨脑工程: 打通brain间能力缺口（需main审批）
+  ├── 测试验证: 为每个capability_delta采集evidence
+  └── 交还标准: capability_delta + evidence + test_result
+```
+
+关键约束：dev是执行层不是决策层，交还的是"证据包"不是"我觉得完成了"。
+
+#### 5. 可落地Artifact/Backlog（8项）
+
+```
+P0 ✅ 综合集成方法论 atom                    已完成
+P0 ✅ 社会系统工程三层 atom                  已完成
+P0 ✅ 吸收进度仪表盘                        已完成
+P1 ⏳ 最优控制→Agent策略 atom               待启动
+P1 ⏳ 大成智慧融合 meta-atom                待启动
+P1 ⏳ 人机结合决策循环 skill                 待启动
+P2 ⏳ 综合集成研讨厅模拟 project             待启动
+P2 ⏳ 多脑通信协议v2 skill                   待启动
+```
+
+#### 6. 验收门
+
+```
+门1 结构化存在    ✅通过 (2/2 atom文件存在+frontmatter完整)
+门2 映射完整性    ✅通过 (每个概念有明确多脑映射表格)
+门3 可执行验证    ⏳待dev补充 (需运行时evidence)
+门4 交叉评审      ⏳待main仲裁 (需main+至少1个其他脑)
+门5 综合集成门    ⏳待全部P0验证完 (端到端循环跑通)
+```
+
+---
+
+### 待办（下一session）
+
+1. 写入进化日志 brain/06-治理与评审/进化日志/2026-05-19-钱学森核心著作吸收P0.md
+2. main脑交叉评审两个P0 atom（门4）
+3. dev脑补充evidence（门3）
+4. 启动P1 backlog: D4最优控制 + D7大成智慧
+5. 目标: 吸收度 43% → 65%（P1完成后）
+
+---
+
+### 能力提升证据
+
+```
+before: atom数量=1 (四环映射), 理论文档=1 (巨系统优化方案)
+after:  atom数量=3 (+综合集成方法论, +社会系统工程三层), 仪表盘=1 (吸收进度)
+delta:  +2 atom, +1 dashboard, capability_gap从7项降至4项
+```
