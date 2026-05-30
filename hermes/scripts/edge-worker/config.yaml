@@ -1,9 +1,9 @@
 # Hermes Edge Worker Configuration
-# 本机作为主节点，监听所有网络接口
+# 使用时请修改以下配置
 
 worker:
-  name: "charlesdeMacBook-Pro"
-  host: "0.0.0.0"  # 监听所有接口
+  name: "your-hostname"  # 修改为你的主机名
+  host: "0.0.0.0"
   port: 9001
   brain_url: ""
   auto_discover: true
@@ -12,24 +12,17 @@ worker:
   reconnect_interval: 10
 
 security:
-  token: "hermes-edge-2024"  # 设置认证token
-  allowed_commands: []  # 空=允许所有
+  token: "your-secret-token"  # 修改为你的token
+  allowed_commands: []
   max_timeout: 300
 
 logging:
   level: "info"
-  file: "/Users/charles/.hermes/edge-worker/logs/edge.log"
+  file: "~/.hermes/edge-worker/logs/edge.log"
   max_size: "10MB"
   max_files: 5
 
 updates:
-  auto_check: false
-  check_interval: 0
-  source: "local"
-
-update_sources:
-  primary: "local"
-  fallbacks:
-    - "github:https://raw.githubusercontent.com/nicholaschenai/hermes-edge-worker/main"
-    - "github-proxy:https://ghproxy.com/https://raw.githubusercontent.com/nicholaschenai/hermes-edge-worker/main"
-    - "cloudflare:https://hermes-edge.pages.dev"
+  auto_check: true
+  check_interval: 3600
+  source: "https://raw.githubusercontent.com/Charles-beta-he/personal-hermes-brain/main/hermes/scripts/edge-worker"
